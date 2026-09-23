@@ -1,35 +1,27 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO v3.4 FINAL - LOCK + BRAND ISOLATION + SIGN ON SCREEN</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
-:root{--navy:#0f172a;--blue:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--yellow:#facc15}
-body{background:#f1f5f9;padding-bottom:70px}
-.topbar{background:var(--navy);color:#fff;padding:14px 16px;display:flex;justify-content:space-between;align-items:center}
-.shield{width:44px;height:44px;background:linear-gradient(180deg,#2563eb,#0f172a);border:2px solid var(--yellow);border-radius:10px;display:flex;align-items:center;justify-content:center}
-.lawbanner{background:linear-gradient(90deg,#facc15,#f59e0b);color:#000;padding:10px 12px;font-weight:900;font-size:13px;text-align:center}
-.lawbanner span{font-weight:400;font-size:11px;display:block}
-.card{background:#fff;border-radius:16px;box-shadow:0 4px 12px rgba(0,0,0,.08);margin:12px;padding:14px;border:1px solid #e2e8f0}
-.badge{display:inline-flex;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
-.gps{background:#dbeafe;color:#1e3a8a;border:1px solid #93c5fd}
-.comp{background:#dcfce7;color:#166534;border:1px solid #86efac}
-.flag{background:#fee2e2;color:#991b1b;border:1px solid #fca5a5}
-.btn{border:0;border-radius:12px;padding:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;width:100%}
-.btn-blue{background:var(--blue);color:#fff}.btn-green{background:var(--green);color:#fff}.btn-red{background:var(--red);color:#fff}.btn-orange{background:var(--orange);color:#fff}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.qrbox{border:2px solid #e2e8f0;border-radius:12px;padding:8px;text-align:center;background:#fff;position:relative}
-.evi{border:2px solid #e2e8f0;border-radius:12px;padding:10px;text-align:center;position:relative;cursor:pointer}
-.evi.cap{border-color:var(--green);background:#f0fdf4}.evi.del{border-color:var(--red);background:#fef2f2}
-.stamp{position:absolute;top:35%;left:5%;right:5%;border:3px solid var(--red);color:var(--red);font-weight:900;transform:rotate(-15deg);text-align:center;padding:3px;font-size:11px;background:rgba(255,255,255,.9)}
-.tabs{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:6px 0;z-index:50}
-.tab{flex:1;text-align:center;padding:6px;font-size:10px;color:#64748b;cursor:pointer}.tab.active{color:var(--blue);font-weight:900}.tab.ic{font-size:20px;display:block}
-.hidden{display:none}
-.dept{border-left:5px solid var(--blue);padding:12px;background:#fff;margin:8px 0;border-radius:0 12px 12px 0;display:flex;justify-content:space-between;align-items:center}
-.dept.flagb{border-left-color:var(--red);background:#fef2f2}.dept.pend{border-left-color:var(--orange);background:#fff7ed}
-input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:5px 0}
-#map{height:300px;border-radius:12px}
-.biom{display
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO CEO DASHBOARD - CLOUD LIVE</title>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,collection,query,orderBy,limit,onSnapshot}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg);const db=getFirestore(app);
+window.db=db;window.q=query;window.col=collection;window.orderBy=orderBy;window.limit=limit;window.onSnapshot=onSnapshot;
+</script>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#0f172a;color:#fff;padding:10px}.top{background:#1e293b;padding:12px;border-radius:12px;display:flex;justify-content:space-between;margin-bottom:10px}.card{background:#fff;color:#0f172a;border-radius:12px;padding:10px;margin:8px 0}.btn{border:0;border-radius:10px;padding:10px;font-weight:800;cursor:pointer}.btn-blue{background:#1d4ed8;color:#fff}.btn-red{background:#dc2626;color:#fff}.status-green{color:#16a34a;font-weight:900}.status-red{color:#dc2626;font-weight:900}.item{border-left:5px solid #16a34a;padding:8px;margin:6px 0;background:#f8fafc;border-radius:8px}.item.red{border-left-color:#dc2626}</style>
+</head><body>
+<div id="loginBox" class="card" style="max-width:400px;margin:40px auto;text-align:center">
+<h2>🔐 CEO DASHBOARD LOGIN</h2><input id="pass" type="password" placeholder="QINISO2024!" style="width:100%;padding:12px;margin:10px 0;border:1px solid #ccc;border-radius:8px">
+<button class="btn btn-blue" style="width:100%" onclick="login()">LOGIN CEO CLOUD</button></div>
+<div id="dashBox" style="display:none">
+<div class="top"><div><b>📊 QINISO CEO DASHBOARD v4.0 - CLOUD LIVE</b><div style="font-size:10px">50 Brands Anti-Fraud - Cloud Firebase</div></div><button class="btn btn-red" style="padding:6px 10px;font-size:11px" onclick="logout()">Logout</button></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
+<div class="card"><b id="totalScans">0</b><br/><small>Total QR Created Cloud</small></div><div class="card"><b id="totalBrands">0</b><br/><small>Brands Active</small></div><div class="card"><b id="totalShops">0</b><br/><small>Shops Allocated</small></div></div>
+<div class="card"><h3>🔴 LIVE SCANS + QR FACTORY FEED (CLOUD + LOCAL)</h3><div style="display:flex;gap:6px;margin:6px 0"><input id="search" placeholder="Search KOO, COCA-COLA, Batch..." style="flex:1;padding:8px;border:1px solid #ccc;border-radius:8px" oninput="render()"><button class="btn btn-blue" onclick="loadLocal()">Reload Local</button></div><div id="feed" style="max-height:70vh;overflow:auto"></div></div>
+<div class="card"><h3>🏪 Shop Allocation</h3><div id="shopCheck"></div></div></div>
+<script>
+let allData=[];let isBlocked=localStorage.getItem('qiniso_qrfact_blocked')==='1';if(isBlocked){document.body.innerHTML='<h1>🚫 BLOCKED</h1>';}
+function login(){const p=document.getElementById('pass').value;if(p==='QINISO2024!'||p==='qinisoadmin123'){document.getElementById('loginBox').style.display='none';document.getElementById('dashBox').style.display='block';initCloud();}else{alert('Wrong! Use QINISO2024!');}}function logout(){document.getElementById('loginBox').style.display='block';document.getElementById('dashBox').style.display='none';}
+async function initCloud(){loadLocal();try{const qq=window.q(window.col(window.db,"scans"),window.orderBy("createdAt","desc"),window.limit(200));window.onSnapshot(qq,(snap)=>{let cloud=[];snap.forEach(doc=>{cloud.push({id:doc.id,...doc.data()});});let local=JSON.parse(localStorage.getItem('qiniso_qr_db')||'[]');let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]');allData=[...cloud,...live,...local];render();});}catch(e){render();}}
+function loadLocal(){let qrDB=JSON.parse(localStorage.getItem('qiniso_qr_db')||'[]');let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]');if(allData.length===0)allData=[...live,...qrDB];render();}
+function render(){const search=document.getElementById('search')?.value.toLowerCase()||'';const feed=document.getElementById('feed');if(!feed)return;let filtered=allData.filter(o=>{if(!search)return true;return (o.code||'').toLowerCase().includes(search)||(o.product||'').toLowerCase().includes(search)||(o.brand||'').toLowerCase().includes(search)||(o.shop||'').toLowerCase().includes(search);});document.getElementById('totalScans').textContent=filtered.length;let brands=new Set(filtered.map(x=>x.brand||x.dept).filter(Boolean));document.getElementById('totalBrands').textContent=brands.size;let shops=new Set(filtered.map(x=>x.shop||x.shopAlloc).filter(Boolean));document.getElementById('totalShops').textContent=shops.size;if(filtered.length===0){feed.innerHTML='<div style="padding:20px;text-align:center;color:#666">No data yet. Generate QR in <a href="qr-factory.html">qr-factory.html</a><br/>Your 2 TEST-CLOUD QRs will appear after cloud sync (wait 10 sec)</div>';return;}feed.innerHTML=filtered.slice(0,100).map(o=>{const isHack=(o.status==='RED'||(o.product||'').includes('HACK'));const time=o.time||o.createdAt?.seconds?new Date(o.createdAt.seconds*1000).toLocaleString():(o.time||'');return `<div class="item ${isHack?'red':''}"><div style="display:flex;justify-content:space-between"><b>${o.icon||'🏭'} ${o.brand||o.dept||'MARK'} - ${o.code||''}</b><span class="${isHack?'status-red':'status-green'}">${o.status||'GREEN'}</span></div><div style="font-size:11px;margin-top:4px">${o.product||''}<br/>Shop: ${o.shop||o.shopAlloc||''} ${o.branch||''} | Batch: ${o.batch||''} | Exp: ${o.exp||''}<br/>GPS: ${o.gps||''} IP: ${o.ip||''} | Admin: ${o.admin||''}<br/>Time: ${time}</div><div style="font-size:9px;background:#fef3c7;padding:2px 4px;border-radius:4px;margin-top:3px">Hash: ${o.antiHash||''}</div></div>`;}).join('');const shopDiv=document.getElementById('shopCheck');let byShop={};filtered.forEach(o=>{let s=o.shop||o.shopAlloc||'UNKNOWN';byShop[s]=(byShop[s]||0)+1;});shopDiv.innerHTML=Object.entries(byShop).map(([s,c])=>`<span style="display:inline-block;background:#1e293b;color:#fff;padding:4px 8px;border-radius:12px;margin:2px;font-size:11px">${s}: ${c}</span>`).join('');}
+</script></body></html>
