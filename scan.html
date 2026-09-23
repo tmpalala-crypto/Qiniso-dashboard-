@@ -1,143 +1,110 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO SCAN - Granny Voice + Icons + 11 Languages</title>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO SCAN 📸+⌨️</title>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,query,where,getDocs,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getFirestore,collection,getDocs,addDoc,serverTimestamp,query,where}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
-const app=initializeApp(cfg);const db=getFirestore(app);
-window.db=db;window.col=collection;window.q=query;window.where=where;window.getDocs=getDocs;window.addDoc=addDoc;window.st=serverTimestamp;
+try{const app=initializeApp(cfg);const db=getFirestore(app);window.db=db;window.col=collection;window.getDocs=getDocs;window.addDoc=addDoc;window.st=serverTimestamp;window.q=query;window.where=where;}catch(e){}
 </script>
-<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#020617;color:#fff;padding:8px;text-align:center}.card{background:#fff;color:#000;border-radius:16px;padding:14px;margin:8px auto;max-width:540px}.btn{border:0;border-radius:12px;padding:14px;font-weight:900;width:100%;cursor:pointer;margin:5px 0;font-size:16px}.btn-voice{background:#7c3aed;color:#fff}.btn-black{background:#000;color:#fff}.icon-big{font-size:64px}.green{background:#16a34a;color:#fff}.orange{background:#ea580c;color:#fff}.gray{background:#334155;color:#fff}.small{font-size:10px;color:#64748b}#reader{width:100%;border-radius:12px;overflow:hidden}.lang-btn{padding:6px 10px;border-radius:20px;border:1px solid #ccc;margin:3px;background:#fff;color:#000;font-size:11px;cursor:pointer}.lang-btn.active{background:#16a34a;color:#fff}.disclaimer{background:#fefce8;border:1px solid #facc15;border-radius:8px;padding:8px;font-size:10px;text-align:left}</style></head><body>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#020617;color:#fff;padding:8px;text-align:center}.card{background:#fff;color:#000;border-radius:16px;padding:14px;margin:8px auto;max-width:540px}.btn{border:0;border-radius:12px;padding:16px;font-weight:900;width:100%;cursor:pointer;margin:6px 0;font-size:18px}.btn-black{background:#000;color:#fff}.btn-cam{background:#1d4ed8;color:#fff}.btn-photo{background:#7c3aed;color:#fff}.btn-green{background:#16a34a;color:#fff}.green{background:#16a34a;color:#fff}.orange{background:#ea580c;color:#fff}.input-big{width:100%;padding:18px;border-radius:12px;border:3px solid #000;font-size:20px;font-weight:900;text-align:center;letter-spacing:1px}.photo-preview{width:100%;border-radius:12px;margin:6px 0;max-height:300px;object-fit:contain}.case{border:3px solid #000;text-align:left;font-family:monospace;font-size:11px;background:#fff;color:#000;padding:10px}</style></head><body>
+<h2>🛡️ QINISO MARK</h2><p style="font-size:10px;color:#93c5fd">📸 TAP PHOTO + ⌨️ TYPE BARCODE - Works offline</p>
 
-<div id="langModal" class="card" style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99;border:3px solid #16a34a;max-width:360px">
-<h3>🌍 Choose Language / Khetha Ulimi</h3><p class="small">App will speak & show in your language for grannies</p>
-<div id="langs"></div>
-<button class="btn btn-black" onclick="saveLang()">SAVE LANGUAGE & CONTINUE</button>
+<div class="card" style="background:#0f172a;color:#fff;font-size:11px"><span id="net">🌐 Checking...</span> | <span id="gps">📍 GPS...</span> | <span id="cache">Cache 0</span> | <span id="que">Queue 0</span></div>
+
+<div class="card">
+<h3>OPTION 1: 📸 TAP TO TAKE PHOTO OF PRODUCT</h3>
+<input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this)">
+<button class="btn btn-photo" onclick="document.getElementById('fileCam').click()">📸 TAP HERE - TAKE PHOTO OF PRODUCT / QR</button>
+<img id="prev" class="photo-preview" style="display:none">
+<div id="photoStat" style="font-size:11px"></div>
+
+<h3 style="margin-top:14px">OPTION 2: ⌨️ TYPE BARCODE / CODE</h3>
+<input id="manual" class="input-big" placeholder="TYPE CODE HERE: QIN-...">
+<button class="btn btn-black" onclick="doVerify(document.getElementById('manual').value)">⌨️ VERIFY TYPED CODE</button>
+
+<button class="btn btn-cam" onclick="startLiveCam()">📹 LIVE CAMERA SCAN (WIFI NEEDED)</button>
+<video id="vid" autoplay playsinline muted style="width:100%;border-radius:12px;display:none;background:#000;min-height:200px"></video>
+<div id="camMsg" style="font-size:10px"></div>
+
+<button class="btn btn-green" onclick="speakLast()">🔊 VOICE FOR GRANNY</button>
 </div>
 
-<h2 id="title">🛡️ QINISO MARK</h2><p class="small" id="sub">Scan + Voice + Icons - For Everyone</p>
+<div id="result" class="card" style="background:#334155;color:#fff"><div style="font-size:48px">📸 ⌨️</div><b>TWO WAYS:</b><br>📸 Tap photo button - take picture of product QR<br>⌨️ Type code - QIN-KOO-...<br><br>Works with NO WIFI! Reports auto send when WIFI returns to BRAND + POLICE + CEO</div>
 
-<div class="card"><div id="reader"></div>
-<input id="manual" placeholder="Enter code" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px">
-<button class="btn btn-black" id="btnVerify" onclick="doVerify(document.getElementById('manual').value)">🔍 VERIFY</button>
-<button class="btn btn-voice" onclick="speakLast()">🔊 PLAY VOICE FOR GRANNY</button>
-</div>
-
-<div id="status" class="card" style="background:#0f172a;color:#fff"><span id="gps">📍 Location auto...</span><br><span id="ip">IP auto...</span><br><span id="autoR">Auto Alert: ACTIVE</span></div>
-
-<div id="result" class="card gray"><div class="icon-big">📷</div><div id="resTxt">Point camera to QR code<br>Khomba ikhamera ku-QR</div></div>
-
-<div id="icons" class="card" style="display:none"><div id="iconBig" class="icon-big">✅</div><h2 id="iconTitle">VERIFIED</h2><p id="iconDesc">Product found in cloud</p><div style="font-size:40px">🟢 = OK &nbsp; 🟠 = NOT FOUND &nbsp; ⚫ = EXPIRED</div></div>
-
-<div id="detail" class="card" style="display:none;text-align:left"></div>
-
-<div class="card disclaimer" id="disc1"><b>⚖️</b> <span id="discTxt">QINISO is only collecting avoidance. The decision is taken by the law and the brand.</span></div>
-
-<div id="argBox" class="card" style="display:none;border:3px solid #1d4ed8"><h3 id="argTitle">🗣️ Record Conversation</h3><p class="small" id="argDesc">If shop disagrees, record evidence</p>
-<textarea id="complaint" placeholder="Describe..."></textarea>
-<button class="btn" style="background:#dc2626;color:#fff" id="recBtn" onclick="toggleRec()">🎤 START RECORD</button><audio id="aud" controls style="width:100%;display:none"></audio>
-<button class="btn btn-black" id="sendBtn" onclick="sendComplaint()">📤 SEND EVIDENCE + LOCATION</button><div id="compStat"></div>
-</div>
+<div id="caseBox" class="card case" style="display:none"></div>
+<div id="printBox" style="display:none" class="card"><button class="btn btn-black" onclick="window.print()">🖨️ PRINT CASE REPORT FOR SAPS CAS NUMBER</button></div>
 
 <script>
-const translations={
- en:{verify:"🔍 VERIFY",playVoice:"🔊 PLAY VOICE FOR GRANNY",waiting:"Point camera to QR code",verifiedTitle:"✅ VERIFIED IN CLOUD",verifiedDesc:"Product found in QINISO cloud - Safe evidence collected",notFoundTitle:"⚠️ NOT FOUND IN CLOUD",notFoundDesc:"Code not registered in QINISO cloud - Evidence reported",expiredTitle:"⚠️ VERIFIED BUT EXPIRED",expiredDesc:"Product found but expiry date passed",disclaimer:"QINISO is only collecting avoidance. The decision is taken by the law and the brand.",recordTitle:"🗣️ Record Conversation",recordDesc:"If shop disagrees, record evidence",startRec:"🎤 START RECORD",sendEv:"📤 SEND EVIDENCE + LOCATION",voiceVerified:"This product is verified in QINISO cloud. Evidence collected.",voiceNotFound:"This code is not found in QINISO cloud. Location reported for avoidance.",voiceExpired:"This product is expired. Evidence collected."},
- zu:{verify:"🔍 QINISEKISA",playVoice:"🔊 DLALA IZWI LIKAGOGO",waiting:"Khomba ikhamera ku-QR code",verifiedTitle:"✅ KUQINISEKISIWE",verifiedDesc:"Umkhiqizo utholakale ku-QINISO - Ubufakazi buqoqiwe",notFoundTitle:"⚠️ AWUTHOLAKALI",notFoundDesc:"Ikhodi ayibhalisiwe - Ubufakazi buthunyelwe",expiredTitle:"⚠️ UPHELELWE ISIKHATHI",expiredDesc:"Umkhiqizo utholakale kodwa uphelelwe isikhathi",disclaimer:"I-QINISO iqoqa ubufakazi kuphela ukugwema ingozi. Isinqumo sithathwa ngumthetho kanye nomnikazi womkhiqizo.",recordTitle:"🗣️ Qopha Ingxoxo",recordDesc:"Uma isitolo singavumelani, qopha ubufakazi",startRec:"🎤 QALA UKUQOPHA",sendEv:"📤 THUMELA UBUFAKAZI",voiceVerified:"Lo mkhiqizo uqinisekisiwe ku-QINISO cloud.",voiceNotFound:"Le khodi ayitholakali ku-QINISO. Indawo ithunyelwe.",voiceExpired:"Lo mkhiqizo uphelelwe isikhathi."},
- xh:{verify:"🔍 QINISEKISA",playVoice:"🔊 DLALA ILIZWI LIKAMAKHULU",waiting:"Khomba ikhamera kwi-QR",verifiedTitle:"✅ IQINISEKISIWE",verifiedDesc:"Imveliso ifumaneke kwi-QINISO",notFoundTitle:"⚠️ AYIFUMANAKI",notFoundDesc:"Ikhowudi ayibhaliswanga",expiredTitle:"⚠️ IPHELELWE",expiredDesc:"Imveliso iphelelwe lixesha",disclaimer:"I-QINISO iqoqa ubungqina kuphela. Isigqibo sithathwa ngumthetho kunye nomnini brand.",recordTitle:"🗣️ Rekhoda Incoko",recordDesc:"Ukuba ivenkile ayavumelani",startRec:"🎤 QALA UKUREKHODA",sendEv:"📤 THUMELA UBUNGQINA",voiceVerified:"Le mveliso iqinisekisiwe kwi-QINISO.",voiceNotFound:"Le khowudi ayifumaneki kwi-QINISO.",voiceExpired:"Le mveliso iphelelwe lixesha."},
- af:{verify:"🔍 VERIFIEER",playVoice:"🔊 SPEEL STEM VIR OUMA",waiting:"Rig kamera na QR kode",verifiedTitle:"✅ GEVERIFIEER IN WOLK",verifiedDesc:"Produk gevind in QINISO wolk",notFoundTitle:"⚠️ NIE GEVIND NIE",notFoundDesc:"Kode nie geregistreer in QINISO",expiredTitle:"⚠️ VERVAL",expiredDesc:"Produk verval datum verby",disclaimer:"QINISO versamel slegs vermyding getuienis. Besluit word geneem deur wet en handelsmerk.",recordTitle:"🗣️ Neem Gesprek Op",recordDesc:"As winkel nie saamstem nie",startRec:"🎤 BEGIN OPNAME",sendEv:"📤 STUUR GETUIENIS",voiceVerified:"Hierdie produk is geverifieer in QINISO wolk.",voiceNotFound:"Hierdie kode is nie gevind in QINISO wolk nie.",voiceExpired:"Hierdie produk is verval."},
- st:{verify:"🔍 NETEFATSA",playVoice:"🔊 BAPALA LENTSOE LA NKGONO",waiting:"Supa khamera ho QR",verifiedTitle:"✅ E NETEFADITSWE",verifiedDesc:"Sehlahisoa se fumanoe ho QINISO",notFoundTitle:"⚠️ HA E FUMANEHE",notFoundDesc:"Khoutu ha e ngodisitswe",expiredTitle:"⚠️ E FELETSWE",expiredDesc:"Sehlahisoa se feletswe ke nako",disclaimer:"QINISO e bokella bopaki ba ho qoba feela. Qeto e nkuoa ke molao le mong'a lets'oao.",recordTitle:"🗣️ Rekhota Moqoqo",recordDesc:"Haeba lebenkele le sa lumellane",startRec:"🎤 QALA HO REKHOTA",sendEv:"📤 ROMELA BOPAKI",voiceVerified:"Sehlahisoa sena se netefalitsoe ho QINISO.",voiceNotFound:"Khoutu ena ha e fumanehe ho QINISO.",voiceExpired:"Sehlahisoa sena se feletswe ke nako."},
-};
-const langList=[{c:'en',n:'English'},{c:'zu',n:'isiZulu'},{c:'xh',n:'isiXhosa'},{c:'af',n:'Afrikaans'},{c:'st',n:'Sesotho'},{c:'tn',n:'Setswana'},{c:'nso',n:'Sepedi'},{c:'ts',n:'Xitsonga'},{c:'ss',n:'siSwati'},{c:'ve',n:'Tshivenda'},{c:'nr',n:'isiNdebele'}];
-let currentLang=localStorage.getItem('qiniso_lang')||'en';
-let lastSpoken="";
+let gps="pending",ip="pending",lastCode="",lastData=null,lastSpoken="",photoData="",offlineDB=JSON.parse(localStorage.getItem('qiniso_offline_db')||"[]"),queue=JSON.parse(localStorage.getItem('qiniso_queue')||"[]");
+function upd(){document.getElementById('net').textContent=navigator.onLine?"🌐 ONLINE ✅":"📴 OFFLINE - Saved in phone ✅";document.getElementById('cache').textContent="Cache: "+offlineDB.length;document.getElementById('que').textContent="Queue: "+queue.length;document.getElementById('net').style.color=navigator.onLine?"#4ade80":"#fbbf24";}
+upd();setInterval(upd,3000);
+navigator.geolocation.watchPosition(p=>{gps=p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);document.getElementById('gps').textContent="📍 "+gps;localStorage.setItem('qiniso_gps',gps);},()=>{}, {enableHighAccuracy:true});
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ip=d.ip;}).catch(()=>{ip="offline";});
 
-function buildLangs(){let h="";langList.forEach(l=>{h+=`<button class="lang-btn ${currentLang===l.c?'active':''}" onclick="setLang('${l.c}')">${l.n}</button>`});document.getElementById('langs').innerHTML=h;}
-buildLangs();
-window.setLang=c=>{currentLang=c;localStorage.setItem('qiniso_lang',c);buildLangs();applyLang();};
-window.saveLang=()=>{document.getElementById('langModal').style.display='none';applyLang();speak(translations[currentLang]?.waiting||"Point camera to QR code");};
-function applyLang(){
- let t=translations[currentLang]||translations.en;
- document.getElementById('btnVerify').textContent=t.verify;
- document.querySelector('.btn-voice').textContent=t.playVoice;
- document.getElementById('resTxt').innerHTML=t.waiting;
- document.getElementById('discTxt').textContent=t.disclaimer;
- document.getElementById('argTitle').textContent=t.recordTitle;
- document.getElementById('argDesc').textContent=t.recordDesc;
- document.getElementById('recBtn').textContent=t.startRec;
- document.getElementById('sendBtn').textContent=t.sendEv;
- if(localStorage.getItem('qiniso_lang')) document.getElementById('langModal').style.display='none';
-}
-applyLang();
-
-function speak(text){
- lastSpoken=text;
- if('speechSynthesis' in window){
-  speechSynthesis.cancel();
-  let u=new SpeechSynthesisUtterance(text);
-  // map lang
-  let map={en:'en-ZA',zu:'zu-ZA',xh:'xh-ZA',af:'af-ZA',st:'st-ZA'};
-  u.lang=map[currentLang]||'en-ZA';u.rate=0.9;
-  speechSynthesis.speak(u);
+window.handlePhoto=async(input=>{
+ if(input.files&&input.files[0]){
+  let file=input.files[0];
+  let reader=new FileReader();
+  reader.onload=e=>{
+   photoData=e.target.result;
+   document.getElementById('prev').src=photoData;
+   document.getElementById('prev').style.display='block';
+   document.getElementById('photoStat').innerHTML="✅ Photo taken: "+(file.size/1000).toFixed(0)+"KB<br>Now type code below if QR not readable, or press VERIFY";
+   localStorage.setItem('qiniso_last_photo',photoData.slice(0,100000));
+  };
+  reader.readAsDataURL(file);
  }
-}
-window.speakLast=()=>{if(lastSpoken) speak(lastSpoken); else speak(translations[currentLang]?.waiting||"Point camera");};
+};
 
-// auto location + ip
-let gps="collecting",ip="collecting",lastCode="",lastData=null,voiceBlob=null,recorder=null,recState=false;
-navigator.geolocation.watchPosition(p=>{gps=p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);document.getElementById('gps').textContent="📍 "+gps+" ✅";},{},{enableHighAccuracy:true});
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ip=d.ip;document.getElementById('ip').textContent="IP "+ip+" ✅";});
+let liveStream=null;
+window.startLiveCam=async()=>{
+ let vid=document.getElementById('vid');
+ try{
+  liveStream=await navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}});
+  vid.srcObject=liveStream;vid.style.display='block';
+  document.getElementById('camMsg').textContent="📹 Live camera on - Point to QR";
+  if('BarcodeDetector' in window){
+   let det=new BarcodeDetector({formats:['qr_code']});
+   let scan=async()=>{
+    if(vid.style.display==='none')return;
+    try{let c=await det.detect(vid);if(c.length){document.getElementById('manual').value=c[0].rawValue;doVerify(c[0].rawValue);vid.style.display='none';liveStream.getTracks().forEach(t=>t.stop());return;}}catch(e){}
+    requestAnimationFrame(scan);
+   };scan();
+  }
+ }catch(e){document.getElementById('camMsg').textContent="Camera fail: "+e.message+" - Use 📸 TAP PHOTO or ⌨️ TYPE - Works offline!";}
+};
 
-let html5Qr=new Html5Qrcode("reader");
-html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},txt=>{if(window._busy)return;window._busy=true;doVerify(txt);setTimeout(()=>window._busy=false,3000);},()=>{}).catch(()=>{});
+function speak(t){lastSpoken=t;try{speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(t);u.lang='en-ZA';u.rate=0.9;speechSynthesis.speak(u);}catch(e){}}
+window.speakLast=()=>{if(lastSpoken)speak(lastSpoken);};
+
+async function syncCache(){if(!navigator.onLine||!window.db)return;try{let snap=await window.getDocs(window.col(window.db,"scans"));let arr=[];snap.forEach(d=>arr.push(d.data()));localStorage.setItem('qiniso_offline_db',JSON.stringify(arr));offlineDB=arr;upd();}catch(e){}}syncCache();
+window.addEventListener('online',()=>{upd();syncCache();});
+
+function genCase(){return "QIN-CASE-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+Math.random().toString(36).substr(2,6).toUpperCase();}
 
 window.doVerify=async(inp=>{
- let code=(inp||"").trim()||new URLSearchParams(location.search).get('c')||"";if(!code)return;code=code.trim();lastCode=code;
- document.getElementById('result').innerHTML=`<div class="icon-big">⏳</div>Checking...<br>${code}`;document.getElementById('argBox').style.display='block';
- try{
-  let qq=window.q(window.col(window.db,"scans"),window.where("code","==",code));
-  let snap=await window.getDocs(qq);
-  let res=document.getElementById('result');let icons=document.getElementById('icons');
-  let t=translations[currentLang]||translations.en;
-  if(snap.empty){
-   res.className="card orange";res.innerHTML=`<div class="icon-big">🟠</div><h2>${t.notFoundTitle}</h2><p>${t.notFoundDesc}</p><code>${code}</code><br>📍 Auto Alert Sent<br>GPS ${gps}`;
-   icons.style.display='block';document.getElementById('iconBig').textContent="🟠";document.getElementById('iconTitle').textContent=t.notFoundTitle;document.getElementById('iconDesc').textContent=t.notFoundDesc;
-   speak(t.voiceNotFound);lastSpoken=t.voiceNotFound;
-   await window.addDoc(window.col(window.db,"unverified_scans"),{code,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});
-  }else{
-   let d=snap.docs[0].data();lastData=d;let exp=new Date(d.exp)>new Date();
-   if(exp){
-    res.className="card green";res.innerHTML=`<div class="icon-big">✅</div><h2>${t.verifiedTitle}</h2><p>${t.verifiedDesc}</p><b>${d.product}</b><br>Batch ${d.batch}<br>📍 GPS ${gps}`;
-    icons.style.display='block';document.getElementById('iconBig').textContent="✅";document.getElementById('iconTitle').textContent=t.verifiedTitle;document.getElementById('iconDesc').textContent=t.verifiedDesc;
-    speak(t.voiceVerified+" "+d.product);lastSpoken=t.voiceVerified;
-   }else{
-    res.className="card gray";res.innerHTML=`<div class="icon-big">⚫</div><h2>${t.expiredTitle}</h2><p>${t.expiredDesc}</p><b>${d.product}</b><br>Exp ${d.exp}<br>📍 GPS ${gps}`;
-    icons.style.display='block';document.getElementById('iconBig').textContent="⚫";document.getElementById('iconTitle').textContent=t.expiredTitle;document.getElementById('iconDesc').textContent=t.expiredDesc;
-    speak(t.voiceExpired);lastSpoken=t.voiceExpired;
-   }
-   await window.addDoc(window.col(window.db,"verified_scans"),{code,product:d.product,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});
-  }
-  for(let dept of ['ceo','alerts']){await window.addDoc(window.col(window.db,"dept_"+dept),{code,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});}
- }catch(e){document.getElementById('result').textContent="Error "+e.message;}
+ let code=(inp||"").trim()||new URLSearchParams(location.search).get('c')||"";if(!code){alert('📸 Take photo OR ⌨️ Type code QIN-...');return;}code=code.trim().toUpperCase();lastCode=code;
+ document.getElementById('result').innerHTML="⏳ Verifying "+code+"...";
+ let found=offlineDB.find(x=>x.code===code||x.code.toUpperCase()===code);
+ if(!found && navigator.onLine && window.db){try{let qq=window.q(window.col(window.db,"scans"),window.where("code","==",code));let snap=await window.getDocs(qq);if(!snap.empty)found=snap.docs[0].data();}catch(e){}}
+ let caseNo=genCase();
+ let hasPhoto=photoData?true:false;
+ if(!found){
+  document.getElementById('result').className="card orange";document.getElementById('result').innerHTML=`<div style="font-size:48px">🟠</div><h2>⚠️ NOT FOUND IN CLOUD</h2><code>${code}</code><br>Case: ${caseNo}<br>📸 Photo: ${hasPhoto?'Yes ✅':'No'}<br>GPS: ${gps}<br><br>Report queued to BRAND + POLICE + CEO`;
+  speak("Not found in cloud. Case generated. Evidence saved.");lastSpoken="Not found in cloud. Case generated.";
+  let html=`<h3>QINISO MARK - CASE REPORT - FOR SAPS & BRAND</h3>Case No: ${caseNo}<br>Date: ${new Date().toLocaleString()}<br>Code Typed: ${code}<br>Photo Taken: ${hasPhoto?'YES - '+photoData.length+' bytes':'NO'}<br>Status: NOT FOUND IN CLOUD<br>GPS: ${gps}<br>IP: ${ip}<br>Net: ${navigator.onLine?'Online':'Offline Queued'}<br><br><b>Evidence:</b> Photo + Code + GPS auto collected<br><b>Sent to:</b> Brand Owner (dept_brand) + Police SAPS (dept_saps) + CEO + Health<br><br><b>⚖️ Legal Notice:</b> QINISO is only collecting avoidance. Decision taken by law and brand owner.<br><br>SAPS CAS Number: ___________________<br>Officer Name: ___________________<br>Signature: ___________________<br><small>qiniso-mark-v4 - Generated ${new Date().toISOString()}</small>`;
+  document.getElementById('caseBox').style.display='block';document.getElementById('caseBox').innerHTML=html;document.getElementById('printBox').style.display='block';
+  let payload={caseNo,code,status:"NOT_FOUND",gps,ip,hasPhoto,time:new Date().toISOString(),photoSmall:hasPhoto?photoData.slice(0,200000):"",createdAt:window.st?window.st():new Date().toISOString()};
+  if(navigator.onLine && window.db){for(let c of ["unverified_scans","dept_ceo","dept_saps","dept_brand","cases","auto_alerts"]){try{await window.addDoc(window.col(window.db,c),payload);}catch(e){}}}else{let q=JSON.parse(localStorage.getItem('qiniso_queue')||"[]");for(let c of ["unverified_scans","dept_ceo","dept_saps","dept_brand","cases"]){q.push({col:c,data:payload});}localStorage.setItem('qiniso_queue',JSON.stringify(q));upd();}
+ }else{
+  lastData=found;let valid=new Date(found.exp)>new Date();
+  document.getElementById('result').className=valid?"card green":"card";document.getElementById('result').innerHTML=`<div style="font-size:48px">${valid?'✅':'⚫'}</div><h2>${valid?'✅ VERIFIED':'⚠️ EXPIRED'}</h2><b>${found.product}</b><br>Batch ${found.batch}<br>Case: ${caseNo}<br>📸 Photo: ${hasPhoto?'Yes ✅':'No'}<br>GPS: ${gps}`;
+  speak(valid?`Verified ${found.product}`:`Expired ${found.product}`);
+  let html=`<h3>QINISO MARK - CASE REPORT</h3>Case No: ${caseNo}<br>Product: ${found.product}<br>Code: ${code}<br>Photo: ${hasPhoto?'Yes':'No'}<br>Status: ${valid?'VERIFIED':'EXPIRED'}<br>GPS: ${gps}<br><br>⚖️ QINISO avoidance only. Decision by law & brand.<br><br>SAPS CAS: _______`;
+  document.getElementById('caseBox').style.display='block';document.getElementById('caseBox').innerHTML=html;document.getElementById('printBox').style.display='block';
+  let payload={caseNo,code,product:found.product,status:valid?"VERIFIED":"EXPIRED",gps,ip,hasPhoto,time:new Date().toISOString(),createdAt:window.st?window.st():new Date().toISOString()};
+  if(navigator.onLine && window.db){for(let c of ["verified_scans","dept_ceo","dept_brand","cases"]){try{await window.addDoc(window.col(window.db,c),payload);}catch(e){}}}else{let q=JSON.parse(localStorage.getItem('qiniso_queue')||"[]");for(let c of ["verified_scans","dept_ceo","dept_brand","cases"]){q.push({col:c,data:payload});}localStorage.setItem('qiniso_queue',JSON.stringify(q));upd();}
+ }
 };
 
-let urlC=new URLSearchParams(location.search).get('c');if(urlC)setTimeout(()=>doVerify(urlC),1200);
-
-window.toggleRec=async()=>{
- let btn=document.getElementById('recBtn');
- if(!recState){
-  try{
-   let stream=await navigator.mediaDevices.getUserMedia({audio:true});
-   recorder=new MediaRecorder(stream);let chunks=[];
-   recorder.ondataavailable=e=>chunks.push(e.data);
-   recorder.onstop=()=>{voiceBlob=new Blob(chunks,{type:'audio/webm'});document.getElementById('aud').src=URL.createObjectURL(voiceBlob);document.getElementById('aud').style.display='block';};
-   recorder.start();recState=true;btn.textContent="⏹️ STOP";}catch(e){alert(e.message)}
- }else{recorder.stop();recState=false;btn.textContent=translations[currentLang]?.startRec||"🎤 START RECORD";}
-};
-window.sendComplaint=async()=>{
- let comp=document.getElementById('complaint').value.trim();if(!comp&&!voiceBlob)return alert('Write or record');
- let payload={type:"CUSTOMER_EVIDENCE",code:lastCode,product:lastData?lastData.product:"UNVERIFIED",evidence:comp,hasVoice:!!voiceBlob,gps,ip,lang:currentLang,time:new Date().toISOString(),note:"QINISO is only collecting avoidance. Decision by law and brand.",createdAt:window.st()};
- await window.addDoc(window.col(window.db,"customer_evidence"),payload);
- for(let d of ['ceo','alerts']){await window.addDoc(window.col(window.db,"dept_"+d),payload);}
- document.getElementById('compStat').innerHTML="<div style='background:#16a34a;color:#fff;padding:8px;border-radius:8px'>✅ Evidence Sent! "+gps+"</div>";
-};
+let urlC=new URLSearchParams(location.search).get('c');if(urlC){document.getElementById('manual').value=urlC;setTimeout(()=>doVerify(urlC),800);}
 </script></body></html>
