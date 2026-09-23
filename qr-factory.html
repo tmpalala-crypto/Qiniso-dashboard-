@@ -1,6 +1,11 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>QINISO MARK v4.0 ANTI-FRAUD - 50 BRANDS - UNHACKABLE</title>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script> <script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";import{getFirestore,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg);const db=getFirestore(app);
+window.saveQinisoToCloud=async(o)=>{await addDoc(collection(db,"scans"),{...o,createdAt:serverTimestamp()});};
+</script>
 <style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#0f172a;color:#fff;padding:10px;padding-bottom:80px;user-select:none} .top{background:#1e293b;padding:12px;border-radius:16px;display:flex;justify-content:space-between;border:1px solid #334155} .card{background:#fff;color:#0f172a;border-radius:16px;padding:12px;margin:10px 0;border:1px solid #e2e8f0} .btn{border:0;border-radius:12px;padding:12px;font-weight:900;width:100%;margin:4px 0;cursor:pointer;display:flex;justify-content:center;gap:6px} .btn-blue{background:#1d4ed8;color:#fff} .btn-green{background:#16a34a;color:#fff} .btn-red{background:#dc2626;color:#fff} input,select{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0} .hidden{display:none} .qrBox{background:#fff;padding:8px;border-radius:12px;text-align:center;margin:6px;border:3px solid #1d4ed8;position:relative} .qrBox::after{content:'QINISO MARK ANTI-FRAUD ✓';position:absolute;bottom:2px;left:0;right:0;font-size:7px;background:#16a34a;color:#fff;padding:2px} .brandTag{display:inline-block;padding:2px 6px;border-radius:6px;font-size:10px;font-weight:900;color:#fff;margin:2px}</style>
 <script>
 // QINISO SHIELD v4.0 ANTI-FRAUD - 9 LAYERS
