@@ -1,49 +1,143 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO SCAN PRO + SHIELD CLOUD</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO SCAN - Granny Voice + Icons + 11 Languages</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,addDoc,serverTimestamp,getDocs}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+import{getFirestore,collection,query,where,getDocs,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
 const app=initializeApp(cfg);const db=getFirestore(app);
-window.db=db;window.col=collection;window.addDoc=addDoc;window.serverTimestamp=serverTimestamp;window.getDocs=getDocs;
+window.db=db;window.col=collection;window.q=query;window.where=where;window.getDocs=getDocs;window.addDoc=addDoc;window.st=serverTimestamp;
 </script>
-<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#f1f5f9;padding:10px;padding-bottom:80px}.top{background:#0f172a;color:#fff;padding:12px;border-radius:16px;display:flex;justify-content:space-between;align-items:center}.card{background:#fff;border-radius:16px;padding:12px;margin:10px 0;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.06)}.btn{border:0;border-radius:12px;padding:14px;font-weight:900;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:6px}.btn-blue{background:#1d4ed8;color:#fff}.btn-green{background:#16a34a;color:#fff}.btn-red{background:#dc2626;color:#fff}.btn-orange{background:#ea580c;color:#fff}.icon-big{font-size:64px;text-align:center;margin:10px}.result-green{background:#dcfce7;border:2px solid #16a34a}.result-red{background:#fee2e2;border:2px solid #dc2626}.result-orange{background:#ffedd5;border:2px solid #ea580c}#reader{border-radius:16px;overflow:hidden;border:3px solid #1d4ed8}#map{height:220px;border-radius:12px;margin-top:8px}.detail{font-size:12px;background:#f8fafc;padding:8px;border-radius:8px;margin:4px 0;display:flex;justify-content:space-between}.detail.ok{border-left:4px solid #16a34a}.detail.bad{border-left:4px solid #dc2626;background:#fef2f2}.detail.warn{border-left:4px solid #ea580c;background:#fff7ed}</style></head><body>
-<div class="top"><div><b>🛡️ QINISO SCAN PRO + SHIELD CLOUD</b><div style="font-size:9px;color:#93c5fd">☁️ Cloud Verified • Auto GPS • IP Trace</div></div><div style="font-size:9px;text-align:right">📍 <span id="gpsTxt">Getting GPS...</span><br/>IP: <span id="ipTxt">Tracing...</span><br/>🟢 CLOUD SHIELD ON</div></div>
-<div class="card"><h3>📷 SCAN QINISO MARK QR - CLOUD CHECK</h3><div id="reader"></div><button class="btn btn-blue" style="margin-top:8px" onclick="startScan()">START SCAN</button><button class="btn" style="background:#e2e8f0;margin-top:6px" onclick="stopScan()">STOP</button><div style="font-size:10px;color:#64748b;margin-top:6px;text-align:center">👍 Green=Correct | 👎 Red=Suspect | 🖐️ Orange=Wait<br/>Now checks CLOUD + LOCAL + Anti-Fraud Hash</div></div>
-<div id="resultCard" class="card" style="display:none"><div id="iconResult" class="icon-big">👍</div><h2 id="statusTitle" style="text-align:center"></h2><div id="statusSub" style="text-align:center;font-size:12px;margin:6px 0"></div><div id="checks"></div><div id="map"></div><div style="font-size:10px;color:#64748b;margin-top:4px">📍 Blue=Scan Location | 🏪=Allocated Shop | 🔴=Suspect Area</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button class="btn btn-green" onclick="confirmOk()">👍 CORRECT</button><button class="btn btn-red" onclick="reportSuspect()">👎 SUSPECT</button></div><button class="btn btn-orange" style="margin-top:6px" onclick="sendToDashboard()">📡 REPORTED TO CLOUD CEO DASHBOARD</button></div>
-<div class="card"><h4>📱 Cloud + Local Scan History</h4><div id="myScans" style="font-size:11px;background:#f8fafc;padding:8px;border-radius:8px;max-height:200px;overflow:auto"></div><div id="shieldLog" style="font-size:10px;background:#fef2f2;padding:6px;border-radius:6px;margin-top:6px;border:1px solid #fca5a5"></div></div>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#020617;color:#fff;padding:8px;text-align:center}.card{background:#fff;color:#000;border-radius:16px;padding:14px;margin:8px auto;max-width:540px}.btn{border:0;border-radius:12px;padding:14px;font-weight:900;width:100%;cursor:pointer;margin:5px 0;font-size:16px}.btn-voice{background:#7c3aed;color:#fff}.btn-black{background:#000;color:#fff}.icon-big{font-size:64px}.green{background:#16a34a;color:#fff}.orange{background:#ea580c;color:#fff}.gray{background:#334155;color:#fff}.small{font-size:10px;color:#64748b}#reader{width:100%;border-radius:12px;overflow:hidden}.lang-btn{padding:6px 10px;border-radius:20px;border:1px solid #ccc;margin:3px;background:#fff;color:#000;font-size:11px;cursor:pointer}.lang-btn.active{background:#16a34a;color:#fff}.disclaimer{background:#fefce8;border:1px solid #facc15;border-radius:8px;padding:8px;font-size:10px;text-align:left}</style></head><body>
+
+<div id="langModal" class="card" style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:99;border:3px solid #16a34a;max-width:360px">
+<h3>🌍 Choose Language / Khetha Ulimi</h3><p class="small">App will speak & show in your language for grannies</p>
+<div id="langs"></div>
+<button class="btn btn-black" onclick="saveLang()">SAVE LANGUAGE & CONTINUE</button>
+</div>
+
+<h2 id="title">🛡️ QINISO MARK</h2><p class="small" id="sub">Scan + Voice + Icons - For Everyone</p>
+
+<div class="card"><div id="reader"></div>
+<input id="manual" placeholder="Enter code" style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px">
+<button class="btn btn-black" id="btnVerify" onclick="doVerify(document.getElementById('manual').value)">🔍 VERIFY</button>
+<button class="btn btn-voice" onclick="speakLast()">🔊 PLAY VOICE FOR GRANNY</button>
+</div>
+
+<div id="status" class="card" style="background:#0f172a;color:#fff"><span id="gps">📍 Location auto...</span><br><span id="ip">IP auto...</span><br><span id="autoR">Auto Alert: ACTIVE</span></div>
+
+<div id="result" class="card gray"><div class="icon-big">📷</div><div id="resTxt">Point camera to QR code<br>Khomba ikhamera ku-QR</div></div>
+
+<div id="icons" class="card" style="display:none"><div id="iconBig" class="icon-big">✅</div><h2 id="iconTitle">VERIFIED</h2><p id="iconDesc">Product found in cloud</p><div style="font-size:40px">🟢 = OK &nbsp; 🟠 = NOT FOUND &nbsp; ⚫ = EXPIRED</div></div>
+
+<div id="detail" class="card" style="display:none;text-align:left"></div>
+
+<div class="card disclaimer" id="disc1"><b>⚖️</b> <span id="discTxt">QINISO is only collecting avoidance. The decision is taken by the law and the brand.</span></div>
+
+<div id="argBox" class="card" style="display:none;border:3px solid #1d4ed8"><h3 id="argTitle">🗣️ Record Conversation</h3><p class="small" id="argDesc">If shop disagrees, record evidence</p>
+<textarea id="complaint" placeholder="Describe..."></textarea>
+<button class="btn" style="background:#dc2626;color:#fff" id="recBtn" onclick="toggleRec()">🎤 START RECORD</button><audio id="aud" controls style="width:100%;display:none"></audio>
+<button class="btn btn-black" id="sendBtn" onclick="sendComplaint()">📤 SEND EVIDENCE + LOCATION</button><div id="compStat"></div>
+</div>
+
 <script>
-let html5Qr,map,mapInit=false,currentGPS="-33.9249,25.57",currentLat=-33.9249,currentLng=25.57;
-let lastRec=null,hackerIP="Tracing...",hackerLoc="Tracing...",cloudDB=[];
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{hackerIP=d.ip;document.getElementById('ipTxt').textContent=d.ip;}).catch(()=>{hackerIP="Hidden VPN";document.getElementById('ipTxt').textContent="Hidden";});
-fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{hackerLoc=`${d.city}, ${d.region}, ${d.country}`;}).catch(()=>{});
-navigator.geolocation.getCurrentPosition(p=>{currentLat=p.coords.latitude;currentLng=p.coords.longitude;currentGPS=`${currentLat.toFixed(4)},${currentLng.toFixed(4)}`;document.getElementById('gpsTxt').textContent=currentGPS+` (±${Math.round(p.coords.accuracy)}m)`;});
-async function loadCloudDB(){try{let snap=await window.getDocs(window.col(window.db,"scans"));cloudDB=[];snap.forEach(doc=>{cloudDB.push(doc.data());});document.getElementById('shieldLog').innerHTML=`☁️ Cloud loaded: ${cloudDB.length} QRs verified<br/>`;}catch(e){document.getElementById('shieldLog').innerHTML=`⚠️ Cloud offline - using local only<br/>`;}}loadCloudDB();
-function getQinisoDB(){let local=JSON.parse(localStorage.getItem('qiniso_qr_db')||'[]');return [...cloudDB,...local];}
-function startScan(){html5Qr=new Html5Qrcode("reader");html5Qr.start({facingMode:"environment"},{fps:10,qrbox:{width:280,height:280}},(decoded)=>{onScan(decoded);stopScan();},(err)=>{}).catch(e=>{alert("Camera error: "+e);});}
-function stopScan(){if(html5Qr){html5Qr.stop().then(()=>html5Qr.clear()).catch(()=>{});}}
-function onScan(code){
- const db=getQinisoDB();
- let found=db.find(x=>code.includes(x.code)||x.code.includes(code.slice(0,15))||code===x.code);
- let status="UNKNOWN";let checks=[];
- if(!found){const isQinisoFormat=code.includes("QIN-")||code.includes("QINISO");if(!isQinisoFormat){status="RED";checks.push({label:"QINISO MARK",value:"❌ NOT FOUND - Fake QR? 👎",cls:"bad"});}else{status="ORANGE";checks.push({label:"QINISO MARK",value:"🖐️ NOT IN CLOUD YET - Wait Don't Buy",cls:"warn"});}found={product:code.slice(0,30),shop:"UNKNOWN",branch:"UNKNOWN",exp:"UNKNOWN",batch:code.slice(0,20),code:code};}else{checks.push({label:"QINISO MARK CLOUD",value:`✅ FOUND CLOUD - ${found.product} 👍`,cls:"ok"});if(found.antiHash)checks.push({label:"Anti-Fraud Hash",value:`✅ ${found.antiHash} QINISO MARK v4.0`,cls:"ok"});}
- if(found.exp&&found.exp!=="UNKNOWN"){const expDate=new Date(found.exp);const now=new Date();if(expDate<now){status="RED";checks.push({label:"Expiry Date",value:`❌ EXPIRED ${found.exp} - Don't buy 👎`,cls:"bad"});}else{checks.push({label:"Expiry Date",value:`✅ OK Exp ${found.exp} 👍`,cls:"ok"});}}else{checks.push({label:"Expiry Date",value:`⚠️ UNKNOWN - Check product 🖐️`,cls:"warn"});}
- const allocatedShop=found.shop||found.shopAlloc||"SPAR Bethelsdorp";checks.push({label:"Shop Allocation",value:`✅ Shop: ${allocatedShop} 👍`,cls:"ok"});checks.push({label:"Branch",value:`✅ Branch: ${found.branch||'Branch 1'} 👍`,cls:"ok"});checks.push({label:"Brand / Batch",value:`✅ ${found.product} | Batch ${found.batch} 👍`,cls:"ok"});checks.push({label:"Scan GPS + IP",value:`📍 ${currentGPS} | IP ${hackerIP} 👍`,cls:"ok"});if(status==="UNKNOWN")status="GREEN";
- const card=document.getElementById('resultCard');card.style.display='block';card.className='card '+(status==='GREEN'?'result-green':status==='RED'?'result-red':'result-orange');
- let icon="👍",title="",sub="";if(status==="GREEN"){icon="👍";title="✅ CORRECT - QINISO VERIFIED CLOUD";sub="Green = Safe to Buy - Cloud authentic";}if(status==="RED"){icon="👎";title="❌ SUSPECT - DO NOT BUY";sub="Red = Suspect - Wrong shop / Expired / Fake";}if(status==="ORANGE"){icon="🖐️";title="⚠️ WAIT - NOT IN CLOUD DATABASE";sub="Orange = Wait - Don't buy";}
- document.getElementById('iconResult').textContent=icon;document.getElementById('statusTitle').textContent=title;document.getElementById('statusSub').textContent=sub+` | IP ${hackerIP} traced | Cloud reported`;document.getElementById('checks').innerHTML=checks.map(c=>`<div class="detail ${c.cls}"><b>${c.label}</b><span>${c.value}</span></div>`).join('');
- setTimeout(()=>{initMap(found,status);},300);
- const rec={code:code,product:found.product,shop:found.shop||found.shopAlloc,branch:found.branch,exp:found.exp,batch:found.batch,status:status,gps:currentGPS,lat:currentLat,lng:currentLng,time:new Date().toISOString(),icon:icon,ip:hackerIP,loc:hackerLoc,antiHash:found.antiHash||"",createdAt:window.serverTimestamp()};
- lastRec=rec;saveScan(rec);autoReport(rec);
+const translations={
+ en:{verify:"🔍 VERIFY",playVoice:"🔊 PLAY VOICE FOR GRANNY",waiting:"Point camera to QR code",verifiedTitle:"✅ VERIFIED IN CLOUD",verifiedDesc:"Product found in QINISO cloud - Safe evidence collected",notFoundTitle:"⚠️ NOT FOUND IN CLOUD",notFoundDesc:"Code not registered in QINISO cloud - Evidence reported",expiredTitle:"⚠️ VERIFIED BUT EXPIRED",expiredDesc:"Product found but expiry date passed",disclaimer:"QINISO is only collecting avoidance. The decision is taken by the law and the brand.",recordTitle:"🗣️ Record Conversation",recordDesc:"If shop disagrees, record evidence",startRec:"🎤 START RECORD",sendEv:"📤 SEND EVIDENCE + LOCATION",voiceVerified:"This product is verified in QINISO cloud. Evidence collected.",voiceNotFound:"This code is not found in QINISO cloud. Location reported for avoidance.",voiceExpired:"This product is expired. Evidence collected."},
+ zu:{verify:"🔍 QINISEKISA",playVoice:"🔊 DLALA IZWI LIKAGOGO",waiting:"Khomba ikhamera ku-QR code",verifiedTitle:"✅ KUQINISEKISIWE",verifiedDesc:"Umkhiqizo utholakale ku-QINISO - Ubufakazi buqoqiwe",notFoundTitle:"⚠️ AWUTHOLAKALI",notFoundDesc:"Ikhodi ayibhalisiwe - Ubufakazi buthunyelwe",expiredTitle:"⚠️ UPHELELWE ISIKHATHI",expiredDesc:"Umkhiqizo utholakale kodwa uphelelwe isikhathi",disclaimer:"I-QINISO iqoqa ubufakazi kuphela ukugwema ingozi. Isinqumo sithathwa ngumthetho kanye nomnikazi womkhiqizo.",recordTitle:"🗣️ Qopha Ingxoxo",recordDesc:"Uma isitolo singavumelani, qopha ubufakazi",startRec:"🎤 QALA UKUQOPHA",sendEv:"📤 THUMELA UBUFAKAZI",voiceVerified:"Lo mkhiqizo uqinisekisiwe ku-QINISO cloud.",voiceNotFound:"Le khodi ayitholakali ku-QINISO. Indawo ithunyelwe.",voiceExpired:"Lo mkhiqizo uphelelwe isikhathi."},
+ xh:{verify:"🔍 QINISEKISA",playVoice:"🔊 DLALA ILIZWI LIKAMAKHULU",waiting:"Khomba ikhamera kwi-QR",verifiedTitle:"✅ IQINISEKISIWE",verifiedDesc:"Imveliso ifumaneke kwi-QINISO",notFoundTitle:"⚠️ AYIFUMANAKI",notFoundDesc:"Ikhowudi ayibhaliswanga",expiredTitle:"⚠️ IPHELELWE",expiredDesc:"Imveliso iphelelwe lixesha",disclaimer:"I-QINISO iqoqa ubungqina kuphela. Isigqibo sithathwa ngumthetho kunye nomnini brand.",recordTitle:"🗣️ Rekhoda Incoko",recordDesc:"Ukuba ivenkile ayavumelani",startRec:"🎤 QALA UKUREKHODA",sendEv:"📤 THUMELA UBUNGQINA",voiceVerified:"Le mveliso iqinisekisiwe kwi-QINISO.",voiceNotFound:"Le khowudi ayifumaneki kwi-QINISO.",voiceExpired:"Le mveliso iphelelwe lixesha."},
+ af:{verify:"🔍 VERIFIEER",playVoice:"🔊 SPEEL STEM VIR OUMA",waiting:"Rig kamera na QR kode",verifiedTitle:"✅ GEVERIFIEER IN WOLK",verifiedDesc:"Produk gevind in QINISO wolk",notFoundTitle:"⚠️ NIE GEVIND NIE",notFoundDesc:"Kode nie geregistreer in QINISO",expiredTitle:"⚠️ VERVAL",expiredDesc:"Produk verval datum verby",disclaimer:"QINISO versamel slegs vermyding getuienis. Besluit word geneem deur wet en handelsmerk.",recordTitle:"🗣️ Neem Gesprek Op",recordDesc:"As winkel nie saamstem nie",startRec:"🎤 BEGIN OPNAME",sendEv:"📤 STUUR GETUIENIS",voiceVerified:"Hierdie produk is geverifieer in QINISO wolk.",voiceNotFound:"Hierdie kode is nie gevind in QINISO wolk nie.",voiceExpired:"Hierdie produk is verval."},
+ st:{verify:"🔍 NETEFATSA",playVoice:"🔊 BAPALA LENTSOE LA NKGONO",waiting:"Supa khamera ho QR",verifiedTitle:"✅ E NETEFADITSWE",verifiedDesc:"Sehlahisoa se fumanoe ho QINISO",notFoundTitle:"⚠️ HA E FUMANEHE",notFoundDesc:"Khoutu ha e ngodisitswe",expiredTitle:"⚠️ E FELETSWE",expiredDesc:"Sehlahisoa se feletswe ke nako",disclaimer:"QINISO e bokella bopaki ba ho qoba feela. Qeto e nkuoa ke molao le mong'a lets'oao.",recordTitle:"🗣️ Rekhota Moqoqo",recordDesc:"Haeba lebenkele le sa lumellane",startRec:"🎤 QALA HO REKHOTA",sendEv:"📤 ROMELA BOPAKI",voiceVerified:"Sehlahisoa sena se netefalitsoe ho QINISO.",voiceNotFound:"Khoutu ena ha e fumanehe ho QINISO.",voiceExpired:"Sehlahisoa sena se feletswe ke nako."},
+};
+const langList=[{c:'en',n:'English'},{c:'zu',n:'isiZulu'},{c:'xh',n:'isiXhosa'},{c:'af',n:'Afrikaans'},{c:'st',n:'Sesotho'},{c:'tn',n:'Setswana'},{c:'nso',n:'Sepedi'},{c:'ts',n:'Xitsonga'},{c:'ss',n:'siSwati'},{c:'ve',n:'Tshivenda'},{c:'nr',n:'isiNdebele'}];
+let currentLang=localStorage.getItem('qiniso_lang')||'en';
+let lastSpoken="";
+
+function buildLangs(){let h="";langList.forEach(l=>{h+=`<button class="lang-btn ${currentLang===l.c?'active':''}" onclick="setLang('${l.c}')">${l.n}</button>`});document.getElementById('langs').innerHTML=h;}
+buildLangs();
+window.setLang=c=>{currentLang=c;localStorage.setItem('qiniso_lang',c);buildLangs();applyLang();};
+window.saveLang=()=>{document.getElementById('langModal').style.display='none';applyLang();speak(translations[currentLang]?.waiting||"Point camera to QR code");};
+function applyLang(){
+ let t=translations[currentLang]||translations.en;
+ document.getElementById('btnVerify').textContent=t.verify;
+ document.querySelector('.btn-voice').textContent=t.playVoice;
+ document.getElementById('resTxt').innerHTML=t.waiting;
+ document.getElementById('discTxt').textContent=t.disclaimer;
+ document.getElementById('argTitle').textContent=t.recordTitle;
+ document.getElementById('argDesc').textContent=t.recordDesc;
+ document.getElementById('recBtn').textContent=t.startRec;
+ document.getElementById('sendBtn').textContent=t.sendEv;
+ if(localStorage.getItem('qiniso_lang')) document.getElementById('langModal').style.display='none';
 }
-function initMap(found,status){if(!mapInit){map=L.map('map').setView([currentLat,currentLng],14);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);mapInit=true;}else{map.setView([currentLat,currentLng],14);map.eachLayer(l=>{if(l instanceof L.Marker||l instanceof L.Circle)map.removeLayer(l);});L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);}L.marker([currentLat,currentLng]).addTo(map).bindPopup(`📱 SCAN HERE - ${status} IP ${hackerIP}`).openPopup();L.marker([currentLat+0.003,currentLng+0.003],{icon:L.divIcon({html:'🏪',className:'',iconSize:[20,20]})}).addTo(map).bindPopup(`🏪 Allocated: ${found.shop}`);if(status!=='GREEN'){L.circle([currentLat,currentLng],{color:'red',fillColor:'#f00',fillOpacity:.4,radius:200}).addTo(map);}}
-function saveScan(rec){let arr=JSON.parse(localStorage.getItem('qiniso_scans')||'[]');arr.unshift(rec);localStorage.setItem('qiniso_scans',JSON.stringify(arr));let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]');live.unshift({...rec,id:Date.now()});localStorage.setItem('qiniso_live_scans',JSON.stringify(live));renderMyScans();}
-function renderMyScans(){let arr=JSON.parse(localStorage.getItem('qiniso_scans')||'[]');document.getElementById('myScans').innerHTML=arr.map(r=>`${r.icon} ${new Date(r.time).toLocaleTimeString()} - ${r.status} - ${r.product} - Cloud ${r.shop||''}`).join('<br/>')||'No scans yet - Scan your TEST-CLOUD QR!';}
-async function autoReport(rec){try{await window.addDoc(window.col(window.db,"scan_reports"),rec);console.log("Cloud reported",rec);}catch(e){console.log("Cloud report fail",e);}if(navigator.vibrate)navigator.vibrate(rec.status==='RED'?[300,100,300]:[100]);}
-function confirmOk(){alert('👍 Thank you! Logged as CORRECT - IP '+hackerIP+' - Cloud Dashboard updated');sendToDashboard();}
-function reportSuspect(){alert('👎 SUSPECT Reported! IP '+hackerIP+' Location '+hackerLoc+' GPS '+currentGPS+' Cloud + SAPS case');sendToDashboard();}
-function sendToDashboard(){window.open('./index.html?alert=1','_blank');alert('📡 AUTO ALERT SENT TO CLOUD! Dashboard will see IP '+hackerIP);}
-renderMyScans();
+applyLang();
+
+function speak(text){
+ lastSpoken=text;
+ if('speechSynthesis' in window){
+  speechSynthesis.cancel();
+  let u=new SpeechSynthesisUtterance(text);
+  // map lang
+  let map={en:'en-ZA',zu:'zu-ZA',xh:'xh-ZA',af:'af-ZA',st:'st-ZA'};
+  u.lang=map[currentLang]||'en-ZA';u.rate=0.9;
+  speechSynthesis.speak(u);
+ }
+}
+window.speakLast=()=>{if(lastSpoken) speak(lastSpoken); else speak(translations[currentLang]?.waiting||"Point camera");};
+
+// auto location + ip
+let gps="collecting",ip="collecting",lastCode="",lastData=null,voiceBlob=null,recorder=null,recState=false;
+navigator.geolocation.watchPosition(p=>{gps=p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);document.getElementById('gps').textContent="📍 "+gps+" ✅";},{},{enableHighAccuracy:true});
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ip=d.ip;document.getElementById('ip').textContent="IP "+ip+" ✅";});
+
+let html5Qr=new Html5Qrcode("reader");
+html5Qr.start({facingMode:"environment"},{fps:10,qrbox:250},txt=>{if(window._busy)return;window._busy=true;doVerify(txt);setTimeout(()=>window._busy=false,3000);},()=>{}).catch(()=>{});
+
+window.doVerify=async(inp=>{
+ let code=(inp||"").trim()||new URLSearchParams(location.search).get('c')||"";if(!code)return;code=code.trim();lastCode=code;
+ document.getElementById('result').innerHTML=`<div class="icon-big">⏳</div>Checking...<br>${code}`;document.getElementById('argBox').style.display='block';
+ try{
+  let qq=window.q(window.col(window.db,"scans"),window.where("code","==",code));
+  let snap=await window.getDocs(qq);
+  let res=document.getElementById('result');let icons=document.getElementById('icons');
+  let t=translations[currentLang]||translations.en;
+  if(snap.empty){
+   res.className="card orange";res.innerHTML=`<div class="icon-big">🟠</div><h2>${t.notFoundTitle}</h2><p>${t.notFoundDesc}</p><code>${code}</code><br>📍 Auto Alert Sent<br>GPS ${gps}`;
+   icons.style.display='block';document.getElementById('iconBig').textContent="🟠";document.getElementById('iconTitle').textContent=t.notFoundTitle;document.getElementById('iconDesc').textContent=t.notFoundDesc;
+   speak(t.voiceNotFound);lastSpoken=t.voiceNotFound;
+   await window.addDoc(window.col(window.db,"unverified_scans"),{code,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});
+  }else{
+   let d=snap.docs[0].data();lastData=d;let exp=new Date(d.exp)>new Date();
+   if(exp){
+    res.className="card green";res.innerHTML=`<div class="icon-big">✅</div><h2>${t.verifiedTitle}</h2><p>${t.verifiedDesc}</p><b>${d.product}</b><br>Batch ${d.batch}<br>📍 GPS ${gps}`;
+    icons.style.display='block';document.getElementById('iconBig').textContent="✅";document.getElementById('iconTitle').textContent=t.verifiedTitle;document.getElementById('iconDesc').textContent=t.verifiedDesc;
+    speak(t.voiceVerified+" "+d.product);lastSpoken=t.voiceVerified;
+   }else{
+    res.className="card gray";res.innerHTML=`<div class="icon-big">⚫</div><h2>${t.expiredTitle}</h2><p>${t.expiredDesc}</p><b>${d.product}</b><br>Exp ${d.exp}<br>📍 GPS ${gps}`;
+    icons.style.display='block';document.getElementById('iconBig').textContent="⚫";document.getElementById('iconTitle').textContent=t.expiredTitle;document.getElementById('iconDesc').textContent=t.expiredDesc;
+    speak(t.voiceExpired);lastSpoken=t.voiceExpired;
+   }
+   await window.addDoc(window.col(window.db,"verified_scans"),{code,product:d.product,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});
+  }
+  for(let dept of ['ceo','alerts']){await window.addDoc(window.col(window.db,"dept_"+dept),{code,gps,ip,lang:currentLang,time:new Date().toISOString(),createdAt:window.st()});}
+ }catch(e){document.getElementById('result').textContent="Error "+e.message;}
+};
+
+let urlC=new URLSearchParams(location.search).get('c');if(urlC)setTimeout(()=>doVerify(urlC),1200);
+
+window.toggleRec=async()=>{
+ let btn=document.getElementById('recBtn');
+ if(!recState){
+  try{
+   let stream=await navigator.mediaDevices.getUserMedia({audio:true});
+   recorder=new MediaRecorder(stream);let chunks=[];
+   recorder.ondataavailable=e=>chunks.push(e.data);
+   recorder.onstop=()=>{voiceBlob=new Blob(chunks,{type:'audio/webm'});document.getElementById('aud').src=URL.createObjectURL(voiceBlob);document.getElementById('aud').style.display='block';};
+   recorder.start();recState=true;btn.textContent="⏹️ STOP";}catch(e){alert(e.message)}
+ }else{recorder.stop();recState=false;btn.textContent=translations[currentLang]?.startRec||"🎤 START RECORD";}
+};
+window.sendComplaint=async()=>{
+ let comp=document.getElementById('complaint').value.trim();if(!comp&&!voiceBlob)return alert('Write or record');
+ let payload={type:"CUSTOMER_EVIDENCE",code:lastCode,product:lastData?lastData.product:"UNVERIFIED",evidence:comp,hasVoice:!!voiceBlob,gps,ip,lang:currentLang,time:new Date().toISOString(),note:"QINISO is only collecting avoidance. Decision by law and brand.",createdAt:window.st()};
+ await window.addDoc(window.col(window.db,"customer_evidence"),payload);
+ for(let d of ['ceo','alerts']){await window.addDoc(window.col(window.db,"dept_"+d),payload);}
+ document.getElementById('compStat').innerHTML="<div style='background:#16a34a;color:#fff;padding:8px;border-radius:8px'>✅ Evidence Sent! "+gps+"</div>";
+};
 </script></body></html>
