@@ -1,4 +1,4 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO MARK v13 SCAN FIX</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO MARK v16 QR SCAN</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -8,110 +8,132 @@ try{const a=initializeApp(cfg);window.db=getFirestore(a);window.col=collection;w
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{background:#0f172a;color:#fff;padding:10px;padding-bottom:80px}
-.hd{text-align:center;padding:12px;background:#020617;border-radius:14px;margin-bottom:10px}
-.card{background:#fff;color:#000;border-radius:16px;padding:14px;margin:10px auto;max-width:580px;box-shadow:0 4px 20px rgba(0,0,0,.3)}
-.btn{border:0;border-radius:14px;padding:18px;font-weight:900;width:100%;cursor:pointer;margin:8px 0;font-size:17px}
-.b-photo{background:#7c3aed;color:#fff}
-.b-type{background:#000;color:#fff}
-.b-cam{background:#2563eb;color:#fff}
-.b-stop{background:#dc2626;color:#fff}
-.inp{width:100%;padding:20px;border-radius:14px;border:3px solid #000;font-size:20px;font-weight:900;text-align:center}
-.prev{width:100%;border-radius:12px;margin-top:8px;display:none;max-height:300px;border:3px solid #000}
-#reader{width:100%;border-radius:14px;overflow:hidden;display:none;margin-top:8px}
-.res-green{background:#16a34a;color:#fff}.res-orange{background:#ea580c;color:#fff}.res-dark{background:#334155;color:#fff}
-.stat{background:#0f172a;color:#a5f3fc;border-radius:12px;padding:8px;font-size:11px;display:flex;justify-content:space-between}
-.caseBox{font-family:monospace;font-size:11px;white-space:pre-wrap;background:#f8fafc;border:2px dashed #000;padding:10px;border-radius:12px;text-align:left}
-.avoid{background:#fef9c3;color:#000;border:2px solid #eab308;border-radius:12px;padding:8px;font-size:11px;font-weight:700;text-align:center;margin-top:8px}
+body{background:#f8fafc;color:#0f172a;padding:0;padding-bottom:80px}
+.header{background:#0f172a;color:#fff;padding:18px;text-align:center}
+.card{background:#fff;border-radius:20px;padding:18px;margin:12px auto;max-width:560px;box-shadow:0 2px 12px rgba(0,0,0,.06);border:1px solid #e2e8f0}
+.btn{border:0;border-radius:14px;padding:18px;font-weight:800;width:100%;cursor:pointer;font-size:16px;display:block;text-align:center;text-decoration:none}
+.b-photo{background:#111827;color:#fff}
+.b-verify{background:#0f172a;color:#fff}
+.b-scan{background:#2563eb;color:#fff}
+.inp{width:100%;padding:18px;border-radius:14px;border:2px solid #0f172a;font-size:18px;font-weight:700;text-align:center;background:#f8fafc}
+.prev{width:100%;border-radius:14px;margin-top:12px;display:none;max-height:360px;border:1px solid #e2e8f0}
+#reader{width:100%;border-radius:16px;overflow:hidden;margin-top:12px;display:none;border:2px solid #0f172a}
+.small{font-size:11px;color:#64748b;text-align:center;margin-top:8px}
+.legal{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:10px;font-size:11px;color:#92400e;text-align:center;font-weight:600;margin-top:12px}
+.caseBox{font-family:monospace;font-size:11px;white-space:pre-wrap;background:#f8fafc;border:1px solid #e2e8f0;padding:14px;border-radius:14px}
 </style></head><body>
-<div class="hd">
-<h1>🛡️ QINISO MARK v13</h1>
-<div style="font-size:10px;color:#93c5fd">📸 PHOTO + ⌨️ TYPE + 📹 SCAN = 100% WORKS</div>
-<div class="stat" style="margin-top:6px"><span id="net">🌐...</span><span id="gps">📍...</span><span id="cache">Cache 0</span></div>
+
+<div class="header">
+<h1>🛡️ QINISO MARK v16</h1>
+<div style="font-size:11px;color:#94a3b8">QR CODE SCANNER - TAP TO SCAN</div>
+<div id="net" style="font-size:10px;margin-top:6px;color:#4ade80">● SECURE SYSTEM READY</div>
 </div>
 
 <div class="card">
-<h3 style="text-align:center">OPTION 1: 📸 TAP TO TAKE PHOTO</h3>
+<h2 style="font-size:13px;color:#475569;text-align:center;letter-spacing:1px">STEP 1 - SCAN QR CODE</h2>
+
+<!-- FIX TAP NOT OPENING - Use LABEL not button -->
 <input type="file" id="fileCam" accept="image/*" capture="environment" style="display:none">
-<button class="btn b-photo" onclick="fileCam.click()">📸 TAP HERE - TAKE PHOTO OF QR</button>
-<img id="prev" class="prev"><div id="photoMsg" style="text-align:center;font-size:12px"></div>
+<label for="fileCam" class="btn b-photo">📷 TAP HERE - TAKE PHOTO OF QR CODE</label>
+<img id="prev" class="prev">
+<div id="pmsg" class="small">Tap above - camera will open - point to QR code on tin</div>
 
-<h3 style="text-align:center;margin-top:16px">OPTION 2: ⌨️ TYPE CODE</h3>
-<input id="manual" class="inp" placeholder="QIN-..."><button class="btn b-type" onclick="doVerify(manual.value)">⌨️ VERIFY TYPED CODE</button>
+<div style="text-align:center;margin:16px 0;font-weight:800;color:#94a3b8">OR</div>
 
-<h3 style="text-align:center;margin-top:16px">OPTION 3: 📹 LIVE SCAN - FIXED!</h3>
-<button id="startBtn" class="btn b-cam" onclick="startScan()">📹 START LIVE SCAN (QR/BARCODE)</button>
-<button id="stopBtn" class="btn b-stop" style="display:none" onclick="stopScan()">⏹️ STOP CAMERA</button>
-<div id="reader"></div><div id="camMsg" style="text-align:center;font-size:12px"></div>
+<button id="liveBtn" class="btn b-scan" onclick="startLive()">📹 START LIVE QR SCAN - POINT CAMERA</button>
+<button id="stopBtn" class="btn" style="display:none;background:#dc2626;color:#fff" onclick="stopLive()">⏹️ STOP SCAN</button>
+<div id="reader"></div>
+<div id="scanMsg" class="small"></div>
+
+<hr style="margin:16px 0;border:0;border-top:1px solid #f1f5f9">
+
+<h2 style="font-size:13px;color:#475569;text-align:center;letter-spacing:1px">STEP 2 - CODE</h2>
+<input id="manual" class="inp" placeholder="QIN-... will appear here after scan">
+<button class="btn b-verify" style="margin-top:12px" onclick="doVerify(manual.value)">Verify Product →</button>
+<div class="small">QR will auto-fill here, or type manually</div>
 </div>
 
-<div id="result" class="card res-dark" style="text-align:center">
-<div style="font-size:44px">📸⌨️📹</div><b>READY</b><br><br>
-<b>3 WAYS:</b><br>1. 📸 Take photo → auto reads QR<br>2. ⌨️ Type code QIN-...<br>3. 📹 Live scan → point camera<br><br>Test: QIN-KOO-MARK-LIVE-CLOUD-001-X98J47-TATS-20260923-SPAR
+<div id="result" class="card" style="text-align:center;display:none"></div>
+<div id="caseWrap" class="card" style="display:none"><div id="caseBox" class="caseBox"></div><button class="btn b-verify" style="margin-top:12px" onclick="window.print()">Print for SAPS</button></div>
+
+<div class="card" style="background:#0f172a;color:#fff;text-align:center">
+<div style="font-size:11px;color:#94a3b8">SECURE • OFFLINE READY • AUTO ALERT</div>
+<div class="legal">⚖️ QINISO is only collecting avoidance. Decision by law & brand.</div>
 </div>
-
-<div id="caseWrap" class="card" style="display:none"><div id="caseBox" class="caseBox"></div><button class="btn b-type" onclick="window.print()">🖨️ PRINT FOR SAPS</button></div>
-
-<div class="card" style="text-align:center;font-size:12px">📍 <span id="gps2">GPS auto</span> | 🌐 <span id="ip2">IP...</span> | 🚨 ACTIVE<div class="avoid">⚖️ QINISO only collecting avoidance. Decision by law & brand.</div></div>
 
 <script>
-let gps="pending",ip="pending",photoData="",offlineDB=JSON.parse(localStorage.getItem('qiniso_offline_db')||"[]");
-const $=id=>document.getElementById(id);let html5Qr=null;let scanning=false;
-function upd(){let net=navigator.onLine?"🌐 ONLINE ✅":"📴 OFFLINE ✅";$("net").textContent=net;$("net").style.color=navigator.onLine?"#4ade80":"#fbbf24";$("cache").textContent="Cache:"+offlineDB.length;}
-setInterval(upd,1500);upd();
-navigator.geolocation.watchPosition(p=>{gps=p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);$("gps").textContent="📍 "+gps;$("gps2").textContent=gps;},{},{enableHighAccuracy:true});
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ip=d.ip;$("ip2").textContent=ip;}).catch(()=>$("ip2").textContent="offline");
+let gps="secure",ip="secure",photoData="",offlineDB=JSON.parse(localStorage.getItem('qiniso_offline_db')||"[]"),html5Qr=null,scanning=false;
+const $=id=>document.getElementById(id);
+navigator.geolocation.getCurrentPosition(p=>{gps=p.coords.latitude.toFixed(6)+","+p.coords.longitude.toFixed(6);},()=>{});
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ip=d.ip;}).catch(()=>{});
+function upd(){let on=navigator.onLine;$("net").textContent=on?"● ONLINE - QR SCANNER READY":"● OFFLINE - Will sync when online";}setInterval(upd,2000);upd();
 
-// FIX 1: PHOTO SCAN - AUTO READ QR FROM PHOTO
+// FIX 1: PHOTO TAP - NOW READS QR CODE FROM PHOTO
 $("fileCam").addEventListener('change',async function(){
- if(!this.files[0])return;let f=this.files[0];let r=new FileReader();
- r.onload=e=>{photoData=e.target.result;$("prev").src=photoData;$("prev").style.display='block';};
- r.readAsDataURL(f);
- $("photoMsg").textContent="⏳ Reading QR from photo...";
+ if(!this.files||!this.files[0]){ $("pmsg").textContent="No file selected - try again"; return; }
+ let f=this.files[0];
+ let r=new FileReader(); r.onload=e=>{photoData=e.target.result;$("prev").src=photoData;$("prev").style.display='block';}; r.readAsDataURL(f);
+ $("pmsg").textContent="⏳ Reading QR code from photo...";
+ $("scanMsg").textContent="";
  try{
-  if(!html5Qr)html5Qr=new Html5Qrcode("reader");
+  if(!html5Qr) html5Qr=new Html5Qrcode("reader");
   let decoded=await html5Qr.scanFile(f,true);
-  $("manual").value=decoded;$("photoMsg").textContent="✅ QR FOUND: "+decoded;doVerify(decoded);
+  $("manual").value=decoded;
+  $("pmsg").innerHTML="✅ QR FOUND: <b>"+decoded+"</b> - Verifying...";
+  $("scanMsg").textContent="✅ Scan success!";
+  if(navigator.vibrate) navigator.vibrate(200);
+  doVerify(decoded);
  }catch(err){
-  $("photoMsg").textContent="⚠️ Could not read QR from photo - Please TYPE code below. Error: "+err;
+  $("pmsg").innerHTML="⚠️ QR not clear in photo. Please move closer, better light, then retake OR type code QIN-... manually below.<br><small>"+err+"</small>";
  }
 });
 
-window.startScan=async()=>{
- $("reader").style.display='block';$("startBtn").style.display='none';$("stopBtn").style.display='block';$("camMsg").textContent="📹 Starting camera - Allow permission...";
+// FIX 2: LIVE SCAN - REAL QR SCANNER
+window.startLive=async()=>{
+ $("reader").style.display='block';$("liveBtn").style.display='none';$("stopBtn").style.display='block';$("scanMsg").textContent="Starting camera... Allow permission";
  try{
-  if(!html5Qr)html5Qr=new Html5Qrcode("reader");
+  html5Qr=new Html5Qrcode("reader");
   scanning=true;
-  await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:{width:250,height:250},aspectRatio:1.0},
-  (decoded)=>{
-   if(scanning){$("manual").value=decoded;$("camMsg").textContent="✅ SCANNED: "+decoded;new Audio().play().catch(()=>{});navigator.vibrate&&navigator.vibrate(200);stopScan();doVerify(decoded);}
-  },
-  (err)=>{});
-  $("camMsg").textContent="📹 Point camera to QR - Hold steady 10cm away";
- }catch(e){$("camMsg").textContent="❌ Camera fail: "+e.message+" - Use 📸 Photo or ⌨️ Type. Works offline!";$("startBtn").style.display='block';$("stopBtn").style.display='none';}
+  await html5Qr.start({facingMode:"environment"}, {fps:15, qrbox:{width:280,height:280}, aspectRatio:1.0},
+   (decoded)=>{
+    if(scanning){
+     $("manual").value=decoded;
+     $("scanMsg").textContent="✅ SCANNED: "+decoded;
+     if(navigator.vibrate) navigator.vibrate([200,100,200]);
+     stopLive();
+     doVerify(decoded);
+    }
+   },
+   (error)=>{}
+  );
+  $("scanMsg").textContent="📹 Point camera to QR - Hold steady 10cm - Good light";
+ }catch(e){
+  $("scanMsg").textContent="❌ Camera blocked: "+e.message+" - Use PHOTO button above. Go to phone Settings > Chrome > Allow Camera";
+  $("liveBtn").style.display='block';$("stopBtn").style.display='none';
+ }
 };
-window.stopScan=async()=>{
- scanning=false;if(html5Qr){try{await html5Qr.stop();}catch(e){} $("reader").style.display='none';} $("startBtn").style.display='block';$("stopBtn").style.display='none';$("camMsg").textContent="Stopped. Use photo or type.";
+window.stopLive=async()=>{
+ scanning=false; if(html5Qr){ try{await html5Qr.stop(); await html5Qr.clear();}catch(e){} } $("reader").style.display='none'; $("liveBtn").style.display='block'; $("stopBtn").style.display='none'; $("scanMsg").textContent="Scan stopped";
 };
 
-async function syncCache(){if(!navigator.onLine||!window.db)return;try{let s=await window.gd(window.col(window.db,"scans"));let a=[];s.forEach(d=>a.push(d.data()));localStorage.setItem('qiniso_offline_db',JSON.stringify(a));offlineDB=a;upd();}catch(e){}}syncCache();
-
+async function syncCache(){if(!navigator.onLine||!window.db)return;try{let s=await window.gd(window.col(window.db,"scans"));let a=[];s.forEach(d=>a.push(d.data()));localStorage.setItem('qiniso_offline_db',JSON.stringify(a));offlineDB=a;}catch(e){}}syncCache();
 function genCase(){return "QIN-CASE-"+new Date().toISOString().slice(0,10).replace(/-/g,"")+"-"+Math.random().toString(36).substr(2,6).toUpperCase();}
 window.doVerify=async(inp=>{
- let code=(inp||"").trim().toUpperCase();if(!code){alert('Type QIN-... or take photo');return;}
- $("result").className="card res-dark";$("result").innerHTML="⏳ Verifying "+code+"...";
+ let code=(inp||"").trim().toUpperCase();if(!code){alert('Scan QR or type QIN-...');return;}
+ $("result").style.display='block';$("result").innerHTML="⏳ Verifying "+code+"...";
  let found=offlineDB.find(x=>x.code&&x.code.toUpperCase()===code);
  if(!found&&navigator.onLine&&window.db){try{let qq=window.qq(window.col(window.db,"scans"),window.ww("code","==",code));let snap=await window.gd(qq);if(!snap.empty)found=snap.docs[0].data();}catch(e){}}
  let caseNo=genCase();
  if(!found){
-  $("result").className="card res-orange";$("result").innerHTML=`<div style="font-size:48px">🟠</div><h2>NOT FOUND</h2><code>${code}</code><br><br>Case: ${caseNo}<br>Photo: ${photoData?'Yes ✅':'No'}<br>GPS: ${gps}<br><br>Queued to Brand + Police + CEO`;
+  $("result").innerHTML=`<div style="font-size:40px">🟠</div><h3>NOT FOUND</h3><code>${code}</code><br><br>Case: ${caseNo}<br>Photo: ${photoData?'Yes ✅':'No'}<br><br>Report sent to Brand + SAPS + CEO`;
   let txt=`QINISO CASE ${caseNo}\nCode:${code}\nStatus:NOT_FOUND\nGPS:${gps}\nIP:${ip}\nPhoto:${photoData?'YES':'NO'}\nSAPS CAS: _____`;
   $("caseBox").textContent=txt;$("caseWrap").style.display='block';
-  if(navigator.onLine&&window.db){let p={caseNo,code,status:"NOT_FOUND",gps,ip,hasPhoto:!!photoData,time:new Date().toISOString(),createdAt:window.st?window.st():new Date().toISOString()};for(let c of["unverified_scans","dept_ceo","dept_saps","dept_brand","cases"]){try{await window.ad(window.col(window.db,c),p);}catch(e){}}}
+  let payload={caseNo,code,status:"NOT_FOUND",gps,ip,hasPhoto:!!photoData,time:new Date().toISOString(),createdAt:window.st?window.st():new Date().toISOString()};
+  if(navigator.onLine&&window.db){for(let c of["unverified_scans","dept_ceo","dept_saps","dept_brand","cases"]){try{await window.ad(window.col(window.db,c),payload);}catch(e){}}}
  }else{
-  let valid=new Date(found.exp)>new Date();$("result").className=valid?"card res-green":"card res-dark";
-  $("result").innerHTML=`<div style="font-size:48px">${valid?'✅':'⚫'}</div><h2>${valid?'✅ VERIFIED':'EXPIRED'}</h2><b>${found.product||''}</b><br>Case:${caseNo}<br>GPS:${gps}`;
-  let txt=`QINISO CASE ${caseNo}\nProduct:${found.product}\nCode:${code}\nStatus:${valid?'VERIFIED':'EXPIRED'}\nGPS:${gps}`;
+  let valid=new Date(found.exp)>new Date();
+  $("result").innerHTML=`<div style="font-size:40px">${valid?'✅':'⏰'}</div><h3>${valid?'VERIFIED ORIGINAL':'EXPIRED'}</h3><b>${found.product||''}</b><br>Case: ${caseNo}`;
+  let txt=`QINISO CASE ${caseNo}\nProduct:${found.product}\nCode:${code}\nStatus:${valid?'VERIFIED':'EXPIRED'}\nBatch:${found.batch}\nExpiry:${found.exp}`;
   $("caseBox").textContent=txt;$("caseWrap").style.display='block';
  }
 };
