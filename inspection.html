@@ -1,110 +1,80 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO INSPECTION v3.5 - LINKED TO ALL DEPTS + ANTI-ROBBERY</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}
-body{background:#f1f5f9;padding:10px;padding-bottom:80px}
-.top{background:#0f172a;color:#fff;padding:12px;border-radius:16px;display:flex;justify-content:space-between}
-.card{background:#fff;border-radius:16px;padding:12px;margin:10px 0;border:1px solid #e2e8f0;box-shadow:0 4px 12px rgba(0,0,0,.06)}
-.btn{border:0;border-radius:12px;padding:12px;font-weight:900;width:100%;margin:4px 0;display:flex;justify-content:center;align-items:center;gap:6px}
-.btn-blue{background:#1d4ed8;color:#fff}.btn-green{background:#16a34a;color:#fff}.btn-red{background:#dc2626;color:#fff}.btn-orange{background:#ea580c;color:#fff}
-.sigBox{border:2px dashed #1d4ed8;border-radius:12px;background:#fff;height:120px;width:100%;touch-action:none}
-.fpBox{border:2px dashed #333;border-radius:12px;background:#f8fafc;height:90px;width:100%;touch-action:none}
-#map{height:250px;border-radius:12px;margin-top:8px}
-.dept{border-left:5px solid #1d4ed8;padding:10px;background:#fff;margin:6px 0;border-radius:0 12px 12px 0;display:flex;justify-content:space-between;align-items:center;font-size:11px}
-.dept.flag{border-left-color:#dc2626;background:#fef2f2}.dept.sent{background:#dcfce7;border-left-color:#16a34a}
-.liveDot{width:12px;height:12px;background:#16a34a;border-radius:50%;display:inline-block;animation:blink 1s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-input,select,textarea{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:5px 0}
-</style></head><body>
-<div class="top"><div><b>🔍 QINISO INSPECTION v3.5</b><div style="font-size:9px;color:#93c5fd">Linked to ALL DEPARTMENTS + Dashboard + Anti-Robbery + Auto GPS</div></div><div style="font-size:9px;text-align:right"><span class="liveDot"></span> LIVE BACKUP ON<br/>📍 <span id="gpsTxt">Getting...</span><br/>IP <span id="ipTxt">...</span></div></div>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO ACTIVE SCAN</title>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import{getFirestore,collection,query,where,getDocs,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg);const db=getFirestore(app);
+window.db=db;window.col=collection;window.q=query;window.where=where;window.getDocs=getDocs;window.addDoc=addDoc;window.st=serverTimestamp;
+</script>
+<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#020617;color:#fff;padding:8px;text-align:center}.card{background:#fff;color:#000;border-radius:14px;padding:12px;margin:8px auto;max-width:500px}#reader{width:100%;border-radius:12px;overflow:hidden}.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.yellow{background:#f59e0b;color:#000}.small{font-size:9px;color:#94a3b8}</style></head><body>
+<h2>🟢 QINISO ACTIVE SCAN</h2><p class="small">Camera auto scans + GPS auto + Auto report to CEO</p>
 
-<div class="card" style="background:linear-gradient(90deg,#0f172a,#1e293b);color:#fff">
-<b>🏢 LINKED TO ALL DEPARTMENTS + 🛡️ ANTI-ROBBERY</b>
-<div style="font-size:10px;margin-top:4px">✅ Every record → Auto GPS + Auto sent to ALL Depts + Dashboard<br/>✅ If robbed → All evidence already in Depts + Dashboard + MAP trail<br/>✅ Each Dept gets alert with GPS + Sign + FP + Docs + Proof</div>
-</div>
+<div class="card"><div id="reader"></div><div class="small">Point camera to QR - Auto scan active</div><input id="manual" placeholder="Or type code: QIN-..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px"><button onclick="doVerify(document.getElementById('manual').value)" style="width:100%;padding:10px;background:#000;color:#fff;border-radius:8px;margin-top:4px">VERIFY TYPED CODE</button></div>
 
-<div class="card"><h3>📋 Shop Info - Auto GPS Every Record</h3>
-<input id="shopName" placeholder="Shop Name - Auto GPS will tag"><input id="ownerName" placeholder="Owner Name"><input id="idNo" placeholder="ID / License">
-<div style="font-size:10px;background:#dbeafe;padding:6px;border-radius:6px;margin:6px 0">📍 GPS: <span id="gpsNow">Getting...</span> | Trail: <span id="trailCount">0</span> | Last backup: <span id="lastBackup">Never</span> | Depts linked: <span id="deptCount">6</span></div>
-<button class="btn btn-blue" onclick="startInspection()">START INSPECTION - LOCK GPS + LINK DEPTS</button>
-</div>
+<div id="status" class="card" style="background:#0f172a;color:#fff">📍 Getting location...<br><span id="gpsTxt">GPS: waiting</span><br><span id="ipTxt">IP: waiting</span><br><span id="autoTxt">Auto report: Ready</span></div>
 
-<div class="card"><h3>🏢 ALL COMPLIANCE DEPARTMENTS - Linked - TAP to Send</h3>
-<div style="font-size:10px;margin-bottom:6px">Chain Break Protocol - Every evidence auto sent to ALL depts + Dashboard - Select which depts to alert</div>
-<div id="deptsList"></div>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px">
-<button class="btn btn-blue" onclick="sendAllDepts()">📡 SEND TO ALL 6 DEPTS + DASHBOARD + AUTO GPS</button>
-<button class="btn btn-green" onclick="sendSAPSOnly()">🚔 SEND TO SAPS COMMERCIAL ONLY</button>
-</div>
-<div id="deptSendLog" style="font-size:10px;background:#f0fdf4;padding:6px;border-radius:6px;margin-top:6px;max-height:100px;overflow:auto"></div>
-</div>
+<div id="result" class="card">Waiting for scan...</div>
+<div id="detail" class="card" style="display:none;text-align:left"></div>
 
-<div class="card"><h3>📸 Evidence + 📄 Docs - Every item Auto GPS + Auto to All Depts</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<button class="btn btn-blue" onclick="document.getElementById('camInput').click()">📷 PHOTO + GPS + DEPTS</button>
-<button class="btn btn-orange" onclick="document.getElementById('docInput').click()">📄 DOC SCAN + GPS + DEPTS</button>
-</div>
-<input type="file" id="camInput" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this.files)">
-<input type="file" id="docInput" accept="image/*,.pdf" multiple style="display:none" onchange="handleDocs(this.files)">
-<div id="evidenceList" style="margin-top:8px"></div>
-</div>
+<script type="module">
+let gpsStr="denied", ipStr="unknown", scanning=false;
+let autoReport=true;
 
-<div class="card"><h3>✍️ Signatures + 👆 Fingerprints - Auto GPS + Auto to All Depts</h3>
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-<div><b style="font-size:10px">Inspector Sign + GPS + Depts</b><canvas id="sigInsp" class="sigBox" width="300" height="120"></canvas><button class="btn" style="background:#e2e8f0;padding:4px;font-size:9px" onclick="clearPad('sigInsp')">Clear</button><div id="sigInspStatus" style="font-size:9px;color:#ea580c">Not signed</div></div>
-<div><b style="font-size:10px">Owner Sign + GPS + Depts</b><canvas id="sigOwner" class="sigBox" width="300" height="120"></canvas><button class="btn" style="background:#e2e8f0;padding:4px;font-size:9px" onclick="clearPad('sigOwner')">Clear</button><div id="sigOwnerStatus" style="font-size:9px;color:#ea580c">Not signed</div></div>
-<div><b style="font-size:10px">Inspector FP + GPS</b><canvas id="fpInsp" class="fpBox" width="300" height="90"></canvas><div id="fpInspStatus" style="font-size:9px">Tap</div></div>
-<div><b style="font-size:10px">Owner FP + GPS</b><canvas id="fpOwner" class="fpBox" width="300" height="90"></canvas><div id="fpOwnerStatus" style="font-size:9px">Tap</div></div>
-</div>
-</div>
+// AUTO LOCATION - Starts immediately
+navigator.geolocation.watchPosition(pos=>{
+ gpsStr=pos.coords.latitude.toFixed(6)+","+pos.coords.longitude.toFixed(6);
+ document.getElementById('gpsTxt').textContent="GPS: "+gpsStr+" ✅ AUTO";
+ localStorage.setItem('qiniso_last_gps',gpsStr);
+},{err=>{document.getElementById('gpsTxt').textContent="GPS: denied - enable location";gpsStr="denied-"+err.message;}}, {enableHighAccuracy:true});
 
-<div class="card"><h3>🗺️ Live GPS Trail + MAP - Linked to Depts + Dashboard</h3><div id="map"></div><div style="font-size:10px;margin-top:4px">🔵 Path | 📷 Evidence | 📄 Docs | Every pin = Auto sent to ALL depts + Dashboard - Anti-robbery proof</div></div>
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ipStr=d.ip;document.getElementById('ipTxt').textContent="IP: "+ipStr+" ✅ AUTO";}).catch(()=>{document.getElementById('ipTxt').textContent="IP: fetch failed"});
 
-<div class="card"><h3>📡 Proof Links</h3>
-<div style="font-size:11px;background:#f8fafc;padding:8px;border-radius:8px">
-Evidence: <span id="evCount">0</span> | GPS Trail: <span id="gpsPoints">0</span> | Depts Alerted: <span id="deptsAlerted">0</span> | Backups: <span id="backupCount">0</span><br/>
-<a href="./index.html?alert=1" target="_blank">→ Open Dashboard Proof</a> | <a href="./scan.html" target="_blank">→ Open Public Scan</a>
-</div>
-<button class="btn btn-green" onclick="submitToDashboard()">✅ SUBMIT TO ALL DEPTS + DASHBOARD + SAPS PDF + GPS TRAIL</button>
-<button class="btn btn-blue" onclick="exportPack()">📦 EXPORT PACK FOR ALL DEPTS + SIGN + FP + GPS</button>
-<button class="btn btn-red" onclick="panicRobbed()">🚨 PHONE ROBBED - PANIC + SEND LAST GPS TO ALL DEPTS + DASHBOARD</button>
-</div>
+// ACTIVE SCANNER - Auto starts camera
+let html5Qr = new Html5Qrcode("reader");
+let config={fps:10, qrbox:{width:250,height:250}};
+html5Qr.start({facingMode:"environment"}, config, onScanSuccess, onScanFail).then(()=>{document.getElementById('autoTxt').textContent="Auto report: CAMERA ACTIVE ✅";}).catch(e=>{document.getElementById('autoTxt').textContent="Camera failed: "+e+" - Use manual";});
 
-<div class="card"><h4>Backup Log + Dept Send Log + GPS Trail (Anti-Robbery)</h4><div id="log" style="font-size:10px;background:#f8fafc;padding:8px;border-radius:8px;max-height:150px;overflow:auto"></div></div>
+function onScanSuccess(decodedText){
+ if(scanning) return;
+ scanning=true;
+ document.getElementById('result').innerHTML="✅ QR Detected: "+decodedText+"<br>Auto verifying...";
+ // beep
+ try{new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg').play();}catch(e){}
+ doVerify(decodedText);
+ setTimeout(()=>scanning=false,3000);
+}
+function onScanFail(err){}
 
-<script>
-let currentLat=-33.9249,currentLng=25.57,currentGPS="-33.9249,25.57",hackerIP="...",trail=[],evidence=[],backupCnt=0,backupOn=true,map,mapInit=false,deptsAlerted=0;
-const depts=[
-{code:"HEALTH",name:"Dept of Health",email:"health.compliance@qiniso.gov.za",status:"COMPLIANT",sent:false},
-{code:"CIPC",name:"CIPC",email:"cipc.compliance@qiniso.gov.za",status:"PENDING",sent:false},
-{code:"SARS VAT",name:"SARS VAT",email:"sarsvat.compliance@qiniso.gov.za",status:"COMPLIANT",sent:false},
-{code:"VAT",name:"VAT Compliance",email:"vat.compliance@qiniso.gov.za",status:"SUSPECT",sent:false},
-{code:"SAPS Commercial",name:"SAPS Commercial",email:"saps.commercial@qiniso.gov.za",status:"COMPLIANT",sent:false},
-{code:"NCC",name:"NCC National Consumer Commission",email:"ncc.consumer@qiniso.gov.za",status:"PENDING",sent:false}
-];
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{hackerIP=d.ip; document.getElementById('ipTxt').textContent=d.ip;}).catch(()=>{});
-function updateGPS(pos){currentLat=pos.coords.latitude; currentLng=pos.coords.longitude; currentGPS=`${currentLat.toFixed(4)},${currentLng.toFixed(4)}`; document.getElementById('gpsTxt').textContent=currentGPS; document.getElementById('gpsNow').textContent=currentGPS; document.getElementById('trailCount').textContent=trail.length; document.getElementById('gpsPoints').textContent=trail.length; trail.push({lat:currentLat,lng:currentLng,gps:currentGPS,time:new Date().toISOString(),ip:hackerIP}); localStorage.setItem('qiniso_gps_trail',JSON.stringify(trail.slice(-200))); if(map){L.marker([currentLat,currentLng],{icon:L.divIcon({html:'🔵',iconSize:[10,10]})}).addTo(map); map.setView([currentLat,currentLng],15);} addLog(`📍 GPS ${currentGPS} IP ${hackerIP}`); autoBackup();}
-function startTracking(){if(navigator.geolocation){navigator.geolocation.watchPosition(updateGPS,()=>{}, {enableHighAccuracy:true}); navigator.geolocation.getCurrentPosition(updateGPS);}} startTracking();
-function initMap(){if(mapInit) return; map=L.map('map').setView([currentLat,currentLng],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); L.marker([currentLat,currentLng]).addTo(map).bindPopup('Inspection Start').openPopup(); mapInit=true;} setTimeout(initMap,800);
-function renderDepts(){const l=document.getElementById('deptsList'); l.innerHTML=''; depts.forEach((d,i)=>{const div=document.createElement('div'); div.className='dept '+(d.sent?'sent':'')+(d.status==='SUSPECT'?' flag':''); div.innerHTML=`<div><b>${d.code}</b> - ${d.name}<div style="font-size:9px">${d.email}<br/>Status ${d.status} - ${d.sent?'✅ SENT GPS '+currentGPS:'⏳ Not sent yet'}</div></div><div style="text-align:right"><input type="checkbox" id="chk${i}" ${d.sent?'checked':''} style="width:18px;height:18px"><br/><button class="btn btn-blue" style="padding:3px 6px;font-size:8px;margin-top:4px" onclick="sendOneDept(${i})">${d.sent?'RESEND':'SEND'}</button></div>`; l.appendChild(div);}); document.getElementById('deptCount').textContent=depts.length; document.getElementById('deptsAlerted').textContent=deptsAlerted;}
-function sendOneDept(i){const d=depts[i]; d.sent=true; deptsAlerted++; const chk=document.getElementById('chk'+i); if(chk) chk.checked=true; addLog(`📡 Sent to ${d.code} ${d.email} GPS ${currentGPS} Evidence ${evidence.length} IP ${hackerIP}`); document.getElementById('deptSendLog').innerHTML=`✅ ${new Date().toLocaleTimeString()} Sent to ${d.code} - ${d.email} - Shop ${document.getElementById('shopName').value} - GPS ${currentGPS} - ${evidence.length} items - IP ${hackerIP}<br/>`+document.getElementById('deptSendLog').innerHTML; renderDepts(); autoBackup(); if(map){L.marker([currentLat,currentLng],{icon:L.divIcon({html:'📡',iconSize:[18,18]})}).addTo(map).bindPopup(`📡 Sent to ${d.code} GPS ${currentGPS}`);} let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]'); live.unshift({code:`DEPT-${d.code}-${Date.now()}`,product:`DEPT ALERT to ${d.code} - ${document.getElementById('shopName').value} - ${evidence.length} evidence`,shop:document.getElementById('shopName').value,branch:`Dept ${d.code}`,status:d.status==='SUSPECT'?'RED':'ORANGE',gps:currentGPS,lat:currentLat,lng:currentLng,time:new Date().toISOString(),icon:'🏢',ip:hackerIP,dept:d.code}); localStorage.setItem('qiniso_live_scans',JSON.stringify(live.slice(0,60))); alert(`📡 Sent to ${d.code}!\nShop: ${document.getElementById('shopName').value}\nGPS: ${currentGPS}\nEvidence: ${evidence.length}\nIP: ${hackerIP}\nDashboard + MAP updated`);}
-function sendAllDepts(){depts.forEach((_,i)=>{setTimeout(()=>sendOneDept(i), i*400);}); addLog(`📡 Sending to ALL ${depts.length} depts GPS ${currentGPS} + Dashboard`); setTimeout(()=>alert(`📡 Sent to ALL ${depts.length} DEPARTMENTS!\nEvery dept got: Evidence ${evidence.length} + GPS ${currentGPS} + Sign + FP + IP ${hackerIP}\nDashboard linked + MAP pins`), depts.length*400+500);}
-function sendSAPSOnly(){const saps=depts.find(d=>d.code.includes('SAPS')); const idx=depts.indexOf(saps); if(idx>=0) sendOneDept(idx);}
-function startInspection(){updateGPS({coords:{latitude:currentLat,longitude:currentLng}}); renderDepts(); addLog(`🔍 Inspection Started Shop ${document.getElementById('shopName').value} Linked to ${depts.length} depts GPS ${currentGPS}`); autoBackup(); alert(`Inspection Started\nShop ${document.getElementById('shopName').value}\nGPS ${currentGPS}\nLinked to ALL ${depts.length} DEPARTMENTS\nTrail logging ON - Anti-robbery ON`);}
-function handlePhoto(files){for(let f of files){const ev={id:Date.now()+Math.random(),type:'PHOTO',name:f.name,time:new Date().toISOString(),gps:currentGPS,lat:currentLat,lng:currentLng,ip:hackerIP,hash:'sha256#'+Math.random().toString(36).slice(2,10),shop:document.getElementById('shopName').value}; evidence.push(ev); addLog(`📷 Photo ${f.name} GPS ${currentGPS} Auto to ${depts.length} depts`); if(map){L.marker([currentLat,currentLng],{icon:L.divIcon({html:'📷',iconSize:[20,20]})}).addTo(map).bindPopup(`📷 ${f.name} GPS ${currentGPS}`);} } renderEv(); autoBackup();}
-function handleDocs(files){for(let f of files){const ev={id:Date.now()+Math.random(),type:'DOC',name:f.name,time:new Date().toISOString(),gps:currentGPS,lat:currentLat,lng:currentLng,ip:hackerIP,hash:'doc#'+Math.random().toString(36).slice(2,8)}; evidence.push(ev); addLog(`📄 Doc ${f.name} GPS ${currentGPS} Auto to depts`);} renderEv(); autoBackup();}
-function renderEv(){document.getElementById('evidenceList').innerHTML=evidence.map(e=>`<div style="font-size:11px;background:#f8fafc;padding:6px;margin:4px 0;border-radius:6px;border-left:4px solid #1d4ed8"> ${e.type} ${e.name} | GPS ${e.gps} | ${new Date(e.time).toLocaleTimeString()} | IP ${e.ip} | Hash ${e.hash} | Auto to ALL depts + Dashboard</div>`).join(''); document.getElementById('evCount').textContent=evidence.length; localStorage.setItem('qiniso_inspection_ev',JSON.stringify(evidence));}
-function makePad(id,statusId,isFP){const c=document.getElementById(id); const ctx=c.getContext('2d'); let d=false; function pos(e){const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return{x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)};} function start(e){d=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();} function move(e){if(!d)return; const p=pos(e); ctx.lineWidth=isFP?5:2; ctx.lineCap='round'; ctx.strokeStyle=isFP?'#0f172a':'#1d4ed8'; ctx.lineTo(p.x,p.y); ctx.stroke(); document.getElementById(statusId).textContent='✅ Captured GPS '+currentGPS+' IP '+hackerIP; document.getElementById(statusId).style.color='#16a34a'; const ev={id:Date.now(),type:isFP?'FINGERPRINT':'SIGNATURE',name:id,time:new Date().toISOString(),gps:currentGPS,lat:currentLat,lng:currentLng,ip:hackerIP,hash:'bio#'+Math.random().toString(36).slice(2,6)}; evidence.push(ev); renderEv(); addLog(`✍️ ${ev.type} ${id} GPS ${currentGPS} Auto to depts`); autoBackup(); e.preventDefault();} function end(){d=false;} c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); c.addEventListener('mouseup',end); c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',end); if(isFP){c.addEventListener('click',()=>{ctx.fillStyle='#0f172a'; ctx.beginPath(); ctx.arc(160,45,28,0,6.28); ctx.fill(); document.getElementById(statusId).textContent='✅ FP Captured GPS '+currentGPS; document.getElementById(statusId).style.color='#16a34a'; const ev={id:Date.now(),type:'FINGERPRINT',name:id,time:new Date().toISOString(),gps:currentGPS,lat:currentLat,lng:currentLng,ip:hackerIP,hash:'fp#'+Math.random().toString(36).slice(2,6)}; evidence.push(ev); renderEv(); addLog(`👆 FP ${id} GPS ${currentGPS}`); autoBackup();});}}
-function clearPad(id){document.getElementById(id).getContext('2d').clearRect(0,0,300,120);}
-function addLog(msg){document.getElementById('log').innerHTML=`${new Date().toLocaleTimeString()} ${msg}<br/>`+document.getElementById('log').innerHTML;}
-function autoBackup(){let data={shop:document.getElementById('shopName').value,owner:document.getElementById('ownerName').value,evidence:evidence,trail:trail,gps:currentGPS,ip:hackerIP,time:new Date().toISOString(),depts:depts.filter(d=>d.sent).map(d=>d.code)}; localStorage.setItem('qiniso_inspection_backup',JSON.stringify(data)); let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]'); live.unshift({code:`INSPECTION-${Date.now()}`,product:`INSPECTION ${data.shop||'Shop'} - ${evidence.length} items - Depts ${data.depts.join(',')||'none yet'}`,shop:data.shop||'Inspection',branch:`GPS ${currentGPS} Depts ${data.depts.length}`,status:'ORANGE',gps:currentGPS,lat:currentLat,lng:currentLng,time:data.time,icon:'🔍',ip:hackerIP,isInspection:true}); localStorage.setItem('qiniso_live_scans',JSON.stringify(live.slice(0,60))); backupCnt++; document.getElementById('backupCount').textContent=backupCnt; document.getElementById('lastBackup').textContent=new Date().toLocaleTimeString()+` GPS ${currentGPS} Depts ${data.depts.length}`; addLog(`💾 Backup #${backupCnt} to dashboard + ${depts.filter(d=>d.sent).length} depts GPS ${currentGPS}`);}
-function submitToDashboard(){if(depts.filter(d=>d.sent).length===0){if(!confirm('No dept alerted yet! Send to ALL depts now?')){autoBackup(); window.open('./index.html?alert=1','_blank'); return;} sendAllDepts();} autoBackup(); alert(`✅ Submitted to ALL DEPTS + Dashboard!\nShop ${document.getElementById('shopName').value}\nEvidence ${evidence.length} each with GPS ${currentGPS}\nDepts ${depts.filter(d=>d.sent).map(d=>d.code).join(', ')}\nIf robbed, all proof safe in depts + dashboard MAP`); window.open('./index.html?alert=1','_blank');}
-function exportPack(){const {jsPDF}=window.jspdf; const doc=new jsPDF(); doc.text(`QINISO INSPECTION - Linked to ALL ${depts.length} DEPTS - GPS ${currentGPS}`,10,10); doc.text(`Shop ${document.getElementById('shopName').value} Owner ${document.getElementById('ownerName').value}`,10,20); doc.text(`Evidence ${evidence.length} items Each GPS + Depts ${depts.filter(d=>d.sent).map(d=>d.code).join(',')}`,10,30); evidence.slice(0,15).forEach((e,i)=>{doc.text(`${i+1}. ${e.type} ${e.name} GPS ${e.gps} Depts ${depts.length} Hash ${e.hash}`,10,40+i*8);}); doc.text(`Trail ${trail.length} points Last GPS ${currentGPS} IP ${hackerIP}`,10,170); doc.save(`INSPECTION-ALL-DEPTS-${Date.now()}.pdf`); addLog(`📦 PDF Exported for ALL depts GPS trail ${trail.length}`);}
-function panicRobbed(){if(confirm('ROBBED? This will backup NOW to ALL DEPTS + Dashboard with last GPS')){sendAllDepts(); autoBackup(); let live=JSON.parse(localStorage.getItem('qiniso_live_scans')||'[]'); live.unshift({code:`ROBBED-${Date.now()}`,product:`🚨 ROBBED Phone robbed Last GPS ${currentGPS} - Sent to ALL DEPTS`,shop:`ROBBED ${document.getElementById('shopName').value}`,branch:`IP ${hackerIP} ALL DEPTS ALERTED`,status:'RED',gps:currentGPS,lat:currentLat,lng:currentLng,time:new Date().toISOString(),icon:'🚨',ip:hackerIP,isRobbery:true}); localStorage.setItem('qiniso_live_scans',JSON.stringify(live)); addLog(`🚨 ROBBED GPS ${currentGPS} Sent to ALL depts`); document.body.innerHTML=`<div style="background:#000;color:#f00;padding:30px;text-align:center;min-height:100vh"><h1>🚨 ROBBED PROTOCOL - SENT TO ALL DEPTS</h1><p>Last GPS ${currentGPS} IP ${hackerIP}</p><p>All ${evidence.length} evidence with GPS each sent to ${depts.length} DEPTS + Dashboard</p><p>GPS Trail ${trail.length} points</p><p>Check Dashboard + All Depts email</p><p>Evidence safe - Law decides</p></div>`;}}
-renderDepts(); makePad('sigInsp','sigInspStatus',false); makePad('sigOwner','sigOwnerStatus',false); makePad('fpInsp','fpInspStatus',true); makePad('fpOwner','fpOwnerStatus',true);
-setInterval(()=>{if(backupCnt>=0) autoBackup();},30000);
-evidence=JSON.parse(localStorage.getItem('qiniso_inspection_ev')||'[]'); renderDepts(); 
-function renderEvInit(){document.getElementById('evidenceList').innerHTML=evidence.map(e=>`<div style="font-size:11px;background:#f8fafc;padding:6px;margin:4px 0;border-radius:6px">${e.type} ${e.name} GPS ${e.gps}</div>`).join(''); document.getElementById('evCount').textContent=evidence.length;} renderEvInit();
-</script></body></html>
+window.doVerify=async(codeInput=>{
+ let code = (codeInput||"").trim() || new URLSearchParams(location.search).get('c') || new URLSearchParams(location.search).get('code');
+ if(!code) return;
+ code=code.trim();
+ document.getElementById('result').innerHTML="🔍 Auto checking cloud...<br><code>"+code+"</code>";
+ try{
+  let qq=window.q(window.col(window.db,"scans"),window.where("code","==",code));
+  let snap=await window.getDocs(qq);
+  let res=document.getElementById('result');
+  let det=document.getElementById('detail');
+  if(snap.empty){
+   res.className="card red";res.innerHTML=`<h2>❌ FAKE / NOT FOUND</h2><code>${code}</code><br>NOT in CEO Cloud<br>DO NOT BUY!<br><br>📍 GPS ${gpsStr}<br>Auto reported to CEO + SAPS`;
+   det.style.display='none';
+   // AUTO REPORT FAKE
+   if(autoReport){await window.addDoc(window.col(window.db,"fake_scans"),{code,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),ua:navigator.userAgent,createdAt:window.st(),auto:true,location:"auto"});await window.addDoc(window.col(window.db,"dept_saps"),{type:"FAKE_SCAN",code,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st()});await window.addDoc(window.col(window.db,"alerts"),{type:"FAKE_PRODUCT_SCANNED",code,gps:gpsStr,ip:ipStr,createdAt:window.st()});}
+  }else{
+   let d=snap.docs[0].data();
+   let exp=new Date(d.exp);let expired=new Date()>exp;
+   res.className=expired?"card yellow":"card green";
+   res.innerHTML=`<h2>${expired?'⚠️ EXPIRED BUT AUTHENTIC':'✅ AUTHENTIC - TRUSTED'}</h2><b>${d.product}</b><br>Batch ${d.batch}<br>${expired?'EXPIRED':'VALID'}<br><br>📍 Auto GPS ${gpsStr}<br>Auto reported ✅`;
+   det.style.display='block';
+   det.innerHTML=`<b>Code:</b> <code>${d.code}</code><br><b>Product:</b> ${d.product}<br><b>Batch:</b> ${d.batch}<br><b>Exp:</b> ${d.exp}<br><b>Shop:</b> ${d.shop} ${d.branch||''}<br><b>Anti-Hash:</b> <code>${d.antiHash||''}</code><br><b>Factory GPS:</b> ${d.gps||''}<br><b>Your GPS:</b> ${gpsStr}<br><b>Your IP:</b> ${ipStr}<br><div style="color:#16a34a;font-size:9px;margin-top:6px">✓ Verified in qiniso-mark-v4 cloud<br>✓ Auto reported to CEO Dashboard<br>✓ Location auto logged</div>`;
+   if(autoReport){await window.addDoc(window.col(window.db,"verified_scans"),{code,product:d.product,shop:d.shop,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st(),auto:true});await window.addDoc(window.col(window.db,"ppl_scans"),{code,product:d.product,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st()});}
+  }
+ }catch(e){document.getElementById('result').innerHTML="Error: "+e.message;}
+};
+
+// AUTO VERIFY IF URL HAS?c=CODE
+let urlCode=new URLSearchParams(location.search).get('c')||new URLSearchParams(location.search).get('code');
+if(urlCode){setTimeout(()=>doVerify(urlCode),1500);}
+</script>
+</body></html>
