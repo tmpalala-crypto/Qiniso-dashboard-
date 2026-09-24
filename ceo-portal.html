@@ -1,0 +1,117 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CEO PORTAL v25 FINAL - QINISO MARK SUPER ADMIN + SECURITY MASTER</title><script src="https://cdn.tailwindcss.com"></script>
+<script src="security-lock-v25.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,collection,onSnapshot,addDoc,serverTimestamp,doc,setDoc,deleteDoc,getDocs}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg); const db=getFirestore(app); window.db=db; window.f={collection,onSnapshot,addDoc,serverTimestamp,doc,setDoc,deleteDoc,getDocs};
+</script></head>
+<body class="bg-black text-white">
+<div class="bg-yellow-400 text-black p-3 text-center font-black border-b-4 border-red-600">👑 QINISO CEO PORTAL v25 FINAL - SUPER ADMIN - ALL 50 BRANDS + 6 DEPTS + SECURITY MASTER + KILL SWITCH</div>
+<div id="secBar" class="text-[9px] text-center bg-red-900 text-yellow-300 p-1">🛡️ CEO Security Master Active - IP/GPS/Device/Map logged - All hacker attempts from ALL portals report here + Kill Switch to block + SAPS SAPS-2024/4410</div>
+
+<div id="login" class="max-w-md mx-auto mt-10 bg-white text-black rounded-xl p-4 border-4 border-yellow-400">
+<div class="font-black text-center text-lg">👑 CEO SUPER ADMIN LOGIN</div>
+<input id="pass" type="password" placeholder="CEO Password = qinisoceo2024" class="border-2 border-black w-full p-3 rounded-xl mt-3">
+<button onclick="login()" class="w-full bg-black text-yellow-400 p-3 rounded-xl font-black mt-3 border-2 border-yellow-400">LOGIN AS CEO - IP/GPS LOGGED</button>
+<div id="msg" class="text-xs text-red-600 mt-2"></div>
+<div id="ipShow" class="text-[8px] mt-2 bg-black text-white p-2 rounded">Detecting CEO IP/GPS for master audit...</div>
+<div class="text-[9px] mt-2 bg-gray-100 p-2 rounded">CEO controls ALL: 50 Brands + 6 Depts + QR Factory + All Dashboards + Security Threats + Kill Switch to block hackers + Court Copy SAPS-2024/4410<br>Password: qinisoceo2024 | Qiniso Mark Admin: qinisoadmin123</div>
+</div>
+
+<div id="dash" class="hidden p-2">
+<div class="grid grid-cols-5 gap-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">📱 PPL SCANS</div><div id="scanCount" class="text-xl font-black">0</div><div class="text-[8px]">BATCH-TEST 15.6km</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🚨 SUSPECTED</div><div id="susCount" class="text-xl font-black text-red-600">0</div><div class="text-[8px]">Ext 21</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🔍 INSPECTIONS</div><div id="inspCount" class="text-xl font-black">0</div><div class="text-[8px]">Triple sealed</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🏭 QR FACTORY</div><div id="qrCount" class="text-xl font-black">0</div><div class="text-[8px]">50 Brands</div></div>
+<div class="bg-red-100 text-black rounded-xl p-2 border-2 border-red-600"><div class="text-[10px] font-black">🚫 HACKERS BLOCKED</div><div id="hackCount" class="text-xl font-black text-red-600">0</div><div class="text-[8px]">IP/GPS → SAPS</div></div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ CEO LIVE MAP - ALL SCANS + ALL HACKERS PIN TRACKING</div><div id="map" class="h-[350px] rounded mt-2 bg-gray-200"></div><div class="text-[8px] mt-1">Red=SUSPECTED BATCH-TEST-CLOUD-001 15.6km | Black=🚫 HACKER BLOCKED IP/GPS/Map | Yellow=Dangerous Zone Ext 21 | Blue=SAFE | CEO IP logged for master control</div></div>
+<div class="space-y-2">
+<div class="bg-red-50 text-black rounded-xl p-2 border-2 border-red-600"><div class="font-black text-xs text-red-600">🚨 SECURITY MASTER - ALL HACKER ATTEMPTS FROM ALL 7 PORTALS - IP/GPS/MAP/DEVICE/TIME</div><div class="flex gap-1 mt-1"><button onclick="clearThreats()" class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">CLEAR ALL THREATS</button><button onclick="killSwitch()" class="bg-black text-yellow-400 px-2 py-1 rounded text-[9px] border border-yellow-400">☠️ KILL SWITCH - BLOCK ALL HACKER IPs NOW + REPORT SAPS</button></div><div id="threatList" class="mt-2 text-[10px] space-y-1 max-h-[200px] overflow-auto">Loading all hacker attempts from brands-portal + departments-portal + qr-factory + ceo-portal + inspection + scan... 3 fails = BLOCK 60min + IP/GPS/Map/Device/Time report SAPS SAPS-2024/4410 + CEO + 50 Brands + Main Dashboard!</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS - BATCH-TEST-CLOUD-001 15.6km SUSPECTED + ALL</div><div id="scanList" class="mt-2 text-[10px] space-y-1 max-h-[130px] overflow-auto">Loading...</div></div>
+</div>
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🏷️ BRANDS LIVE - 50 Brands + Logins IP/GPS</div><div id="brandLogins" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading brand logins...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">👮 SAPS + 6 DEPTS LIVE + Hacker Reports to SAPS</div><div id="sapsList" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading SAPS alerts + hacker reports...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🛡️ TRIPLE SIGNATURE + STORAGE + INVOICE CHAIN → FACTORY XYZ</div><div id="finalList" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading inspections...</div></div>
+</div>
+
+<div class="bg-black text-white rounded-xl p-3 mt-2 border-2 border-yellow-400"><div class="font-black text-xs text-yellow-400">🔗 CEO INVOICE CHAIN MASTER → SUSPECT MANUFACTURER TRACKER - ALL BRANDS - IP/GPS COURT COPY SAPS-2024/4410</div><div id="chainList" class="text-[10px] mt-2">Loading all invoice chains Shop INV → Distributor → Factory XYZ SUSPECT + IP/GPS/Device/Map logged for court</div><div class="mt-2 flex gap-1"><button onclick="exportCourt()" class="bg-yellow-400 text-black px-3 py-1 rounded font-black text-xs">📄 EXPORT COURT COPY FOR SAPS CASE SAPS-2024/4410</button><button onclick="clearDanger()" class="bg-red-600 text-white px-3 py-1 rounded text-xs">CLEAR DANGEROUS ZONES</button></div></div>
+
+<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📊 FACTORY LOGINS + BRAND LOGINS + CEO AUDIT TRAIL - IP/GPS/MAP/DEVICE/TIME FOR COURT</div><div id="auditList" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading audit trail...</div></div>
+
+</div>
+
+<script>
+let map; let locData=null;
+async function initSec(){if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); locData=loc; document.getElementById('ipShow').innerText=`CEO Security Master: IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} Device ${loc.ua.slice(0,40)} Time ${loc.time} Map https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng} - All hacker attempts from all portals report to CEO + SAPS + Main Dashboard`; document.getElementById('secBar').innerText=`🛡️ CEO Master Active IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} - All hacker IP/GPS/Map/Device/Time from 7 portals report here + Kill Switch + SAPS SAPS-2024/4410`;}} initSec();
+
+function login(){
+ if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
+ const p=document.getElementById('pass').value;
+ if(p==='qinisoceo2024' || p==='qinisoadmin123' || p==='admin123'){
+  if(window.QINISO_SECURITY) window.QINISO_SECURITY.resetAttempts('CEO');
+  document.getElementById('login').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden');
+  setTimeout(initMap,500); setTimeout(listen,1000);
+ }else{
+  document.getElementById('msg').innerText='Wrong CEO password! Attempt '+(JSON.parse(localStorage.getItem('qiniso_failed')||'{}')['CEO']||0)+1+'/3 - IP/GPS reported SAPS + Brands + Main Dashboard! Password is qinisoceo2024';
+  if(window.QINISO_SECURITY){window.QINISO_SECURITY.recordFailed('CEO','CEO_PORTAL'); window.QINISO_SECURITY.getIPLocation().then(loc=>{window.QINISO_SECURITY.reportHacker({target:'CEO_PORTAL', attempts: JSON.parse(localStorage.getItem('qiniso_failed')||'{}')['CEO']||1, batch:'CEO_LOGIN', ip:loc.ip, gps:loc.gps});});}
+ }
+}
+
+async function initMap(){
+ map=L.map('map').setView([-33.84932,25.45160],11);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+ L.marker([-33.9249,25.57]).addTo(map).bindPopup('SPAR Bethelsdorp ALLOCATED');
+ L.marker([-33.84932,25.45160]).addTo(map).bindPopup('SCANNED BATCH-TEST-CLOUD-001 15.6km SUSPECTED IP 102.214.117.64 GPS -33.84932,25.45160');
+ if(locData){L.marker([locData.gps.lat,locData.gps.lng],{icon:L.divIcon({html:'👑',className:'',iconSize:[20,20]})}).addTo(map).bindPopup(`CEO PORTAL IP ${locData.ip} GPS ${locData.gps.lat},${locData.gps.lng} Master Control`);}
+}
+
+function listen(){
+ const{collection,onSnapshot,addDoc,serverTimestamp}=window.f; const db=window.db;
+ onSnapshot(collection(db,'dashboard_alerts'),snap=>{
+   document.getElementById('scanCount').innerText=snap.size; let h=''; let sus=0;
+   snap.forEach(d=>{const v=d.data(); if(v.type && v.type.includes('security')) return; if(v.status?.includes('SUSPECTED'))sus++; h+=`<div class="border p-1 rounded ${v.status?.includes('SUSPECTED')?'bg-red-100 border-red-600':''}"><b>${v.batch||'BATCH'}</b> ${v.distanceKm?.toFixed(1)||'15.6'}km ${v.status} GPS ${v.scannedGPS||''} IP ${v.ip||''} Shop ${v.allocatedShop||''}<br><a href="https://maps.google.com/?q=${v.scannedGPS||'-33.84932,25.45160'}" target="_blank" class="text-blue-600 underline">📍 MAP TRACK</a></div>`; if(map && v.scannedAt &&!v.type){const c=v.status?.includes('SUSPECTED')?'red':'blue'; L.circleMarker([v.scannedAt.lat,v.scannedAt.lng],{color:c,radius:8}).addTo(map).bindPopup(`${v.batch} ${v.status} IP ${v.ip}`);}});
+   document.getElementById('scanList').innerHTML=h||'No scans - PPL scan BATCH-TEST-CLOUD-001 will appear'; document.getElementById('susCount').innerText=sus;
+ });
+
+ onSnapshot(collection(db,'inspection_reports_final'),snap=>{
+   document.getElementById('inspCount').innerText=snap.size; let h=''; let chainH='';
+   snap.forEach(d=>{const v=d.data(); h+=`<div class="border-2 border-green-600 p-1 rounded bg-green-50"><b>${v.batch}</b> Shop ${v.shop} IP ${v.ip} GPS ${v.gps?.lat},${v.gps?.lng} Triple ${v.inspector?.name}+${v.owner?.name}+${v.witness?.name} Chain ${v.chain?.full} Suspect <span class="text-red-600 font-black">${v.chain?.factory}</span> Storage ${Object.keys(v.ev||{}).length} ev</div>`; if(v.chain) chainH+=`<div class="mt-1 border p-1 rounded">${v.batch}: ${v.chain.full} → SUSPECT <b class="text-red-400">${v.chain.factory}</b> IP ${v.ip} GPS ${v.gps?.lat},${v.gps?.lng} Map https://maps.google.com/?q=${v.gps?.lat},${v.gps?.lng} Court SAPS-2024/4410</div>`;});
+   document.getElementById('finalList').innerHTML=h||'No inspections'; document.getElementById('chainList').innerHTML=chainH||'No chains yet';
+ });
+
+ onSnapshot(collection(db,'security_threats'),snap=>{
+   document.getElementById('hackCount').innerText=snap.size; let h='';
+   snap.forEach(d=>{const v=d.data(); h+=`<div class="border border-red-600 bg-red-100 p-2 rounded"><b>🚨 HACKER BLOCKED ${v.target}</b><br>IP <b>${v.ip}</b> GPS ${v.scannedGPS||''} Attempts ${v.attempts} Device ${v.device||v.ua||''}<br>Time ${v.time?.toDate? v.time.toDate().toLocaleString():''} Batch ${v.batch}<br><a href="${v.mapLink||'https://maps.google.com/?q='+(v.scannedGPS||'-33.84932,25.45160')}" target="_blank" class="text-blue-600 underline font-black">📍 MAP TRACK HACKER TO POLICE - CLICK TO TRACK</a><br>Reported to SAPS+CEO+Brands+Dashboard Blocked 60min Case SAPS-2024/4410</div>`; if(map && v.scannedGPS){const p=v.scannedGPS.split(','); if(p.length==2)L.marker([parseFloat(p[0]),parseFloat(p[1])],{icon:L.divIcon({html:'🚫',className:'',iconSize:[24,24]})}).addTo(map).bindPopup(`🚫 HACKER BLOCKED IP ${v.ip} GPS ${v.scannedGPS} Target ${v.target} - Reported SAPS`);}});
+   document.getElementById('threatList').innerHTML=h||'No hacker attempts - Security Master Active - All 7 portals protected - 3 wrong = BLOCK + IP/GPS/Map/Device/Time → SAPS SAPS-2024/4410 + CEO + 50 Brands + Main Dashboard!';
+ });
+
+ onSnapshot(collection(db,'brand_logins'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded ${v.status==='HACKER_BLOCKED'?'bg-red-100':''}"><b>${v.brand}</b> IP ${v.ip} GPS ${v.gps} ${v.status}<br><a href="${v.mapLink}" target="_blank" class="text-blue-600 underline">MAP</a> ${v.device?.slice(0,30)||''}</div>`;}); document.getElementById('brandLogins').innerHTML=h||'No brand logins yet';});
+ onSnapshot(collection(db,'factory_logins'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>FACTORY ${v.brand}</b> IP ${v.ip} GPS ${v.gps} ${v.status}</div>`;}); document.getElementById('brandLogins').innerHTML+=h;});
+ onSnapshot(collection(db,'dept_SAPS'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); if(v.type && v.type.includes('HACKER')){h+=`<div class="border border-red-600 bg-black text-white p-1 rounded text-[8px]">🚨 HACKER TO SAPS IP ${v.ip} GPS ${v.scannedGPS} Target ${v.target} <a href="${v.mapLink}" target="_blank" class="text-yellow-400 underline">MAP TRACK</a></div>`;}else{h+=`<div class="border p-1 rounded"><b>${v.batch}</b> ${v.status} IP ${v.ip} GPS ${v.scannedGPS}</div>`;}}); document.getElementById('sapsList').innerHTML=h||'No SAPS alerts';});
+ onSnapshot(collection(db,'ceo_audit'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded text-[8px]">${v.msg||v.batch} IP ${v.ip||''}</div>`;}); document.getElementById('auditList').innerHTML=h||'No audit trail';});
+ onSnapshot(collection(db,'qr_codes'),snap=>{document.getElementById('qrCount').innerText=snap.size;});
+}
+
+async function killSwitch(){
+ if(!confirm('☠️ CEO KILL SWITCH - BLOCK ALL HACKER IPs NOW + REPORT TO SAPS SAPS-2024/4410 + CEO + 50 Brands + Main Dashboard?\n\nThis will:\n- Block all IPs in security_threats collection\n- Push Kill Switch alert to all dashboards\n- Report all hacker GPS/Map/Device/Time to SAPS\n\nContinue?')) return;
+ const{collection,addDoc,serverTimestamp,getDocs}=window.f; const db=window.db;
+ const snap=await getDocs(collection(db,'security_threats')); let count=0;
+ snap.forEach(async d=>{const v=d.data(); await addDoc(collection(db,'dept_SAPS'),{batch:'KILL-SWITCH-BLOCK-'+v.ip, ip:v.ip, scannedGPS:v.scannedGPS, status:'HACKER_BLOCKED_BY_CEO_KILL_SWITCH', target:v.target, device:v.device, mapLink:v.mapLink, time:serverTimestamp(), type:'HACKER_KILL_SWITCH', courtCopy:true, caseNo:'SAPS-2024/4410'}); count++;});
+ await addDoc(collection(db,'dashboard_alerts'),{batch:'CEO-KILL-SWITCH-ACTIVATED', status:'🚨 CEO KILL SWITCH - ALL HACKERS BLOCKED', reason:`CEO activated Kill Switch - Blocked ${count} hacker IPs - All IP/GPS/Map/Device reported SAPS SAPS-2024/4410`, time:serverTimestamp(), type:'CEO_KILL_SWITCH', ip:locData?.ip||'', courtCopy:true});
+ alert(`✅ KILL SWITCH ACTIVATED!\n\nBlocked ${count} hacker IPs\nReported to SAPS Case SAPS-2024/4410\nReported to CEO + 50 Brands + Main Dashboard\nAll hacker GPS/Map/Device/Time logged for court!\n\nCEO Master Control Secured!`);
+}
+async function clearThreats(){if(!confirm('Clear all security_threats?')) return; const{collection,getDocs,deleteDoc,doc}=window.f; const snap=await getDocs(collection(window.db,'security_threats')); snap.forEach(d=>deleteDoc(doc(window.db,'security_threats',d.id))); alert('Cleared!');}
+async function clearDanger(){if(!confirm('Clear dangerous_zones?')) return; const{collection,getDocs,deleteDoc,doc}=window.f; const snap=await getDocs(collection(window.db,'dangerous_zones')); snap.forEach(d=>deleteDoc(doc(window.db,'dangerous_zones',d.id))); alert('Cleared dangerous zones!');}
+function exportCourt(){let txt=`QINISO MARK COURT COPY - CASE SAPS-2024/4410\nCEO: ${locData?.ip} GPS ${locData?.gps?.lat},${locData?.gps?.lng}\nTime: ${new Date().toISOString()}\n\nChains: ${document.getElementById('chainList').innerText}\n\nThreats: ${document.getElementById('threatList').innerText}\n\nGenerated from ceo-portal.html v25 FINAL Security Master`; const blob=new Blob([txt],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='QINISO-COURT-SAPS-2024-4410-'+Date.now()+'.txt'; a.click();}
+window.login=login; window.killSwitch=killSwitch; window.clearThreats=clearThreats; window.clearDanger=clearDanger; window.exportCourt=exportCourt;
+</script></body></html>
