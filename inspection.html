@@ -1,80 +1,37 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO ACTIVE SCAN</title>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,query,where,getDocs,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
-const app=initializeApp(cfg);const db=getFirestore(app);
-window.db=db;window.col=collection;window.q=query;window.where=where;window.getDocs=getDocs;window.addDoc=addDoc;window.st=serverTimestamp;
-</script>
-<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#020617;color:#fff;padding:8px;text-align:center}.card{background:#fff;color:#000;border-radius:14px;padding:12px;margin:8px auto;max-width:500px}#reader{width:100%;border-radius:12px;overflow:hidden}.green{background:#16a34a;color:#fff}.red{background:#dc2626;color:#fff}.yellow{background:#f59e0b;color:#000}.small{font-size:9px;color:#94a3b8}</style></head><body>
-<h2>🟢 QINISO ACTIVE SCAN</h2><p class="small">Camera auto scans + GPS auto + Auto report to CEO</p>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QINISO MARK - SAPS Inspection</title>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<style>
+body{font-family:Arial;background:#f1f5f9;margin:0;padding:10px}
+.card{background:white;border-radius:15px;padding:20px;margin:10px 0;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
+input,select,textarea{width:95%;padding:14px;margin:8px 0;border-radius:10px;border:2px solid #ddd;font-size:16px}
+.btn{width:100%;padding:16px;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin:6px 0}
+.blue{background:#1e40af;color:white}.red{background:#dc2626;color:white}.green{background:#16a34a;color:white}
+#mapLink{color:blue;word-break:break-all}
+@media print{.noPrint{display:none} body{background:white}}
+</style>
+</head>
+<body>
+<h2>📋 QINISO MARK - INSPECTION REPORT (SAPS)</h2>
 
-<div class="card"><div id="reader"></div><div class="small">Point camera to QR - Auto scan active</div><input id="manual" placeholder="Or type code: QIN-..." style="width:100%;padding:10px;border-radius:8px;border:1px solid #ccc;margin-top:6px"><button onclick="doVerify(document.getElementById('manual').value)" style="width:100%;padding:10px;background:#000;color:#fff;border-radius:8px;margin-top:4px">VERIFY TYPED CODE</button></div>
+<div class="card">
+<h3>📍 Auto-Trace (Cannot be faked)</h3>
+<p><b>Code:</b> <span id="code">Loading...</span></p>
+<p><b>IP:</b> <span id="ip">Loading...</span></p>
+<p><b>GPS:</b> <span id="gps">Loading...</span></p>
+<p><b>Location:</b> <span id="addr">Loading...</span></p>
+<p><b>Map:</b> <a id="mapLink" href="#" target="_blank">Open Google Maps</a></p>
+<p><b>Date:</b> <span id="date"></span></p>
+</div>
 
-<div id="status" class="card" style="background:#0f172a;color:#fff">📍 Getting location...<br><span id="gpsTxt">GPS: waiting</span><br><span id="ipTxt">IP: waiting</span><br><span id="autoTxt">Auto report: Ready</span></div>
-
-<div id="result" class="card">Waiting for scan...</div>
-<div id="detail" class="card" style="display:none;text-align:left"></div>
-
-<script type="module">
-let gpsStr="denied", ipStr="unknown", scanning=false;
-let autoReport=true;
-
-// AUTO LOCATION - Starts immediately
-navigator.geolocation.watchPosition(pos=>{
- gpsStr=pos.coords.latitude.toFixed(6)+","+pos.coords.longitude.toFixed(6);
- document.getElementById('gpsTxt').textContent="GPS: "+gpsStr+" ✅ AUTO";
- localStorage.setItem('qiniso_last_gps',gpsStr);
-},{err=>{document.getElementById('gpsTxt').textContent="GPS: denied - enable location";gpsStr="denied-"+err.message;}}, {enableHighAccuracy:true});
-
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ipStr=d.ip;document.getElementById('ipTxt').textContent="IP: "+ipStr+" ✅ AUTO";}).catch(()=>{document.getElementById('ipTxt').textContent="IP: fetch failed"});
-
-// ACTIVE SCANNER - Auto starts camera
-let html5Qr = new Html5Qrcode("reader");
-let config={fps:10, qrbox:{width:250,height:250}};
-html5Qr.start({facingMode:"environment"}, config, onScanSuccess, onScanFail).then(()=>{document.getElementById('autoTxt').textContent="Auto report: CAMERA ACTIVE ✅";}).catch(e=>{document.getElementById('autoTxt').textContent="Camera failed: "+e+" - Use manual";});
-
-function onScanSuccess(decodedText){
- if(scanning) return;
- scanning=true;
- document.getElementById('result').innerHTML="✅ QR Detected: "+decodedText+"<br>Auto verifying...";
- // beep
- try{new Audio('https://actions.google.com/sounds/v1/cartoon/pop.ogg').play();}catch(e){}
- doVerify(decodedText);
- setTimeout(()=>scanning=false,3000);
-}
-function onScanFail(err){}
-
-window.doVerify=async(codeInput=>{
- let code = (codeInput||"").trim() || new URLSearchParams(location.search).get('c') || new URLSearchParams(location.search).get('code');
- if(!code) return;
- code=code.trim();
- document.getElementById('result').innerHTML="🔍 Auto checking cloud...<br><code>"+code+"</code>";
- try{
-  let qq=window.q(window.col(window.db,"scans"),window.where("code","==",code));
-  let snap=await window.getDocs(qq);
-  let res=document.getElementById('result');
-  let det=document.getElementById('detail');
-  if(snap.empty){
-   res.className="card red";res.innerHTML=`<h2>❌ FAKE / NOT FOUND</h2><code>${code}</code><br>NOT in CEO Cloud<br>DO NOT BUY!<br><br>📍 GPS ${gpsStr}<br>Auto reported to CEO + SAPS`;
-   det.style.display='none';
-   // AUTO REPORT FAKE
-   if(autoReport){await window.addDoc(window.col(window.db,"fake_scans"),{code,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),ua:navigator.userAgent,createdAt:window.st(),auto:true,location:"auto"});await window.addDoc(window.col(window.db,"dept_saps"),{type:"FAKE_SCAN",code,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st()});await window.addDoc(window.col(window.db,"alerts"),{type:"FAKE_PRODUCT_SCANNED",code,gps:gpsStr,ip:ipStr,createdAt:window.st()});}
-  }else{
-   let d=snap.docs[0].data();
-   let exp=new Date(d.exp);let expired=new Date()>exp;
-   res.className=expired?"card yellow":"card green";
-   res.innerHTML=`<h2>${expired?'⚠️ EXPIRED BUT AUTHENTIC':'✅ AUTHENTIC - TRUSTED'}</h2><b>${d.product}</b><br>Batch ${d.batch}<br>${expired?'EXPIRED':'VALID'}<br><br>📍 Auto GPS ${gpsStr}<br>Auto reported ✅`;
-   det.style.display='block';
-   det.innerHTML=`<b>Code:</b> <code>${d.code}</code><br><b>Product:</b> ${d.product}<br><b>Batch:</b> ${d.batch}<br><b>Exp:</b> ${d.exp}<br><b>Shop:</b> ${d.shop} ${d.branch||''}<br><b>Anti-Hash:</b> <code>${d.antiHash||''}</code><br><b>Factory GPS:</b> ${d.gps||''}<br><b>Your GPS:</b> ${gpsStr}<br><b>Your IP:</b> ${ipStr}<br><div style="color:#16a34a;font-size:9px;margin-top:6px">✓ Verified in qiniso-mark-v4 cloud<br>✓ Auto reported to CEO Dashboard<br>✓ Location auto logged</div>`;
-   if(autoReport){await window.addDoc(window.col(window.db,"verified_scans"),{code,product:d.product,shop:d.shop,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st(),auto:true});await window.addDoc(window.col(window.db,"ppl_scans"),{code,product:d.product,gps:gpsStr,ip:ipStr,time:new Date().toISOString(),createdAt:window.st()});}
-  }
- }catch(e){document.getElementById('result').innerHTML="Error: "+e.message;}
-};
-
-// AUTO VERIFY IF URL HAS?c=CODE
-let urlCode=new URLSearchParams(location.search).get('c')||new URLSearchParams(location.search).get('code');
-if(urlCode){setTimeout(()=>doVerify(urlCode),1500);}
-</script>
-</body></html>
+<div class="card">
+<h3>🏪 Shop Details</h3>
+<input id="shopName" placeholder="Shop Name e.g Boxer Uitenhage">
+<input id="shopOwner" placeholder="Owner Name">
+<input id="shopPhone
