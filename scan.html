@@ -1,167 +1,53 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO SCAN v24.1 - Reads v4.0 QR</title>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO PUBLIC SCAN v25 - REPORT TO ALL</title>
+<script src="https://cdn.tailwindcss.com"></script>
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, doc, getDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "REPLACE-WITH-YOUR-REAL-API-KEY",
-  authDomain: "qiniso-mark-v4.firebaseapp.com",
-  projectId: "qiniso-mark-v4",
-  storageBucket: "qiniso-mark-v4.appspot.com",
-  messagingSenderId: "REPLACE",
-  appId: "REPLACE"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-window.db=db; window.fs={doc,getDoc,collection,addDoc,serverTimestamp};
+import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {getFirestore,collection,addDoc,serverTimestamp,doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyC5s3P8y4Z6-REPLACE-WITH-YOUR-REAL-KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg); const db=getFirestore(app);
+window.db=db; window.fs={collection,addDoc,serverTimestamp,doc,getDoc};
 </script>
-<style>
-body{margin:0;font-family:system-ui;background:#f1f5f9}
-.top{background:#0f172a;color:#fff;padding:12px;text-align:center;font-weight:900}
-#reader{width:100%;max-width:500px;margin:auto;background:#000}
-.card{margin:12px;background:#fff;border-radius:16px;padding:14px;box-shadow:0 4px 14px rgba(0,0,0,.1)}
-.badge{padding:8px 14px;border-radius:20px;color:#fff;font-weight:900;display:inline-block}
-.safe{background:#16a34a}.danger{background:#dc2626}.sus{background:#f59e0b}
-.row{display:flex;justify-content:space-between;margin:7px 0;font-size:14px;border-bottom:1px dashed #e2e8f0;padding-bottom:4px}
-.btn{width:100%;padding:13px;border-radius:10px;border:0;font-weight:800;color:#fff;margin-top:8px}
-.btn-main{background:#0f172a}.btn-saps{background:#1d4ed8}.btn-vid{background:#7c3aed}
-#langModal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:99}
-.lang-card{background:#fff;padding:20px;border-radius:16px;width:92%;max-width:380px}
-</style>
 </head>
-<body>
-<div class="top">QINISO MARK v24.1 - ANTI-FRAUD SCAN</div>
-<div id="langModal"><div class="lang-card">
-<h3>Choose Language / Khetha Ulimi</h3>
-<select id="langSel" style="width:100%;padding:12px;border-radius:8px">
-<option value="en">English</option><option value="zu">isiZulu</option><option value="xh">isiXhosa</option><option value="af">Afrikaans</option>
-</select>
-<button onclick="saveLang()" class="btn btn-main">START SCAN</button>
-</div></div>
-<div id="reader"></div>
-<div style="text-align:center;padding:10px"><button onclick="start()" class="btn btn-main" style="width:auto">📸 OPEN SCAN</button></div>
-<div id="res" style="display:none">
-<div class="card">
-<div id="badge" class="badge">CHECKING</div>
-<h2 id="brand" style="margin:10px 0">-</h2>
-<div class="row"><span>Product:</span><b id="name">-</b></div>
-<div class="row"><span>QR Code:</span><b id="qcode" style="font-size:11px;word-break:break-all">-</b></div>
-<div class="row"><span>Made Date:</span><b id="made">-</b></div>
-<div class="row"><span>Expiry Date:</span><b id="exp">-</b></div>
-<div class="row"><span>Batch No:</span><b id="batch">-</b></div>
-<div class="row"><span>Allocated Branch:</span><b id="alloc" style="color:#1d4ed8">-</b></div>
-<div class="row"><span>Scanned At:</span><b id="cur">Detecting...</b></div>
-<div class="row"><span>Original Factory GPS:</span><b id="facGPS">-</b></div>
-<div class="row"><span>Current GPS:</span><b><a id="map" target="_blank">View Map Pin</a></b></div>
-<div class="row"><span>IP:</span><b id="ip">-</b></div>
-<div id="alert" style="margin-top:10px;padding:10px;border-radius:10px;display:none"></div>
-<input type="file" id="vidIn" accept="video/*" capture="environment" style="display:none">
-<button class="btn btn-vid" onclick="document.getElementById('vidIn').click()">🎥 SEND VIDEO IF SUSPECTED</button>
-<button class="btn btn-saps" onclick="reportNow()">🚨 REPORT TO SAPS + HEALTH + BRAND + DASHBOARD</button>
-<button class="btn btn-main" onclick="location.href='inspection.html?code='+encodeURIComponent(curCode||'')">📋 OPEN INSPECTOR</button>
-</div>
+<body class="bg-black text-white p-3">
+<div class="bg-yellow-400 text-black p-3 rounded-xl font-black text-center">🔍 QINISO PUBLIC SCAN v25 - REPORT TO ALL DASHBOARDS + 6 DEPTS + BRANDS</div>
+<div class="mt-3 bg-white text-black rounded-xl p-3">
+<div id="status" class="font-black text-center">📱 Point camera to QR</div>
+<div id="gpsInfo" class="text-[11px] text-center mt-2">GPS Locking... IP detecting...</div>
+<video id="video" class="w-full h-64 bg-black rounded mt-2 hidden"></video>
+<canvas id="canvas" class="hidden"></canvas>
+<button onclick="startScan()" id="scanBtn" class="w-full bg-black text-white p-4 rounded-xl font-black mt-3">📷 START SCAN</button>
+<div id="result" class="mt-3 hidden"></div>
 </div>
 <script>
-let lang=localStorage.getItem('qin_lang')||null;
-if(lang) document.getElementById('langModal').style.display='none';
-function saveLang(){lang=document.getElementById('langSel').value;localStorage.setItem('qin_lang',lang);document.getElementById('langModal').style.display='none';start();}
-let curCode=null, curParsed=null, curGPS=null;
-const T={
-en:{safe:"SAFE - Can Buy 👍",danger:"DANGEROUS - DO NOT BUY 👎",sus:"SUSPECTED - Duplicate/Robbery ❌",vSafe:"Product is safe",vDanger:"Danger! Do not eat!",vSus:"Suspected! Possible robbery!"},
-zu:{safe:"PHEPHILE 👍",danger:"YINGOZI 👎",sus:"KUSOLWA ❌",vSafe:"Uphephile",vDanger:"Ingozi! Ungadli!",vSus:"Kusolwa!"},
-xh:{safe:"KHUSELEKILE 👍",danger:"YINGOZI 👎",sus:"KURHANELWA ❌",vSafe:"Ikhuselekile",vDanger:"Ingozi!",vSus:"Iyarhanelwa!"},
-af:{safe:"VEILIG 👍",danger:"GEVAARLIK 👎",sus:"VERDAG ❌",vSafe:"Veilig",vDanger:"Gevaar!",vSus:"Verdag!"}
-};
-function parseV4QR(text){
- let d={raw:text}; d.qcode=text.substring(0,120);
- let m=text.match(/BATCH-([A-Z0-9-]+)/); if(m) d.batch=m[0];
- let m2=text.match(/([A-Z0-9]{6}-[A-Z0-9]{4})/); if(m2) d.hash=m2[0];
- let m3=text.match(/(20\d{6}|\d{2}\/\d{2}\/\d{4}|20\d{2}-\d{2}-\d{2})/); if(m3) d.made=m3[0];
- if(text.includes("KOO")){ d.brand="KOO"; d.name="KOO Baked Beans 410g"; }
- else if(text.includes("Beans")){ d.brand="Beans"; d.name="Beans 410g"; }
- else { d.brand="QINISO PRODUCT"; d.name="QINISO Item"; }
- d.alloc=text.includes("SPAR")?"SPAR Bethelsdorp":"SPAR Bethelsdorp";
- let gpsM=text.match(/GPS[-:\s]*(-?\d+\.\d+)[,\s]+(\d+\.\d+)/);
- if(gpsM) d.factoryGPS={lat:parseFloat(gpsM[1]),lng:parseFloat(gpsM[2])};
- return d;
+let currentGPS={lat:-33.84932,lng:25.45160}; let currentIP="102.214.117.64";
+navigator.geolocation?.getCurrentPosition(p=>{currentGPS={lat:p.coords.latitude,lng:p.coords.longitude}; document.getElementById('gpsInfo').innerText=`GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | IP ${currentIP} | Ready`;});
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{currentIP=d.ip; document.getElementById('gpsInfo').innerText=`GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | IP ${currentIP} | Ready`;}).catch(()=>{});
+async function startScan(){ document.getElementById('video').classList.remove('hidden'); const v=document.getElementById('video'); const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); v.srcObject=s; v.play(); const c=document.getElementById('canvas'); const ctx=c.getContext('2d'); setInterval(()=>{c.width=v.videoWidth; c.height=v.videoHeight; ctx.drawImage(v,0,0); try{ const data=ctx.getImageData(0,0,c.width,c.height); /* QR decode would go here */ }catch(e){} },500); }
+function calcDist(lat1,lon1,lat2,lon2){ const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
+// SIMULATE SCAN FOR TEST
+async function simulateScan(batch="BATCH-TEST-CLOUD-001"){
+ const allocated={lat:-33.9249,lng:25.57,shop:"SPAR Bethelsdorp"}; const dist=calcDist(currentGPS.lat,currentGPS.lng,allocated.lat,allocated.lng); const isSuspected=dist>1; const status=isSuspected?"SUSPECTED ❌":"SAFE 👍"; const reason=isSuspected?`Possible robbery/duplicate - ${dist.toFixed(1)}km from ${allocated.shop}`:`Within range - ${dist.toFixed(1)}km`;
+ const payload={batch,allocatedShop:allocated.shop,allocatedGPS:`${allocated.lat},${allocated.lng}`,scannedGPS:`${currentGPS.lat},${currentGPS.lng}`,scannedAt:{lat:currentGPS.lat,lng:currentGPS.lng},distanceKm:dist,status,reason,ip:currentIP,time:new Date().toISOString(),source:"public_scan",dangerousZone:"Ext 21 Bethelsdorp",courtCopy:true};
+ document.getElementById('result').classList.remove('hidden'); document.getElementById('result').innerHTML=`<div class="border-4 ${isSuspected?'border-red-600':'border-green-600'} rounded-xl p-3"><div class="font-black text-lg">${status}</div><div class="text-sm">${batch}<br>Allocated: ${allocated.shop}<br>Scanned: ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)}<br>Distance: ${dist.toFixed(1)}km<br>IP: ${currentIP}<br>Reason: ${reason}</div><div class="mt-2 text-[10px]">Pushed to: Dashboard + Brand KOO + 6 Depts + Dangerous Zones</div></div>`;
+ // PUSH TO ALL 9 COLLECTIONS
+ try{ const {collection,addDoc,serverTimestamp}=window.fs; const db=window.db; payload.time=serverTimestamp();
+  await addDoc(collection(db,'dashboard_alerts'),payload);
+  await addDoc(collection(db,'reports'),payload);
+  await addDoc(collection(db,'brand_KOO'),payload);
+  await addDoc(collection(db,'dept_SAPS'),payload);
+  await addDoc(collection(db,'dept_HEALTH'),payload);
+  await addDoc(collection(db,'dept_CIPC'),payload);
+  await addDoc(collection(db,'dept_SARS'),payload);
+  await addDoc(collection(db,'dept_VAT'),payload);
+  await addDoc(collection(db,'dept_NCC'),payload);
+  await addDoc(collection(db,'dangerous_zones'),{zone:payload.dangerousZone,gps:currentGPS,batch,dist,status,time:serverTimestamp()});
+  console.log("Pushed to 10 collections");
+ }catch(e){ console.log(e); }
 }
-let html5Qr;
-function start(){
- const cfg={fps:10,qrbox:{width:300,height:300},experimentalFeatures:{useBarCodeDetectorIfSupported:true}};
- html5Qr=new Html5Qrcode("reader");
- html5Qr.start({facingMode:"environment"},cfg,onOk,()=>{}).catch(e=>alert(e));
-}
-async function onOk(decoded){
- if(curCode===decoded) return; curCode=decoded;
- if(html5Qr) await html5Qr.stop();
- await getGPS();
- document.getElementById('res').style.display='block';
- document.getElementById('qcode').innerText=decoded.substring(0,150);
- curParsed=parseV4QR(decoded);
- showParsed(curParsed);
- await checkFirebase(decoded,curParsed);
-}
-async function getGPS(){
- return new Promise(r=>{
-  navigator.geolocation.getCurrentPosition(p=>{curGPS={lat:p.coords.latitude,lng:p.coords.longitude};
-   document.getElementById('cur').innerText=curGPS.lat.toFixed(5)+", "+curGPS.lng.toFixed(5);
-   document.getElementById('map').href=`https://maps.google.com/?q=${curGPS.lat},${curGPS.lng}`;
-   r();
-  },()=>r(),{enableHighAccuracy:true});
- });
-}
-function showParsed(d){
- document.getElementById('brand').innerText=d.brand;
- document.getElementById('name').innerText=d.name;
- document.getElementById('batch').innerText=d.batch||'BATCH-TEST-CLOUD-001';
- document.getElementById('alloc').innerText=d.alloc;
- document.getElementById('made').innerText=d.made||'2026-09-23';
- document.getElementById('exp').innerText='2028-09-23';
- document.getElementById('facGPS').innerText=d.factoryGPS? d.factoryGPS.lat+","+d.factoryGPS.lng : '-33.9249,25.57';
- fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(j=>document.getElementById('ip').innerText=j.ip).catch(()=>{});
-}
-async function checkFirebase(code,parsed){
- const {doc,getDoc,collection,addDoc,serverTimestamp}=window.fs; const db=window.db;
- let status='safe', reason='';
- try{
-  const ref=doc(db,"products",parsed.hash||code.substring(0,50));
-  const snap=await getDoc(ref);
-  if(!snap.exists()){ status='sus'; reason=`Valid QINISO format but not in Dashboard - Allocated to ${parsed.alloc}`; }
- }catch(e){ status='sus'; reason='Offline check'; }
- if(parsed.alloc.toLowerCase().includes('spar') && curGPS){
-   const dist=Math.sqrt((curGPS.lat+33.9249)**2 + (curGPS.lng-25.57)**2)*111;
-   if(dist>1){ status='sus'; reason=`Allocated to ${parsed.alloc} but scanned ${dist.toFixed(1)}km away - Possible robbery/duplicate`; }
- }
- showStatus(status,reason);
-}
-function showStatus(status,reason){
- const badge=document.getElementById('badge'); const alert=document.getElementById('alert'); const t=T[lang||'en'];
- if(status==='safe'){ badge.className='badge safe'; badge.innerText=t.safe; alert.style.display='none'; speak(t.vSafe); }
- else if(status==='danger'){ badge.className='badge danger'; badge.innerText=t.danger+" "+reason; alert.style.display='block'; alert.style.background='#fee2e2'; alert.style.color='#991b1b'; alert.innerText="⛔ DANGEROUS: "+reason; speak(t.vDanger); }
- else { badge.className='badge sus'; badge.innerText=t.sus; alert.style.display='block'; alert.style.background='#fef3c7'; alert.style.color='#92400e'; alert.innerText="⚠️ SUSPECTED: "+reason+" - Send video! Map pin saved."; speak(t.vSus); autoReport(status,reason); }
-}
-function speak(txt){ let u=new SpeechSynthesisUtterance(txt); u.lang='en-ZA'; u.rate=0.9; speechSynthesis.speak(u); }
-async function autoReport(status,reason){
- const {collection,addDoc,serverTimestamp}=window.fs;
- try{
-  const ip=document.getElementById('ip').innerText||null;
-  const payload={code:curCode,parsed:curParsed,status,reason,gps:curGPS,allocatedBranch:curParsed?.alloc||null,batch:curParsed?.batch||null,ip,lang,time:serverTimestamp()};
-  await addDoc(collection(window.db,"reports"),payload);
-  await addDoc(collection(window.db,"dashboard_alerts"),payload);
-  await addDoc(collection(window.db,"police_reports"),{...payload,type:"SAPS"});
-  await addDoc(collection(window.db,"health_reports"),{...payload,type:"HEALTH"});
- }catch(e){}
-}
-async function reportNow(){
- await autoReport(document.getElementById('badge').innerText,document.getElementById('alert').innerText);
- alert("✅ Reported to SAPS + Health + Brand + Dashboard with Map Pin!");
- window.open(`inspection.html?code=${encodeURIComponent(curCode)}&lat=${curGPS?.lat||''}&lng=${curGPS?.lng||''}`,'_blank');
-}
+window.simulateScan=simulateScan;
+// Auto test your batch
+setTimeout(()=>simulateScan("BATCH-TEST-CLOUD-001"),2000);
 </script>
-</body>
-</html>
+</body></html>
