@@ -1,16 +1,53 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO CEO CLOUD v4</title>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO CIO CLOUD DASHBOARD v25 - LIVE</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,orderBy,query,onSnapshot,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
-const app=initializeApp(cfg);const db=getFirestore(app);
-window.db=db;window.col=collection;window.q=query;window.orderBy=orderBy;window.onSnapshot=onSnapshot;window.addDoc=addDoc;window.serverTimestamp=serverTimestamp;
-if(new URLSearchParams(location.search).get('unlock')==='QINISO2024!'){localStorage.clear();alert('UNLOCKED!');location.href='./';}
-</script>
-<style>*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui}body{background:#0f172a;color:#fff;padding:12px}.card{background:#fff;color:#000;border-radius:12px;padding:12px;margin:8px 0}.btn{border:0;border-radius:10px;padding:10px;font-weight:800;width:100%;cursor:pointer}.btn-blue{background:#1d4ed8;color:#fff}.item{background:#f8fafc;padding:8px;margin:6px 0;border-radius:8px;border-left:5px solid #16a34a}</style></head><body>
-<div style="font-weight:900;font-size:20px">🛡️ QINISO CEO CLOUD DASHBOARD v4.0 LIVE</div><div style="font-size:10px;color:#93c5fd">Firestore: qiniso-mark-v4 | Collection: scans | No Block Shield</div>
-<div id="login" class="card" style="max-width:400px;margin:20px auto"><h3>CEO LOGIN</h3><input id="p" type="password" placeholder="QINISO2024!" style="width:100%;padding:10px;margin:6px 0;border:1px solid #cbd5e1;border-radius:8px"><button class="btn btn-blue" onclick="if(document.getElementById('p').value==='QINISO2024!'){document.getElementById('login').style.display='none';document.getElementById('dash').style.display='block';load();}else alert('Wrong!')">LOGIN CLOUD</button><div style="font-size:10px;margin-top:6px">If blocked, add ?unlock=QINISO2024! to URL</div></div>
-<div id="dash" style="display:none"><div class="card">☁️ Cloud QR Total: <b id="cnt">0</b> | Shops: <b id="shops">0</b> | <span id="status">Connecting...</span></div><div id="feed"></div><button class="btn btn-blue" onclick="location.href='qr-factory.html'">+ Go to QR Factory</button></div>
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import{getFirestore,collection,onSnapshot,query,orderBy,limit}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const cfg={apiKey:"AIzaSyC5s3P8y4Z6-YOUR-REAL-KEY-REPLACE",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const app=initializeApp(cfg); const db=getFirestore(app);
+window.db=db; window.f={collection,onSnapshot,query,orderBy,limit};
+</script></head>
+<body class="bg-[#0a0e1a] text-white">
+<div class="bg-black p-3 border-b-4 border-yellow-400 flex justify-between items-center">
+<div><div class="font-black text-yellow-400">🛡️ QINISO CIO CLOUD DASHBOARD v25 LIVE</div><div class="text-[9px] text-gray-400">PPL SCAN BATCH-TEST-CLOUD-001 15.6km | IP 102.214.117.64 | GPS -33.84932,25.45160 | SAPS-2024/4410</div></div>
+<div class="text-right text-[10px]"><div class="bg-red-600 px-2 py-1 rounded">15 SUSPECTED Ext 21</div><div class="mt-1">Dangerous Zone Live</div></div>
+</div>
+
+<div class="grid grid-cols-3 gap-2 p-2">
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📱 PPL SCANS</div><div id="scanCount" class="text-2xl font-black">0</div><div class="text-[9px]">From scan.html v25 - All 10 collections</div></div>
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🔍 INSPECTIONS</div><div id="inspCount" class="text-2xl font-black">0</div><div class="text-[9px]">Triple signature sealed</div></div>
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🚨 SUSPECTED</div><div id="susCount" class="text-2xl font-black text-red-600">0</div><div class="text-[9px]">15.6km from SPAR Bethelsdorp</div></div>
+</div>
+
+<div class="p-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ LIVE MAP - GPS -33.84932,25.45160 + IP 102.214.117.64</div><div id="map" class="h-[300px] rounded mt-2 bg-gray-200"></div><div class="text-[9px] mt-1">Red pin = SUSPECTED BATCH-TEST-CLOUD-001 15.6km away | Blue = SAFE | Yellow = Dangerous Zone Ext 21</div></div>
+<div class="space-y-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🚨 DANGEROUS ZONES - Ext 21 Bethelsdorp</div><div id="dangerList" class="mt-2 text-xs space-y-1 max-h-[140px] overflow-auto">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS - BATCH-TEST-CLOUD-001</div><div id="scanList" class="mt-2 text-[11px] space-y-1 max-h-[140px] overflow-auto">Loading...</div></div>
+</div>
+</div>
+
+<div class="p-2 grid grid-cols-1 md:grid-cols-3 gap-2">
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🏷️ BRAND KOO ALERTS</div><div id="brandList" class="text-[10px] mt-2">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">👮 SAPS LIVE</div><div id="sapsList" class="text-[10px] mt-2">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🛡️ TRIPLE SIGNATURE INSPECTIONS</div><div id="finalList" class="text-[10px] mt-2">Loading...</div></div>
+</div>
+
+<div class="p-2 bg-black rounded-xl m-2 border-yellow-400">
+<div class="font-black text-yellow-400 text-xs">🔗 INVOICE CHAIN → SUSPECT MANUFACTURER TRACKER</div>
+<div id="chainList" class="text-[10px] mt-2 text-white">Loading invoice chains from inspections... Shop INV → Distributor → Factory XYZ (SUSPECT)</div>
+</div>
+
 <script>
-function load(){let qq=window.q(window.col(window.db,"scans"),window.orderBy("createdAt","desc"));window.onSnapshot(qq,(snap)=>{let arr=[];snap.forEach(d=>arr.push(d.data()));document.getElementById('cnt').textContent=arr.length;let s=new Set(arr.map(x=>x.shop));document.getElementById('shops').textContent=s.size;document.getElementById('status').textContent='LIVE CLOUD '+new Date().toLocaleTimeString();document.getElementById('feed').innerHTML=arr.map(o=>`<div class="card item"><b>${o.code}</b><br/>${o.product} | ${o.brand} | Batch ${o.batch} | Exp ${o.exp}<br/>🏪 ${o.shop} ${o.branch} | ${o.time||''}<br/><span style="font-size:9px;color:#16a34a">${o.antiHash||''}</span></div>`).join('')||'<div class="card">No cloud QR yet - Generate in Factory BATCH-TEST-CLOUD</div>';let local=JSON.parse(localStorage.getItem('qiniso_qr_db')||'[]');if(local.length>0)document.getElementById('feed').innerHTML+=local.map(o=>`<div class="card item" style="border-left-color:#ea580c"><b>${o.code} (PHONE LOCAL)</b> ${o.product}</div>`).join('');});}
-</script></body></html>
+let map; setTimeout(()=>{map=L.map('map').setView([-33.84932,25.45160],11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); L.marker([-33.9249,25.57]).addTo(map).bindPopup('SPAR Bethelsdorp ALLOCATED'); L.marker([-33.84932,25.45160]).addTo(map).bindPopup('SCANNED BATCH-TEST-CLOUD-001 15.6km SUSPECTED IP 102.214.117.64');},500);
+function listen(){const{collection,onSnapshot,query,orderBy,limit}=window.f; const db=window.db;
+onSnapshot(collection(db,'dashboard_alerts'),snap=>{document.getElementById('scanCount').innerText=snap.size; let h=''; let sus=0; snap.forEach(d=>{const v=d.data(); if(v.status?.includes('SUSPECTED'))sus++; h+=`<div class="border p-1 rounded"><b>${v.batch||'BATCH'}</b> ${v.distanceKm?.toFixed(1)}km ${v.status} GPS ${v.scannedGPS||''} IP ${v.ip||''} ${v.reason||''}</div>`; if(map&&v.scannedAt){L.marker([v.scannedAt.lat,v.scannedAt.lng]).addTo(map).bindPopup(`${v.batch} ${v.status}`);} }); document.getElementById('scanList').innerHTML=h||'No scans yet'; document.getElementById('susCount').innerText=sus; });
+onSnapshot(collection(db,'dangerous_zones'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="bg-red-100 border border-red-600 p-1 rounded"><b>${v.zone||'Ext 21'}</b> ${v.batch} ${v.dist?.toFixed? v.dist.toFixed(1)+'km' : ''} ${v.status}</div>`;}); document.getElementById('dangerList').innerHTML=h||'No dangerous zones yet - Ext 21 will appear after scan';});
+onSnapshot(collection(db,'brand_KOO'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded">${v.batch} ${v.status} ${v.distanceKm?.toFixed(1)}km</div>`;}); document.getElementById('brandList').innerHTML=h||'No brand alerts';});
+onSnapshot(collection(db,'dept_SAPS'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>${v.batch}</b> GPS ${v.scannedGPS} IP ${v.ip} <a href="https://maps.google.com/?q=${v.scannedGPS}" target="_blank" class="text-blue-600 underline">MAP</a></div>`;}); document.getElementById('sapsList').innerHTML=h||'No SAPS alerts - will show after scan';});
+onSnapshot(collection(db,'inspection_reports_final'),snap=>{document.getElementById('inspCount').innerText=snap.size; let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border-2 border-green-600 p-1 rounded bg-green-50"><b>${v.batch}</b> Shop ${v.shop} Triple: Inspector ${v.inspector?.name} + Owner ${v.owner?.name} + Witness ${v.witness?.name}(${v.witness?.role}) Chain: ${v.chain?.full||''} Suspect: <span class="text-red-600 font-black">${v.chain?.factory||''}</span></div>`; if(v.chain) document.getElementById('chainList').innerHTML+=`<div class="mt-1 border p-1 rounded">${v.batch} : ${v.chain.full} → SUSPECT ${v.chain.factory}</div>`;}); document.getElementById('finalList').innerHTML=h||'No sealed inspections yet';});
+} setTimeout(listen,1000);
+</script>
+</body></html>
