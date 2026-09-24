@@ -1,126 +1,65 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO SCAN PRO + SHIELD v22 RESTORED</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QINISO MARK - Scan</title>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-import{getFirestore,collection,getDocs,addDoc,serverTimestamp,query,where}from"https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyAHRegV2imef2EZB9c9CTPHDJFvhUvzI8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
-try{const a=initializeApp(cfg);window.db=getFirestore(a);window.col=collection;window.gd=getDocs;window.ad=addDoc;window.st=serverTimestamp;window.qq=query;window.ww=where;}catch(e){}
-</script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:system-ui,sans-serif}
-body{background:#f1f5f9;padding:0;padding-bottom:80px}
-.top{background:#0f172a;color:#fff;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;font-size:11px}
-.top b{font-size:13px}
-.card{background:#fff;border-radius:16px;padding:12px;margin:10px auto;max-width:600px;box-shadow:0 2px 10px rgba(0,0,0,.1);border:1px solid #e2e8f0}
-.btn{border:0;border-radius:12px;padding:14px;font-weight:900;width:100%;cursor:pointer;font-size:15px;margin:6px 0;display:block;text-align:center}
-.b-start{background:#2563eb;color:#fff}
-.b-stop{background:#e5e7eb;color:#111827}
-#reader{width:100%;border-radius:12px;overflow:hidden;display:none;margin-top:8px;border:2px solid #000}
-.row{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;margin:6px 0;border-left:5px solid #e5e7eb;background:#f8fafc;border-radius:10px;font-size:13px}
-.row.ok{border-left-color:#22c55e}.row.bad{border-left-color:#ef4444}.row.warn{border-left-color:#f97316}
-.suspect-card{border:3px solid #ef4444;background:#fff1f2;border-radius:20px;padding:14px;margin:10px auto;max-width:600px}
-.correct-card{border:3px solid #22c55e;background:#f0fdf4;border-radius:20px;padding:14px;margin:10px auto;max-width:600px}
-#map{width:100%;height:260px;border-radius:14px;border:2px solid #000;margin-top:10px}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:800;color:#fff}
-.history{font-size:11px;white-space:pre-wrap;background:#fff;border:1px solid #e2e8f0;border-radius:12px;padding:10px;margin-top:8px;max-height:180px;overflow:auto}
-.small{font-size:10px;color:#64748b;text-align:center}
-</style></head><body>
-
-<div class="top">
-<div><b>🛡️ QINISO SCAN PRO + SHIELD</b><br><span style="font-size:9px;color:#94a3b8">Auto Report • Auto GPS • Auto PIN MAP • IP Trace • Law Decides</span></div>
-<div style="text-align:right"><span id="gpsTop">📍 Waiting GPS...</span><br><span id="ipTop">IP:...</span><br><span style="color:#4ade80">🟢 LIVE SHIELD ON</span></div>
-</div>
-
-<div class="card">
-<div style="font-weight:900">📷 SCAN QINISO MARK QR</div>
+body{font-family:Arial;background:#0f172a;color:white;margin:0;padding:15px;text-align:center}
+.card{background:white;color:black;border-radius:20px;padding:20px;margin:15px 0}
+#reader{width:100%;border-radius:15px;overflow:hidden}
+.btn{width:100%;padding:18px;border:none;border-radius:15px;font-size:18px;font-weight:bold;margin:8px 0}
+.safe{background:#16a34a;color:white}.suspect{background:#eab308;color:black}.fake{background:#dc2626;color:white}.gps{background:#1e40af;color:white}
+input{width:90%;padding:15px;border-radius:10px;border:2px solid #ccc;font-size:16px;margin:10px 0}.icon{font-size:50px}
+</style>
+</head>
+<body>
+<h2>🛡️ QINISO MARK - SCAN</h2>
 <div id="reader"></div>
-<button class="btn b-start" id="startBtn" onclick="startScan()">START SCAN</button>
-<button class="btn b-stop" onclick="stopScan()">STOP</button>
-<div class="small">👍 Green=Correct | 👎 Red=Suspect | ✋ Orange=Wait Don't Buy<br>Auto report + GPS pin + IP traced</div>
-</div>
-
-<div id="resultArea"></div>
-
 <div class="card">
-<div style="font-weight:900;font-size:13px">📱 Auto Scan History + Auto Report Log + Shield Log</div>
-<div id="history" class="history">No scans yet...</div>
-<div style="margin-top:8px;border:1px solid #fca5a5;background:#fff1f2;border-radius:8px;padding:6px;font-size:11px">IP Traced: <span id="ipLog">...</span></div>
+<p class="icon">⌨️</p>
+<input id="manualCode" placeholder="QIN-XXXX e.g QIN-KOO-1234">
+<button class="btn gps" onclick="checkCode(document.getElementById('manualCode').value)">CHECK CODE</button>
 </div>
-
+<div id="result" class="card" style="display:none"></div>
 <script>
-let gps="Waiting",gpsLat=null,gpsLng=null,ip="...",offlineDB=JSON.parse(localStorage.getItem('qiniso_offline_db')||"[]"),html5Qr=null,scanning=false,map=null,marker=null,circle=null,historyLog=JSON.parse(localStorage.getItem('qiniso_history')||"[]");
-const $=id=>document.getElementById(id);
-function updTop(){ $("gpsTop").textContent="📍 "+gps; $("ipTop").textContent="IP: "+ip; $("ipLog").textContent=ip; }
-navigator.geolocation.getCurrentPosition(p=>{ gpsLat=p.coords.latitude; gpsLng=p.coords.longitude; gps=(p.coords.latitude.toFixed(4)+","+p.coords.longitude.toFixed(4)+" (±"+Math.round(p.coords.accuracy)+"m)"); updTop(); if(map) pinMap(); },()=>{gps="GPS Denied"; updTop();}, {enableHighAccuracy:true});
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{ ip=d.ip; updTop(); }).catch(()=>{ ip="Offline"; updTop(); });
-
-function renderHistory(){
- if(historyLog.length==0){$("history").textContent="No scans yet..."; return;}
- let txt=""; historyLog.slice(-10).reverse().forEach(h=>{ txt+=`${h.time} - ${h.status} - ${h.code} - GPS ${h.gps} - IP ${h.ip} - Exp ${h.exp||"UNKNOWN"}\n`; }); $("history").textContent=txt;
-} renderHistory();
-
-function pinMap(){
- if(!gpsLat) return;
- if(!map){ map=L.map('map').setView([gpsLat,gpsLng],14); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
- else map.setView([gpsLat,gpsLng],14);
- if(marker) map.removeLayer(marker); if(circle) map.removeLayer(circle);
- marker=L.marker([gpsLat,gpsLng]).addTo(map).bindPopup("📍 SCAN HERE - RED IP "+ip).openPopup();
- circle=L.circle([gpsLat,gpsLng],{radius:100,color:'red',fillColor:'#f87171',fillOpacity:0.3}).addTo(map);
+const firebaseConfig = {
+  apiKey: "AIzaSyAHRegV2vQw1Z5N3ZxQv4_example",
+  authDomain: "qiniso-mark-v4.firebaseapp.com",
+  projectId: "qiniso-mark-v4",
+  storageBucket: "qiniso-mark-v4.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcd"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+let userIP="Unknown"; let userGPS={lat:null,lng:null,address:"Unknown"};
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{userIP=d.ip;});
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{userGPS.address=d.city+", "+d.region;}).catch(()=>{});
+if(navigator.geolocation){navigator.geolocation.getCurrentPosition(pos=>{userGPS.lat=pos.coords.latitude;userGPS.lng=pos.coords.longitude;});}
+function onScanSuccess(decodedText){html5QrcodeScanner.clear();checkCode(decodedText);}
+let html5QrcodeScanner=new Html5QrcodeScanner("reader",{fps:10,qrbox:{width:250,height:250}});
+html5QrcodeScanner.render(onScanSuccess);
+async function checkCode(code){
+ code=code.trim().toUpperCase(); if(!code){alert("Enter code!");return;}
+ const resDiv=document.getElementById('result'); resDiv.style.display='block';
+ resDiv.innerHTML=`<h3>⏳ Checking ${code}...</h3><p>IP: ${userIP}</p>`;
+ try{
+  const docSnap=await db.collection('products').doc(code).get();
+  let status="FAKE"; let brand="Unknown";
+  if(docSnap.exists){let data=docSnap.data();brand=data.brand||"KOO";status=data.status||"SAFE";if(data.scanned&&data.scanned>0)status="SUSPECT";await db.collection('products').doc(code).update({scanned: firebase.firestore.FieldValue.increment(1),lastScan:new Date()});}
+  const report={code:code,brand:brand,result:status,ip:userIP,lat:userGPS.lat,lng:userGPS.lng,location:userGPS.address,timestamp:firebase.firestore.FieldValue.serverTimestamp(),mapLink:userGPS.lat?`https://www.google.com/maps?q=${userGPS.lat},${userGPS.lng}`:"No GPS"};
+  await db.collection('reports').add(report);
+  let html=""; 
+  if(status=="SAFE"){html=`<p class="icon">✅</p><h1 style="color:#16a34a">REAL - SAFE</h1><h2>${brand} - ${code}</h2><button class="btn safe">✔️ OK TO EAT</button><p><a href="${report.mapLink}" target="_blank">📍 View Map</a></p>`;}
+  else if(status=="SUSPECT"){html=`<p class="icon">⚠️</p><h1 style="color:#ca8a04">SUSPECT!</h1><h2>${brand}</h2><button class="btn suspect">⚠️ CHECKED BEFORE</button><p>IP: ${userIP}</p><p><a href="${report.mapLink}" target="_blank">📍 Map: ${report.location}</a></p>`;}
+  else{html=`<p class="icon">☠️</p><h1 style="color:#dc2626">FAKE - DO NOT EAT!</h1><h2>${code}</h2><button class="btn fake">🚨 REPORT TO SAPS</button><p>IP: ${userIP} saved</p><p>GPS: ${userGPS.lat}, ${userGPS.lng}</p><p><a href="${report.mapLink}" target="_blank">📍 FAKE Location</a></p><button class="btn gps" onclick="window.open('inspection.html?code=${code}','_blank')">📋 SAPS Form</button>`;}
+  resDiv.innerHTML=html;
+ }catch(e){resDiv.innerHTML=`<h2 style="color:red">Error: ${e.message}</h2>`;}
 }
-
-window.startScan=async()=>{
- $("reader").style.display='block'; $("startBtn").textContent="SCANNING... Point to QR 10cm";
- try{ html5Qr=new Html5Qrcode("reader"); scanning=true;
-  await html5Qr.start({facingMode:"environment"}, {fps:15,qrbox:{width:280,height:280}},
-   (dec)=>{ if(scanning){ stopScan(); doVerify(dec); } },
-   ()=>{}
-  );
- }catch(e){ alert("Camera blocked: "+e.message+"\nAllow: Settings → Chrome → Camera → Allow"); $("reader").style.display='none'; $("startBtn").textContent="START SCAN"; }
-};
-window.stopScan=async()=>{ scanning=false; if(html5Qr){ try{ await html5Qr.stop(); await html5Qr.clear(); }catch(e){} } $("reader").style.display='none'; $("startBtn").textContent="START SCAN"; };
-
-async function syncCache(){ if(!navigator.onLine||!window.db) return; try{ let s=await window.gd(window.col(window.db,"scans")); let a=[]; s.forEach(d=>a.push(d.data())); localStorage.setItem('qiniso_offline_db',JSON.stringify(a)); offlineDB=a; }catch(e){} } syncCache();
-
-function genCase(){ return "QIN-CASE-"+Date.now(); }
-
-window.doVerify=async(inp)=>{
- let code=(inp||"").trim().toUpperCase(); if(!code){ alert('Scan QR first'); return; }
- let found=offlineDB.find(x=>x.code&&x.code.toUpperCase()===code);
- if(!found&&navigator.onLine&&window.db){ try{ let qq=window.qq(window.col(window.db,"scans"),window.ww("code","==",code)); let snap=await window.gd(qq); if(!snap.empty) found=snap.docs[0].data(); }catch(e){} }
- let caseNo=genCase(); let now=new Date(); let timeStr=now.toLocaleTimeString();
- let status="",cardClass="",icon="",title="";
- if(!found){ status="RED"; cardClass="suspect-card"; icon="👎"; title="SUSPECT - DO NOT BUY"; }
- else{ let exp=new Date(found.exp); let valid=exp>now; if(valid){ status="GREEN"; cardClass="correct-card"; icon="👍"; title="CORRECT - SAFE TO BUY"; } else { status="RED"; cardClass="suspect-card"; icon="👎"; title="SUSPECT - EXPIRED"; } }
- let shop=found?found.shop||"KNOWN":"UNKNOWN";
- let branch=found?found.branch||"KNOWN":"UNKNOWN";
- let batch=found? (found.batch||found.code) : code;
- let expTxt=found? found.exp||"UNKNOWN" : "UNKNOWN";
- let qMark=found?"✅ VERIFIED":"❌ NOT FOUND - Fake QR? 👎";
- let resultHtml=`
- <div class="${cardClass}">
-  <div style="text-align:center"><div style="font-size:50px">${icon}</div><div style="font-size:22px;font-weight:900;color:${status=='GREEN'?'#16a34a':'#dc2626'}">${status=='GREEN'?'✅':'❌'} ${title}</div><div style="font-size:11px;color:#64748b">Red = Suspect - Wrong shop / Expired / Fake - Report! | IP ${ip} traced | Auto reported</div></div>
-  <div class="row ${found?'ok':'bad'}"><b>QINISO MARK</b><span>${qMark}</span></div>
-  <div class="row warn"><b>Expiry Date</b><span>⚠️ ${expTxt} - Check product ✋</span></div>
-  <div class="row ok"><b>Shop Allocation</b><span>✅ Shop: ${shop} 👍</span></div>
-  <div class="row ok"><b>Branch</b><span>✅ Branch: ${branch} 👍</span></div>
-  <div class="row ok"><b>Brand / Batch</b><span>✅ ${batch} | Batch ${batch} 👍</span></div>
-  <div class="row ok"><b>Scan GPS + IP</b><span>📍 ${gps} | IP ${ip} 👍</span></div>
-  <div id="map"></div>
-  <div class="small">📍 Blue=Scan Location | 🟦=Allocated Shop | 🔴=Suspect Area | 🕵️=Hacker</div>
-  <div style="display:flex;gap:8px;margin-top:10px"><button class="btn" style="background:#22c55e;color:#fff">👍 CORRECT</button><button class="btn" style="background:#ef4444;color:#fff">👎 SUSPECT</button></div>
-  <button class="btn" style="background:#f97316;color:#fff">📡 AUTO REPORTED TO DASHBOARD + SAPS</button>
- </div>`;
- $("resultArea").innerHTML=resultHtml;
- setTimeout(()=>pinMap(),300);
- let log={time:timeStr,status:status,code:code,gps:gps,ip:ip,exp:expTxt};
- historyLog.push(log); localStorage.setItem('qiniso_history',JSON.stringify(historyLog)); renderHistory();
- let payload={caseNo,code,status:status,gps:gpsLat?gpsLat+","+gpsLng:gps,ip,shop,branch,batch,exp:expTxt,time:timeStr,createdAt:window.st?window.st():new Date().toISOString()};
- if(navigator.onLine&&window.db){ for(let c of["unverified_scans","dept_ceo","dept_saps","dept_brand","dept_health","cases","auto_alerts"]){ try{ await window.ad(window.col(window.db,c),payload);}catch(e){} } }
- window.scrollTo({top:300,behavior:'smooth'});
-};
-
-let urlC=new URLSearchParams(location.search).get('c'); if(urlC){ setTimeout(()=>doVerify(urlC),800); }
 </script>
-</body></html>
+</body>
+</html>
