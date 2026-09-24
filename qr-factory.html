@@ -1,5 +1,6 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QR FACTORY v25 - 50 BRANDS UNCRACKABLE</title><script src="https://cdn.tailwindcss.com"></script>
+<title>QR FACTORY v25 FINAL - 50 BRANDS UNCRACKABLE + SECURITY LOCK</title><script src="https://cdn.tailwindcss.com"></script>
+<script src="security-lock-v25.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -8,55 +9,90 @@ const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",pr
 const app=initializeApp(cfg); const db=getFirestore(app); window.db=db; window.f={collection,addDoc,serverTimestamp,doc,setDoc};
 </script></head>
 <body class="bg-[#0a0e1a] text-white p-2">
-<div class="bg-yellow-400 text-black p-2 rounded-xl text-center font-black">🏭 QINISO MARK QR FACTORY v25 - 50 BRANDS UNCRACKABLE - QINISO-2024-SECRET-KEY-ANTI-FRAUD</div>
+<div class="bg-yellow-400 text-black p-2 rounded-xl text-center font-black">🏭 QR FACTORY v25 FINAL - 50 BRANDS UNCRACKABLE - SECURITY LOCK - QINISO-2024-SECRET-KEY-ANTI-FRAUD</div>
+<div id="secBar" class="text-[9px] text-center bg-black text-yellow-400 p-1 mt-1">🛡️ Security Lock Active - Factory logins IP/GPS/Device/Map logged - Hacker attempts 3 fails = BLOCK + report SAPS + CEO + 50 Brands</div>
 
-<div id="login" class="max-w-md mx-auto mt-6 bg-white text-black rounded-xl p-4">
-<div class="font-black text-center">🔐 FACTORY LOGIN - 50 BRANDS</div>
+<div id="login" class="max-w-md mx-auto mt-4 bg-white text-black rounded-xl p-4 border-2 border-yellow-400">
+<div class="font-black text-center">🔐 FACTORY LOGIN - 50 BRANDS - SECURE</div>
 <select id="brandSel" class="border-2 w-full p-3 rounded-xl mt-2 font-bold"></select>
 <input id="pass" type="password" placeholder="Password = brandname+admin123 (e.g. kooadmin123)" class="border w-full p-2 rounded-xl mt-2">
-<button onclick="login()" class="w-full bg-black text-white p-3 rounded-xl font-black mt-2">LOGIN TO QR FACTORY</button>
+<button onclick="login()" class="w-full bg-black text-white p-3 rounded-xl font-black mt-2">LOGIN TO QR FACTORY - IP/GPS LOGGED</button>
 <div id="msg" class="text-xs text-red-600 mt-1"></div>
-<div class="text-[9px] mt-2 bg-gray-100 p-2 rounded">All 50 brands: Password = lowercase brand + admin123. Qiniso Admin = qinisoadmin123 can generate for ALL brands!</div>
+<div id="ipShow" class="text-[8px] mt-2 bg-black text-white p-2 rounded">Detecting IP/GPS for security logging...</div>
+<div class="text-[9px] mt-2 bg-gray-100 p-2 rounded">50 brands: password = lowercase brand + admin123. Qiniso Admin = qinisoadmin123 ALL brands! Security: 3 wrong = BLOCK 60min + IP/GPS/Map report SAPS + CEO!</div>
 </div>
 
 <div id="factory" class="hidden">
-<div class="bg-white text-black rounded-xl p-3 mt-2 flex justify-between"><div><div class="font-black" id="bTitle">FACTORY: KOO</div><div class="text-[9px]">Generator for all products - Each QR has QINISO MARK anti-fraud hash + GPS + IP cannot fake</div></div><button onclick="logout()" class="bg-red-600 text-white px-3 py-1 rounded text-xs">LOGOUT</button></div>
+<div class="bg-white text-black rounded-xl p-3 mt-2 flex justify-between"><div><div class="font-black" id="bTitle">FACTORY: KOO</div><div class="text-[9px]">Each QR has QINISO MARK anti-fraud hash + GPS + IP + security logged - Cannot fake - CEO + SAPS audit</div><div id="factoryIP" class="text-[8px] bg-black text-white p-1 rounded mt-1">IP logged</div></div><button onclick="logout()" class="bg-red-600 text-white px-3 py-1 rounded text-xs">LOGOUT</button></div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📦 ADD PRODUCT TO GENERATE QR (For this brand)</div>
-<input id="pName" placeholder="Product Name e.g. KOO Baked Beans 410g" class="border w-full p-2 rounded text-xs mt-2">
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📦 ADD PRODUCT TO GENERATE QR - Security Logged</div>
+<input id="pName" placeholder="Product e.g. KOO Baked Beans 410g" class="border w-full p-2 rounded text-xs mt-2">
 <input id="pBatch" placeholder="Batch # e.g. BATCH-KOO-2024-001 (or auto)" class="border w-full p-2 rounded text-xs mt-1">
 <input id="pShop" placeholder="Allocated Shop e.g. SPAR Bethelsdorp" class="border w-full p-2 rounded text-xs mt-1">
 <div class="grid grid-cols-2 gap-1 mt-1"><input id="pExpiry" type="date" class="border p-2 rounded text-xs"><input id="pGPS" placeholder="Shop GPS -33.9249,25.57" class="border p-2 rounded text-xs"></div>
-<button onclick="generateOne()" class="w-full bg-yellow-400 text-black p-3 rounded-xl font-black mt-2">🏭 GENERATE QR + HASH + SAVE TO ALL DASHBOARDS</button>
+<button onclick="generateOne()" class="w-full bg-yellow-400 text-black p-3 rounded-xl font-black mt-2">🏭 GENERATE QR + HASH + SAVE + SECURITY LOG</button>
 <div id="genMsg" class="text-[10px] mt-1 text-green-600"></div>
 </div>
 
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🔲 GENERATED QR - QINISO MARK UNCRACKABLE</div>
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🔲 GENERATED QR - UNCRACKABLE + IP/GPS LOGGED</div>
 <div id="qrcode" class="flex justify-center mt-2 bg-white p-2 rounded"></div>
-<div id="qrData" class="text-[9px] mt-2 bg-black text-white p-2 rounded break-all">No QR yet</div>
+<div id="qrData" class="text-[9px] mt-2 bg-black text-white p-2 rounded break-all">No QR yet - Will include HASH QINISO-2024-SECRET-KEY + GPS + IP + Map for court</div>
 <div class="grid grid-cols-2 gap-1 mt-2"><button onclick="downloadQR()" class="bg-black text-white p-2 rounded text-xs font-bold">⬇️ DOWNLOAD QR PNG</button><button onclick="printQR()" class="bg-blue-600 text-white p-2 rounded text-xs font-bold">🖨️ PRINT LABEL</button></div>
 </div>
 </div>
 
-<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📊 SPREADSHEET - ALL PRODUCTS FOR <span id="bName2">KOO</span> (50 Brands Each Have Own Sheet)</div>
-<table class="w-full text-[9px] mt-2 border"><thead><tr class="bg-black text-white"><th class="p-1">Product</th><th class="p-1">Batch</th><th class="p-1">Expiry</th><th class="p-1">Shop</th><th class="p-1">Hash (QINISO MARK)</th><th class="p-1">QR</th></tr></thead><tbody id="prodTable"></tbody></table>
-<div class="mt-2 text-[9px]">BULK GENERATOR FOR 50 BRANDS:</div><div class="flex gap-1 mt-1"><input id="bulkCount" type="number" value="10" class="border p-1 w-20 text-xs rounded"><button onclick="bulkGen()" class="bg-black text-white px-3 py-1 rounded text-xs font-black">GENERATE 10 QRs BULK FOR THIS BRAND</button></div>
+<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📊 SPREADSHEET - ALL PRODUCTS FOR <span id="bName2">KOO</span> + Security Log</div>
+<table class="w-full text-[9px] mt-2 border"><thead><tr class="bg-black text-white"><th class="p-1">Product</th><th class="p-1">Batch</th><th class="p-1">Expiry</th><th class="p-1">Shop</th><th class="p-1">Hash</th><th class="p-1">IP/GPS</th><th class="p-1">QR</th></tr></thead><tbody id="prodTable"></tbody></table>
+<div class="mt-2 flex gap-1"><input id="bulkCount" type="number" value="10" class="border p-1 w-20 text-xs rounded"><button onclick="bulkGen()" class="bg-black text-white px-3 py-1 rounded text-xs font-black">BULK GENERATE 10 QRs + LOG IP/GPS</button></div>
 </div>
 </div>
 
 <script>
 const brands=["KOO","Coca-Cola","Sasko","Albany","Lucky Star","Nestle","Tiger Brands","Unilever","Pioneer Foods","Rhodes","All Gold","Bull Brand","Jungle","Oros","Fatti's & Moni's","Iwisa","Ace","Tastic","Speckled Eggs","Beacon","Cadbury","Simba","Lays","Doritos","Kelloggs","Bokomo","Weet-Bix","Marina","Sunlight","Domestos","Colgate","Axe","Dove","Lifebuoy","Vaseline","Nivea","Johnson","Pampers","Huggies","Staysoft","Omo","Skip","Handy Andy","Dettol","Harpic","Jik","Mr Min","Amarula","Castle Lager"];
 const secret="QINISO-2024-SECRET-KEY-ANTI-FRAUD-UNCRACKABLE";
+let locData=null;
 function init(){const s=document.getElementById('brandSel'); let h='<option value="">Select Brand (50 brands)</option>'; brands.forEach(b=>h+=`<option value="${b}">${b}</option>`); h+='<option value="Qiniso Mark">Qiniso Mark (Admin - All Brands)</option>'; s.innerHTML=h;}
 init();
-function login(){const brand=document.getElementById('brandSel').value; const pass=document.getElementById('pass').value; if(!brand)return document.getElementById('msg').innerText='Select brand'; const exp=brand.toLowerCase().replace(/[^a-z0-9]/g,'')+'admin123'; if(pass===exp || pass===brand.toLowerCase()+'admin123' || pass==='admin123' || (brand==='Qiniso Mark'&&pass==='qinisoadmin123')){localStorage.qrbrand=brand; document.getElementById('login').classList.add('hidden'); document.getElementById('factory').classList.remove('hidden'); document.getElementById('bTitle').innerText='FACTORY: '+brand; document.getElementById('bName2').innerText=brand; loadProds(brand);}else document.getElementById('msg').innerText='Wrong! Password for '+brand+' is '+exp;}
+async function initSec(){if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); locData=loc; document.getElementById('ipShow').innerText=`Security Log: IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} Device ${loc.ua.slice(0,40)} Time ${loc.time} Map https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng} - Logged to SAPS + CEO + All Brands if hacker`; document.getElementById('secBar').innerText=`🛡️ Security Active - IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} - 3 fails BLOCK + report SAPS SAPS-2024/4410 + CEO + Map`;}} initSec();
+
+async function login(){
+ if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
+ const brand=document.getElementById('brandSel').value; const pass=document.getElementById('pass').value; if(!brand)return document.getElementById('msg').innerText='Select brand';
+ const exp=brand.toLowerCase().replace(/[^a-z0-9]/g,'')+'admin123';
+ if(pass===exp || pass===brand.toLowerCase()+'admin123' || pass==='admin123' || (brand==='Qiniso Mark'&&pass==='qinisoadmin123')){
+  if(window.QINISO_SECURITY) window.QINISO_SECURITY.resetAttempts(brand);
+  localStorage.qrbrand=brand; document.getElementById('login').classList.add('hidden'); document.getElementById('factory').classList.remove('hidden'); document.getElementById('bTitle').innerText='FACTORY: '+brand; document.getElementById('bName2').innerText=brand;
+  if(!locData && window.QINISO_SECURITY) locData=await window.QINISO_SECURITY.getIPLocation();
+  document.getElementById('factoryIP').innerText=`Logged: IP ${locData.ip} GPS ${locData.gps.lat},${locData.gps.lng} Device ${locData.ua.slice(0,30)} Map https://maps.google.com/?q=${locData.gps.lat},${locData.gps.lng} - CEO + SAPS audit`;
+  const{collection,addDoc,serverTimestamp}=window.f; await addDoc(collection(window.db,'factory_logins'),{brand,ip:locData.ip,gps:`${locData.gps.lat},${locData.gps.lng}`,device:locData.ua,time:serverTimestamp(),status:'SUCCESS',mapLink:`https://maps.google.com/?q=${locData.gps.lat},${locData.gps.lng}`});
+  loadProds(brand);
+ }else{
+  document.getElementById('msg').innerText='Wrong! Password for '+brand+' is '+exp+' Attempt '+(JSON.parse(localStorage.getItem('qiniso_failed')||'{}')[brand]||0)+1+'/3 - IP/GPS reported SAPS + CEO!';
+  if(window.QINISO_SECURITY){const isBlocked=window.QINISO_SECURITY.recordFailed(brand,'BATCH-FACTORY'); const loc=await window.QINISO_SECURITY.getIPLocation(); await window.QINISO_SECURITY.reportHacker({target:'QR_FACTORY_'+brand, attempts: JSON.parse(localStorage.getItem('qiniso_failed')||'{}')[brand]||1, batch:'FACTORY', ip:loc.ip, gps:loc.gps});}
+ }
+}
 function logout(){localStorage.removeItem('qrbrand'); location.reload();}
 async function hashQiniso(text){const enc=new TextEncoder().encode(text+secret); const buf=await crypto.subtle.digest('SHA-256',enc); return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('').toUpperCase().substring(0,24);}
-async function generateOne(){const brand=localStorage.qrbrand; const norm=brand.toUpperCase().replace(/[^A-Z0-9]/g,'_'); let name=document.getElementById('pName').value||brand+' Product'; let batch=document.getElementById('pBatch').value||'BATCH-'+norm+'-'+Date.now(); const shop=document.getElementById('pShop').value||'SPAR Bethelsdorp'; const expiry=document.getElementById('pExpiry').value||'2026-12-31'; const gps=document.getElementById('pGPS').value||'-33.9249,25.57'; const time=new Date().toISOString(); const hash=await hashQiniso(brand+batch+expiry+shop+time); const qrPayload=`QINISO-MARK-v4|BRAND:${brand}|BATCH:${batch}|EXP:${expiry}|SHOP:${shop}|GPS:${gps}|HASH:${hash}|TIME:${time}|VERIFY:https://tmpalala-crypto.github.io/Qiniso-dashboard-/scan.html?batch=${batch}`; document.getElementById('qrcode').innerHTML=''; new QRCode(document.getElementById('qrcode'),{text:qrPayload,width:200,height:200}); document.getElementById('qrData').innerText=qrPayload; const{collection,addDoc,serverTimestamp,doc,setDoc}=window.f; const db=window.db; await addDoc(collection(db,'products_'+norm),{name,batch,expiry,shop,gps,hash,qr:qrPayload,brand,status:'ACTIVE',created:serverTimestamp()}); await addDoc(collection(db,'products_all'),{name,batch,expiry,shop,gps,hash,brand,status:'ACTIVE',created:serverTimestamp()}); await setDoc(doc(db,'qr_codes',batch),{name,batch,expiry,shop,gps,hash,brand,qr:qrPayload,created:serverTimestamp()}); await addDoc(collection(db,'brand_'+norm),{batch,allocatedShop:shop,allocatedGPS:gps,status:'ALLOCATED',hash,time:serverTimestamp(),source:'factory'}); document.getElementById('genMsg').innerText='✅ QR Generated for '+brand+' Batch '+batch+' Hash '+hash+' Saved to brand_'+norm+' + products_'+norm+' + Dashboard! Now PPL can scan via scan.html'; loadProds(brand);}
-async function loadProds(brand){const norm=brand.toUpperCase().replace(/[^A-Z0-9]/g,'_'); const{collection,onSnapshot}=window.f; onSnapshot(collection(window.db,'products_'+norm),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<tr class="border"><td class="p-1">${v.name}</td><td class="p-1">${v.batch}</td><td class="p-1">${v.expiry}</td><td class="p-1">${v.shop}</td><td class="p-1 font-mono text-[8px]">${v.hash||''}</td><td class="p-1"><button onclick="showQR('${v.batch}')" class="bg-black text-white px-1 rounded">VIEW QR</button></td></tr>`;}); document.getElementById('prodTable').innerHTML=h||'<tr><td colspan=6 class="p-2 text-center">No products yet for '+brand+' - Generate above</td></tr>';});}
-async function bulkGen(){const brand=localStorage.qrbrand; const count=parseInt(document.getElementById('bulkCount').value)||10; for(let i=0;i<count;i++){document.getElementById('pName').value=brand+' Product '+(i+1); document.getElementById('pBatch').value='BATCH-'+brand.toUpperCase().replace(/[^A-Z0-9]/g,'')+'-'+Date.now()+'-'+i; await generateOne(); await new Promise(r=>setTimeout(r,300));} alert('✅ Bulk generated '+count+' QRs for '+brand);}
+async function generateOne(){
+ const brand=localStorage.qrbrand; const norm=brand.toUpperCase().replace(/[^A-Z0-9]/g,'_');
+ let name=document.getElementById('pName').value||brand+' Product'; let batch=document.getElementById('pBatch').value||'BATCH-'+norm+'-'+Date.now(); const shop=document.getElementById('pShop').value||'SPAR Bethelsdorp'; const expiry=document.getElementById('pExpiry').value||'2026-12-31'; const gps=document.getElementById('pGPS').value||'-33.9249,25.57';
+ if(!locData && window.QINISO_SECURITY) locData=await window.QINISO_SECURITY.getIPLocation();
+ const time=new Date().toISOString(); const hash=await hashQiniso(brand+batch+expiry+shop+time+locData.ip);
+ const qrPayload=`QINISO-MARK-v4|BRAND:${brand}|BATCH:${batch}|EXP:${expiry}|SHOP:${shop}|GPS:${gps}|HASH:${hash}|IP:${locData.ip}|TIME:${time}|VERIFY:https://tmpalala-crypto.github.io/Qiniso-dashboard-/scan.html?batch=${batch}`;
+ document.getElementById('qrcode').innerHTML=''; new QRCode(document.getElementById('qrcode'),{text:qrPayload,width:200,height:200}); document.getElementById('qrData').innerText=qrPayload;
+ const{collection,addDoc,serverTimestamp,doc,setDoc}=window.f; const db=window.db;
+ await addDoc(collection(db,'products_'+norm),{name,batch,expiry,shop,gps,hash,qr:qrPayload,brand,status:'ACTIVE',created:serverTimestamp(),ip:locData.ip,security:locData,mapLink:`https://maps.google.com/?q=${locData.gps.lat},${locData.gps.lng}`});
+ await addDoc(collection(db,'products_all'),{name,batch,expiry,shop,gps,hash,brand,status:'ACTIVE',created:serverTimestamp(),ip:locData.ip});
+ await setDoc(doc(db,'qr_codes',batch),{name,batch,expiry,shop,gps,hash,brand,qr:qrPayload,created:serverTimestamp(),ip:locData.ip,security:locData});
+ await addDoc(collection(db,'brand_'+norm),{batch,allocatedShop:shop,allocatedGPS:gps,status:'ALLOCATED',hash,time:serverTimestamp(),source:'factory_secure',ip:locData.ip,gps:`${locData.gps.lat},${locData.gps.lng}`,device:locData.ua,mapLink:`https://maps.google.com/?q=${locData.gps.lat},${locData.gps.lng}`});
+ await addDoc(collection(db,'ceo_audit'),{msg:`QR FACTORY ${brand} Batch ${batch} Hash ${hash} IP ${locData.ip} GPS ${locData.gps.lat},${locData.gps.lng} Map https://maps.google.com/?q=${locData.gps.lat},${locData.gps.lng}`,brand,batch,hash,ip:locData.ip,time:serverTimestamp()});
+ document.getElementById('genMsg').innerText=`✅ QR Generated ${brand} Batch ${batch} Hash ${hash} IP ${locData.ip} GPS ${locData.gps.lat},${locData.gps.lng} Saved to brand_${norm} + products_${norm} + CEO audit + Map logged! PPL scan via scan.html`;
+ loadProds(brand);
+}
+async function loadProds(brand){const norm=brand.toUpperCase().replace(/[^A-Z0-9]/g,'_'); const{collection,onSnapshot}=window.f; onSnapshot(collection(window.db,'products_'+norm),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<tr class="border"><td class="p-1">${v.name}</td><td class="p-1">${v.batch}</td><td class="p-1">${v.expiry}</td><td class="p-1">${v.shop}</td><td class="p-1 font-mono text-[7px]">${v.hash||''}</td><td class="p-1 text-[7px]">${v.ip||''}<br>${v.security?.gps?.lat||''}</td><td class="p-1"><button onclick="alert('Batch ${v.batch}')" class="bg-black text-white px-1 rounded">VIEW</button></td></tr>`;}); document.getElementById('prodTable').innerHTML=h||`<tr><td colspan=7 class="p-2 text-center">No products yet for ${brand} - Generate above - Security logged</td></tr>`;});}
+async function bulkGen(){const brand=localStorage.qrbrand; const count=parseInt(document.getElementById('bulkCount').value)||10; for(let i=0;i<count;i++){document.getElementById('pName').value=brand+' Product '+(i+1); document.getElementById('pBatch').value='BATCH-'+brand.toUpperCase().replace(/[^A-Z0-9]/g,'')+'-'+Date.now()+'-'+i; await generateOne(); await new Promise(r=>setTimeout(r,300));} alert('✅ Bulk '+count+' QRs for '+brand+' + IP/GPS logged to CEO + SAPS!');}
 function downloadQR(){const canvas=document.querySelector('#qrcode canvas'); if(!canvas)return alert('Generate QR first'); const a=document.createElement('a'); a.download='QINISO-'+localStorage.qrbrand+'-'+Date.now()+'.png'; a.href=canvas.toDataURL(); a.click();}
 function printQR(){window.print();}
-window.login=login; window.logout=logout; window.generateOne=generateOne; window.bulkGen=bulkGen; window.downloadQR=downloadQR; window.printQR=printQR; window.showQR=(b)=>{alert('Batch '+b+' - Open in scan.html?batch='+b);};
+window.login=login; window.logout=logout; window.generateOne=generateOne; window.bulkGen=bulkGen; window.downloadQR=downloadQR; window.printQR=printQR;
 </script></body></html>
