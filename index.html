@@ -1,53 +1,76 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO CIO CLOUD DASHBOARD v25 - LIVE</title>
+<title>QINISO CIO CLOUD DASHBOARD v25 LIVE + SECURITY LOCK</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="security-lock-v25.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,collection,onSnapshot,query,orderBy,limit}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const cfg={apiKey:"AIzaSyC5s3P8y4Z6-YOUR-REAL-KEY-REPLACE",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
+const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
 const app=initializeApp(cfg); const db=getFirestore(app);
 window.db=db; window.f={collection,onSnapshot,query,orderBy,limit};
 </script></head>
 <body class="bg-[#0a0e1a] text-white">
 <div class="bg-black p-3 border-b-4 border-yellow-400 flex justify-between items-center">
-<div><div class="font-black text-yellow-400">🛡️ QINISO CIO CLOUD DASHBOARD v25 LIVE</div><div class="text-[9px] text-gray-400">PPL SCAN BATCH-TEST-CLOUD-001 15.6km | IP 102.214.117.64 | GPS -33.84932,25.45160 | SAPS-2024/4410</div></div>
-<div class="text-right text-[10px]"><div class="bg-red-600 px-2 py-1 rounded">15 SUSPECTED Ext 21</div><div class="mt-1">Dangerous Zone Live</div></div>
+<div><div class="font-black text-yellow-400">🛡️ QINISO CIO CLOUD DASHBOARD v25 LIVE + ANTI-HACKER SHIELD</div><div class="text-[9px] text-gray-400">PPL SCAN BATCH-TEST-CLOUD-001 15.6km | IP 102.214.117.64 | GPS -33.84932,25.45160 | SAPS-2024/4410 | Security Lock Active</div></div>
+<div class="text-right text-[10px]"><div class="bg-red-600 px-2 py-1 rounded" id="susBadge">0 SUSPECTED Ext 21</div><div class="mt-1" id="ipBadge">IP Detecting...</div></div>
 </div>
+<div id="secBar" class="bg-red-900 text-center text-[9px] p-1 text-yellow-300">🛡️ Security Lock Active - Hacker IP/GPS/Device/Map/Time auto reported to SAPS + CEO + 50 Brands + All Dashboards + Block 60min</div>
 
-<div class="grid grid-cols-3 gap-2 p-2">
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📱 PPL SCANS</div><div id="scanCount" class="text-2xl font-black">0</div><div class="text-[9px]">From scan.html v25 - All 10 collections</div></div>
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🔍 INSPECTIONS</div><div id="inspCount" class="text-2xl font-black">0</div><div class="text-[9px]">Triple signature sealed</div></div>
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🚨 SUSPECTED</div><div id="susCount" class="text-2xl font-black text-red-600">0</div><div class="text-[9px]">15.6km from SPAR Bethelsdorp</div></div>
+<div class="grid grid-cols-4 gap-2 p-2">
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📱 PPL SCANS</div><div id="scanCount" class="text-2xl font-black">0</div><div class="text-[9px]">All 10 collections live</div></div>
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🔍 INSPECTIONS</div><div id="inspCount" class="text-2xl font-black">0</div><div class="text-[9px]">Triple sealed + Storage</div></div>
+<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">🚨 SUSPECTED</div><div id="susCount" class="text-2xl font-black text-red-600">0</div><div class="text-[9px]">15.6km from SPAR</div></div>
+<div class="bg-red-100 text-black rounded-xl p-3 border-2 border-red-600"><div class="font-black text-xs">🚫 HACKERS BLOCKED</div><div id="hackCount" class="text-2xl font-black text-red-600">0</div><div class="text-[9px]">IP/GPS/Map → SAPS</div></div>
 </div>
 
 <div class="p-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ LIVE MAP - GPS -33.84932,25.45160 + IP 102.214.117.64</div><div id="map" class="h-[300px] rounded mt-2 bg-gray-200"></div><div class="text-[9px] mt-1">Red pin = SUSPECTED BATCH-TEST-CLOUD-001 15.6km away | Blue = SAFE | Yellow = Dangerous Zone Ext 21</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ LIVE MAP - GPS -33.84932,25.45160 + IP 102.214.117.64 + Hacker Pins</div><div id="map" class="h-[320px] rounded mt-2 bg-gray-200"></div><div class="text-[9px] mt-1">Red = SUSPECTED BATCH-TEST-CLOUD-001 15.6km | Black = HACKER BLOCKED IP/GPS | Yellow = Dangerous Zone Ext 21</div></div>
 <div class="space-y-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🚨 DANGEROUS ZONES - Ext 21 Bethelsdorp</div><div id="dangerList" class="mt-2 text-xs space-y-1 max-h-[140px] overflow-auto">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS - BATCH-TEST-CLOUD-001</div><div id="scanList" class="mt-2 text-[11px] space-y-1 max-h-[140px] overflow-auto">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🚨 DANGEROUS ZONES + HACKER ZONES - Ext 21</div><div id="dangerList" class="mt-2 text-xs space-y-1 max-h-[120px] overflow-auto">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS - BATCH-TEST-CLOUD-001 15.6km SUSPECTED</div><div id="scanList" class="mt-2 text-[11px] space-y-1 max-h-[120px] overflow-auto">Loading...</div></div>
+<div class="bg-red-50 text-black rounded-xl p-2 border-2 border-red-600"><div class="font-black text-xs text-red-600">🚨 SECURITY THREATS - HACKER ATTEMPTS LIVE - IP/GPS/MAP/DEVICE/TIME → SAPS + CEO + BRANDS</div><div id="threatList" class="mt-2 text-[10px] space-y-1 max-h-[100px] overflow-auto">Loading threats... If someone tries wrong password in Brands/Depts/CEO Portal 3 times, blocked + IP/GPS/Map/Device auto report here!</div></div>
 </div>
 </div>
 
 <div class="p-2 grid grid-cols-1 md:grid-cols-3 gap-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🏷️ BRAND KOO ALERTS</div><div id="brandList" class="text-[10px] mt-2">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">👮 SAPS LIVE</div><div id="sapsList" class="text-[10px] mt-2">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🛡️ TRIPLE SIGNATURE INSPECTIONS</div><div id="finalList" class="text-[10px] mt-2">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🏷️ BRAND KOO ALERTS - 50 Brands</div><div id="brandList" class="text-[10px] mt-2">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">👮 SAPS LIVE + HACKER REPORTS TO SAPS</div><div id="sapsList" class="text-[10px] mt-2">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🛡️ TRIPLE SIGNATURE + STORAGE + IP LOGGED</div><div id="finalList" class="text-[10px] mt-2">Loading...</div></div>
 </div>
 
-<div class="p-2 bg-black rounded-xl m-2 border-yellow-400">
-<div class="font-black text-yellow-400 text-xs">🔗 INVOICE CHAIN → SUSPECT MANUFACTURER TRACKER</div>
-<div id="chainList" class="text-[10px] mt-2 text-white">Loading invoice chains from inspections... Shop INV → Distributor → Factory XYZ (SUSPECT)</div>
+<div class="p-2 bg-black rounded-xl m-2 border-2 border-yellow-400">
+<div class="font-black text-yellow-400 text-xs">🔗 INVOICE CHAIN → SUSPECT MANUFACTURER TRACKER - With IP/GPS Security</div>
+<div id="chainList" class="text-[10px] mt-2 text-white">Loading invoice chains from inspections... Shop INV → Distributor → Factory XYZ (SUSPECT) + IP/GPS logged for court</div>
 </div>
 
 <script>
-let map; setTimeout(()=>{map=L.map('map').setView([-33.84932,25.45160],11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); L.marker([-33.9249,25.57]).addTo(map).bindPopup('SPAR Bethelsdorp ALLOCATED'); L.marker([-33.84932,25.45160]).addTo(map).bindPopup('SCANNED BATCH-TEST-CLOUD-001 15.6km SUSPECTED IP 102.214.117.64');},500);
-function listen(){const{collection,onSnapshot,query,orderBy,limit}=window.f; const db=window.db;
-onSnapshot(collection(db,'dashboard_alerts'),snap=>{document.getElementById('scanCount').innerText=snap.size; let h=''; let sus=0; snap.forEach(d=>{const v=d.data(); if(v.status?.includes('SUSPECTED'))sus++; h+=`<div class="border p-1 rounded"><b>${v.batch||'BATCH'}</b> ${v.distanceKm?.toFixed(1)}km ${v.status} GPS ${v.scannedGPS||''} IP ${v.ip||''} ${v.reason||''}</div>`; if(map&&v.scannedAt){L.marker([v.scannedAt.lat,v.scannedAt.lng]).addTo(map).bindPopup(`${v.batch} ${v.status}`);} }); document.getElementById('scanList').innerHTML=h||'No scans yet'; document.getElementById('susCount').innerText=sus; });
-onSnapshot(collection(db,'dangerous_zones'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="bg-red-100 border border-red-600 p-1 rounded"><b>${v.zone||'Ext 21'}</b> ${v.batch} ${v.dist?.toFixed? v.dist.toFixed(1)+'km' : ''} ${v.status}</div>`;}); document.getElementById('dangerList').innerHTML=h||'No dangerous zones yet - Ext 21 will appear after scan';});
-onSnapshot(collection(db,'brand_KOO'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded">${v.batch} ${v.status} ${v.distanceKm?.toFixed(1)}km</div>`;}); document.getElementById('brandList').innerHTML=h||'No brand alerts';});
-onSnapshot(collection(db,'dept_SAPS'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>${v.batch}</b> GPS ${v.scannedGPS} IP ${v.ip} <a href="https://maps.google.com/?q=${v.scannedGPS}" target="_blank" class="text-blue-600 underline">MAP</a></div>`;}); document.getElementById('sapsList').innerHTML=h||'No SAPS alerts - will show after scan';});
-onSnapshot(collection(db,'inspection_reports_final'),snap=>{document.getElementById('inspCount').innerText=snap.size; let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border-2 border-green-600 p-1 rounded bg-green-50"><b>${v.batch}</b> Shop ${v.shop} Triple: Inspector ${v.inspector?.name} + Owner ${v.owner?.name} + Witness ${v.witness?.name}(${v.witness?.role}) Chain: ${v.chain?.full||''} Suspect: <span class="text-red-600 font-black">${v.chain?.factory||''}</span></div>`; if(v.chain) document.getElementById('chainList').innerHTML+=`<div class="mt-1 border p-1 rounded">${v.batch} : ${v.chain.full} → SUSPECT ${v.chain.factory}</div>`;}); document.getElementById('finalList').innerHTML=h||'No sealed inspections yet';});
+let map; let hackerMarkers=[];
+async function initMap(){
+map=L.map('map').setView([-33.84932,25.45160],11);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+L.marker([-33.9249,25.57]).addTo(map).bindPopup('SPAR Bethelsdorp ALLOCATED');
+L.marker([-33.84932,25.45160]).addTo(map).bindPopup('SCANNED BATCH-TEST-CLOUD-001 15.6km SUSPECTED IP 102.214.117.64');
+if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); document.getElementById('ipBadge').innerText=`Your IP ${loc.ip} GPS ${loc.gps.lat.toFixed(5)},${loc.gps.lng.toFixed(5)} logged - Security Active`; L.marker([loc.gps.lat,loc.gps.lng],{icon:L.divIcon({html:'🛡️',className:'',iconSize:[20,20]})}).addTo(map).bindPopup(`CEO/Security View IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng}`);}
+} setTimeout(initMap,500);
+
+function listen(){const{collection,onSnapshot}=window.f; const db=window.db;
+onSnapshot(collection(db,'dashboard_alerts'),snap=>{
+document.getElementById('scanCount').innerText=snap.size; let h=''; let sus=0;
+snap.forEach(d=>{const v=d.data(); if(v.status?.includes('SUSPECTED'))sus++; if(v.type && v.type.includes('security')) return; h+=`<div class="border p-1 rounded text-[10px]"><b>${v.batch||'BATCH'}</b> ${v.distanceKm?.toFixed(1)||'15.6'}km ${v.status} GPS ${v.scannedGPS||''} IP ${v.ip||''}</div>`;});
+document.getElementById('scanList').innerHTML=h||'No scans yet - PPL scan BATCH-TEST-CLOUD-001 will appear'; document.getElementById('susCount').innerText=sus; document.getElementById('susBadge').innerText=sus+' SUSPECTED Ext 21';
+});
+
+onSnapshot(collection(db,'dangerous_zones'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); const isHacker=v.status?.includes('HACKER')||v.zone?.includes('HACKER'); h+=`<div class="${isHacker?'bg-black text-white':'bg-red-100 text-black'} border ${isHacker?'border-black':'border-red-600'} p-1 rounded text-[10px]"><b>${v.zone||'Ext 21'}</b> ${v.batch} ${v.dist?.toFixed? v.dist.toFixed(1)+'km':''} ${v.status} IP ${v.ip||''} GPS ${v.gps||v.scannedGPS||''} ${isHacker?'<a href="https://maps.google.com/?q='+(v.gps||'')+'" target="_blank" class="text-yellow-400 underline">MAP TRACK</a>':''}</div>`; if(isHacker && map && v.gps){const parts=(v.gps||'').split(','); if(parts.length==2) L.marker([parseFloat(parts[0]),parseFloat(parts[1])],{icon:L.divIcon({html:'🚫',className:'',iconSize:[20,20]})}).addTo(map).bindPopup(`HACKER BLOCKED IP ${v.ip} GPS ${v.gps}`);}}); document.getElementById('dangerList').innerHTML=h||'No dangerous zones yet - Ext 21 will appear after PPL scan';});
+
+onSnapshot(collection(db,'brand_KOO'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); if(v.type && v.type.includes('HACKER')){h+=`<div class="border border-red-600 bg-red-50 p-1 rounded">🚨 HACKER tried KOO IP ${v.ip} GPS ${v.scannedGPS} <a href="${v.mapLink}" target="_blank" class="text-blue-600 underline">MAP</a></div>`;}else{h+=`<div class="border p-1 rounded">${v.batch} ${v.status} ${v.distanceKm?.toFixed(1)}km</div>`;}}); document.getElementById('brandList').innerHTML=h||'No brand alerts';});
+
+onSnapshot(collection(db,'dept_SAPS'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); if(v.type && v.type.includes('HACKER')){h+=`<div class="border border-red-600 bg-black text-white p-1 rounded text-[9px]">🚨 HACKER TO SAPS IP ${v.ip} GPS ${v.scannedGPS} Target ${v.target} Device ${v.device||''} <a href="${v.mapLink}" target="_blank" class="text-yellow-400 underline">📍 TRACK MAP</a> Case SAPS-2024/4410</div>`; if(map && v.scannedGPS){const p=v.scannedGPS.split(','); L.marker([parseFloat(p[0]),parseFloat(p[1])],{icon:L.divIcon({html:'👮',className:'',iconSize:[20,20]})}).addTo(map).bindPopup(`HACKER REPORT TO SAPS IP ${v.ip}`);}}else{h+=`<div class="border p-1 rounded"><b>${v.batch}</b> GPS ${v.scannedGPS} IP ${v.ip} <a href="https://maps.google.com/?q=${v.scannedGPS}" target="_blank" class="text-blue-600 underline">MAP</a></div>`;}}); document.getElementById('sapsList').innerHTML=h||'No SAPS alerts - Hacker reports + PPL scans will show here';});
+
+onSnapshot(collection(db,'inspection_reports_final'),snap=>{document.getElementById('inspCount').innerText=snap.size; let h=''; let chainH=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border-2 border-green-600 p-1 rounded bg-green-50 text-[9px]"><b>${v.batch}</b> Shop ${v.shop} IP ${v.ip} GPS ${v.gps?.lat},${v.gps?.lng} Triple: ${v.inspector?.name}+${v.owner?.name}+${v.witness?.name} Chain: ${v.chain?.full||''} Suspect: <span class="text-red-600 font-black">${v.chain?.factory||''}</span> Ev ${Object.keys(v.ev||{}).length} Storage</div>`; if(v.chain){chainH+=`<div class="mt-1 border p-1 rounded">Batch ${v.batch}: ${v.chain.full} → SUSPECT <b class="text-red-400">${v.chain.factory}</b> IP ${v.ip} GPS ${v.gps?.lat},${v.gps?.lng} Court Copy SAPS-2024/4410</div>`;}}); document.getElementById('finalList').innerHTML=h||'No sealed inspections yet'; document.getElementById('chainList').innerHTML=chainH||'No invoice chains yet - Will show after inspection sealed';});
+
+onSnapshot(collection(db,'security_threats'),snap=>{document.getElementById('hackCount').innerText=snap.size; let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border border-red-600 bg-red-100 p-1 rounded text-[9px]"><b>🚨 HACKER BLOCKED</b> Target ${v.target} IP <b>${v.ip}</b> GPS ${v.scannedGPS||''} Attempts ${v.attempts} Device ${v.device||v.ua||''} <a href="${v.mapLink||'https://maps.google.com/?q='+v.scannedGPS}" target="_blank" class="text-blue-600 underline">📍 MAP TRACK HACKER TO POLICE</a> Time ${v.time?.toDate? v.time.toDate().toLocaleString():''} Reported SAPS+CEO+Brands</div>`; if(map && v.scannedGPS){const parts=v.scannedGPS.split(','); if(parts.length==2){const m=L.marker([parseFloat(parts[0]),parseFloat(parts[1])],{icon:L.divIcon({html:'🚫',className:'',iconSize:[24,24]})}).addTo(map).bindPopup(`🚨 HACKER IP ${v.ip} GPS ${v.scannedGPS} Target ${v.target} Blocked - Reported SAPS`); hackerMarkers.push(m);}}}); document.getElementById('threatList').innerHTML=h||'No hacker attempts - Security Lock Active - 3 wrong passwords = BLOCK 60min + IP/GPS/Map/Device/Time auto report to SAPS SAPS-2024/4410 + CEO Portal + All 50 Brands + Main Dashboard!';});
+
 } setTimeout(listen,1000);
 </script>
 </body></html>
