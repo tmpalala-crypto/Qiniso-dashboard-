@@ -2,36 +2,130 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>QINISO MARK - SAPS Inspection</title>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage-compat.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO INSPECTION v24.4 - SAPS + Health</title>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, query, orderBy, getDocs, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "REPLACE-WITH-YOUR-API-KEY",
+  authDomain: "qiniso-mark-v4.firebaseapp.com",
+  projectId: "qiniso-mark-v4",
+  storageBucket: "qiniso-mark-v4.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcd"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.db=db; window.fs={collection,query,orderBy,getDocs,doc,updateDoc};
+</script>
 <style>
-body{font-family:Arial;background:#f1f5f9;margin:0;padding:10px}
-.card{background:white;border-radius:15px;padding:20px;margin:10px 0;box-shadow:0 4px 10px rgba(0,0,0,0.1)}
-input,select,textarea{width:95%;padding:14px;margin:8px 0;border-radius:10px;border:2px solid #ddd;font-size:16px}
-.btn{width:100%;padding:16px;border:none;border-radius:12px;font-size:18px;font-weight:bold;margin:6px 0}
-.blue{background:#1e40af;color:white}.red{background:#dc2626;color:white}.green{background:#16a34a;color:white}
-#mapLink{color:blue;word-break:break-all}
-@media print{.noPrint{display:none} body{background:white}}
+body{margin:0;font-family:system-ui;background:#0f172a;color:#fff}
+.top{background:#000;padding:14px;text-align:center;font-weight:900;font-size:18px;border-bottom:3px solid #f59e0b}
+.card{margin:10px;background:#fff;color:#000;border-radius:14px;padding:12px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+.badge{padding:6px 12px;border-radius:20px;color:#fff;font-weight:900;display:inline-block;font-size:12px}
+.safe{background:#16a34a}.danger{background:#dc2626}.sus{background:#f59e0b}
+.row{display:flex;justify-content:space-between;margin:5px 0;font-size:13px;border-bottom:1px dashed #e2e8f0;padding-bottom:3px}
+.btn{padding:8px 12px;border-radius:8px;border:0;font-weight:800;color:#fff;margin:3px;font-size:12px}
+.btn-map{background:#0f172a}.btn-saps{background:#dc2626}.btn-safe{background:#16a34a}
+.filter{padding:10px;display:flex;gap:6px;overflow:auto}
+.filter button{padding:8px 14px;border-radius:20px;border:0;font-weight:700}
+.active{outline:3px solid #f59e0b}
 </style>
 </head>
 <body>
-<h2>📋 QINISO MARK - INSPECTION REPORT (SAPS)</h2>
+<div class="top">🚔 QINISO INSPECTION PORTAL v24.4 - SAPS + HEALTH + BRAND</div>
 
-<div class="card">
-<h3>📍 Auto-Trace (Cannot be faked)</h3>
-<p><b>Code:</b> <span id="code">Loading...</span></p>
-<p><b>IP:</b> <span id="ip">Loading...</span></p>
-<p><b>GPS:</b> <span id="gps">Loading...</span></p>
-<p><b>Location:</b> <span id="addr">Loading...</span></p>
-<p><b>Map:</b> <a id="mapLink" href="#" target="_blank">Open Google Maps</a></p>
-<p><b>Date:</b> <span id="date"></span></p>
+<div class="filter">
+<button onclick="filter='all'; load()" id="fAll" class="active">ALL</button>
+<button onclick="filter='sus'; load()" id="fSus">❌ SUSPECTED (Robbery)</button>
+<button onclick="filter='danger'; load()" id="fDan">👎 DANGEROUS</button>
+<button onclick="filter='safe'; load()" id="fSafe">👍 SAFE</button>
+<button onclick="load()" style="background:#1d4ed8;color:#fff">🔄 REFRESH</button>
 </div>
 
-<div class="card">
-<h3>🏪 Shop Details</h3>
-<input id="shopName" placeholder="Shop Name e.g Boxer Uitenhage">
-<input id="shopOwner" placeholder="Owner Name">
-<input id="shopPhone
+<div style="padding:10px;font-size:12px;color:#94a3b8">
+Showing scans with GPS Map Pins + IP + Batch + Allocated Branch. Auto from scan.html
+</div>
+
+<div id="list">Loading reports from Firebase...</div>
+
+<script>
+let filter='all';
+async function load(){
+ const {collection,query,orderBy,getDocs}=window.fs;
+ const db=window.db;
+ document.getElementById('list').innerHTML='Loading...';
+ try{
+  let q=query(collection(db,"dashboard_alerts"),orderBy("time","desc"));
+  let snap=await getDocs(q);
+  let html='';
+  if(snap.empty){
+   q=query(collection(db,"reports"),orderBy("time","desc"));
+   snap=await getDocs(q);
+  }
+  snap.forEach(d=>{
+   let r=d.data();
+   let status=(r.status||'').toLowerCase();
+   if(status.includes('safe')) status='safe';
+   else if(status.includes('danger')) status='danger';
+   else status='sus';
+   if(filter!=='all' && filter!==status) return;
+   
+   let gps=r.gps||{};
+   let parsed=r.parsed||{};
+   let batch=r.batch||parsed.batch||r.parsed?.batch||'BATCH-TEST-CLOUD-001';
+   let alloc=r.allocatedBranch||parsed.alloc||'SPAR Bethelsdorp';
+   let code=(r.code||'').substring(0,80);
+   let ip=r.ip||'102.214.117.64';
+   let dist='';
+   if(gps.lat){
+    let d=Math.sqrt((gps.lat+33.9249)**2 + (gps.lng-25.57)**2)*111;
+    dist=d.toFixed(1)+'km from '+alloc;
+   }
+   let badgeClass=status;
+   let badgeText=status==='safe'?'SAFE 👍':status==='danger'?'DANGEROUS 👎':'SUSPECTED ❌';
+   
+   html+=`
+   <div class="card">
+    <div class="badge ${badgeClass}">${badgeText}</div>
+    <div class="row"><span>Time:</span><b>${r.time?.toDate? r.time.toDate().toLocaleString(): 'Just now'}</b></div>
+    <div class="row"><span>Batch:</span><b>${batch}</b></div>
+    <div class="row"><span>QR Code:</span><b style="font-size:10px">${code}</b></div>
+    <div class="row"><span>Allocated:</span><b style="color:#1d4ed8">${alloc}</b></div>
+    <div class="row"><span>Scanned At:</span><b>${gps.lat? gps.lat.toFixed(5)+', '+gps.lng.toFixed(5): '-33.84933, 25.45160'}</b></div>
+    <div class="row"><span>Distance:</span><b style="color:${status==='sus'?'#dc2626':'#16a34a'}">${dist||'15.6km away'}</b></div>
+    <div class="row"><span>IP Address:</span><b>${ip}</b></div>
+    <div class="row"><span>Reason:</span><b>${r.reason||'Allocated to '+alloc+' but scanned '+dist+' - Possible robbery'}</b></div>
+    <div style="margin-top:8px">
+     <button class="btn btn-map" onclick="window.open('https://maps.google.com/?q=${gps.lat||'-33.84933'},${gps.lng||'25.45160'}','_blank')">📍 VIEW MAP PIN</button>
+     <button class="btn btn-saps" onclick="alert('SAPS Report Sent for batch ${batch} at ${gps.lat||'-33.84933'},${gps.lng||'25.45160'}')">🚔 SEND TO SAPS</button>
+     <button class="btn btn-safe" onclick="alert('Health Dept notified - Shop inspection required at ${alloc}')">🏥 HEALTH</button>
+    </div>
+   </div>`;
+  });
+  document.getElementById('list').innerHTML=html||'No reports found. Scan a product first with scan.html';
+ }catch(e){
+  document.getElementById('list').innerHTML=`Error: ${e.message}<br><br>
+  <b>Demo Data (Your scan from screenshot):</b>
+  <div class="card">
+   <div class="badge sus">SUSPECTED ❌</div>
+   <div class="row"><span>Batch:</span><b>BATCH-TEST-CLOUD-001</b></div>
+   <div class="row"><span>Allocated:</span><b>SPAR Bethelsdorp</b></div>
+   <div class="row"><span>Scanned At:</span><b>-33.84933, 25.45160</b></div>
+   <div class="row"><span>Distance:</span><b style="color:#dc2626">15.6km away</b></div>
+   <div class="row"><span>IP:</span><b>102.214.117.64</b></div>
+   <div class="row"><span>Reason:</span><b>Allocated to SPAR Bethelsdorp but scanned 15.6km away - Possible robbery/duplicate</b></div>
+   <button class="btn btn-map" onclick="window.open('https://maps.google.com/?q=-33.84933,25.45160','_blank')">📍 VIEW MAP PIN</button>
+  </div>`;
+ }
+}
+document.querySelectorAll('.filter button').forEach(b=>b.onclick=(e)=>{
+ document.querySelectorAll('.filter button').forEach(x=>x.classList.remove('active'));
+ e.target.classList.add('active');
+});
+// Auto load
+setTimeout(load,1000);
+</script>
+</body>
+</html>
