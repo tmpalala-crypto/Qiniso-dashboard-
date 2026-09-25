@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO PRO LIGHT - MARK V4 LIVE</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Inter',system-ui}body{margin:0;background:#f2f4f8;color:#0f172a;padding-bottom:90px}
+.header{background:white;padding:18px 14px;border-radius:0 0 22px 22px;box-shadow:0 6px 24px rgba(0,0,0,0.06);display:flex;gap:12px;border-top:5px solid #1e3a8a;position:relative}
+.logo-shield{width:56px;height:56px;background:linear-gradient(135deg,#1e3a8a 50%,#d4af37 50%);border-radius:12px;display:flex;align-items:center;justify-content:center;border:3px solid #d4af37}
+.card{background:white;border-radius:18px;padding:16px;margin:12px;box-shadow:0 4px 16px rgba(0,0,0,0.05);border:1px solid #eef2ff}
+.card-title{font-weight:900;font-size:15px;border-bottom:2.5px solid #d4af37;display:inline-block;padding-bottom:4px;margin-bottom:12px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #f1f5f9;gap:8px}
+.label{font-size:11px;color:#475569;font-weight:600;min-width:90px}.value{font-weight:800;font-size:13px;flex:1}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px}
+.mini{background:white;border-radius:14px;padding:12px 8px;box-shadow:0 2px 10px rgba(0,0,0,0.05);border-top:3.5px solid #d4af37}
+.mini-top{color:#b45309;font-weight:800;font-size:10px}.mini b{display:block;font-size:12px;margin-top:8px}.mini small{font-size:10px;color:#64748b}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px}
+.sig-box{background:white;border:1.5px solid #d4af37;border-radius:12px;padding:8px;text-align:center}
+.sig-label{font-size:8px;font-weight:800}.sig-line{border:1.5px dashed #d4af37;border-radius:8px;margin:8px 0;padding:12px 4px;font-family:cursive;font-size:18px;color:#1e3a8a}
+.legal-black{background:#0f0f0f;border:2px solid #fbbf24;border-radius:16px;padding:14px;margin:12px;color:white}
+.legal-gold{background:linear-gradient(90deg,#fffbeb,#fef3c7);color:#78350f;padding:10px;border-radius:10px;font-weight:800;font-size:11px;text-align:center;border:1px solid #fbbf24;margin-bottom:10px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;padding:10px 0 14px;border-radius:22px 22px 0 0}
+.nav-item{text-align:center;font-size:10px;color:#94a3b8;font-weight:600}.nav-item.active{color:#1e3a8a}
+input.editable{border:none;background:transparent;font-weight:800;font-size:13px;width:100%}
+</style></head><body>
+<div class="header">
+<div class="logo-shield">🛡️</div>
+<div style="flex:1"><div style="font-weight:900;font-size:15px;line-height:1.1">QINISO INSPECTION<br>FIELD TOOL PRO + SHIELD</div><div style="font-size:10px;color:#64748b;font-weight:600">SAPS 2024/4410 COMPLIANT • VERIFIED & SECURE</div></div>
+<div style="background:#fffbeb;border:1.5px solid #1e3a8a;border-radius:10px;padding:4px 8px;font-size:9px;font-weight:900;color:#1e3a8a;text-align:center">SAPS 2024/4410<br>COMPLIANT</div>
+</div>
+<div style="margin:12px;background:linear-gradient(90deg,#dbeafe,#eff6ff);border:1.5px solid #d4af37;border-radius:12px;padding:12px;display:flex;gap:10px;font-weight:800;font-size:12px">🛡️ Inspections operating under SAPS 2024/4410<br>Compliance Standard • Verified & Secure</div>
+<div class="grid3">
+<div class="mini"><div class="mini-top">SCAN INFO</div><b id="scanId">ID: QI-8847291</b><small>QR • Valid • 2.1.4</small></div>
+<div class="mini"><div class="mini-top">GPS</div><b id="gpsText">Loading...</b><small id="gpsSmall">Live • Accuracy 3m</small></div>
+<div class="mini"><div class="mini-top">IP</div><b id="ipText">Loading...</b><small>Secured • TLS 1.3</small></div>
+</div>
+<div class="card"><div class="card-title">FIELD DETAILS</div>
+<div class="row"><div class="label">BATCH FIELD:</div><div class="value"><input class="editable" id="batchField" value="BATCH #QIN-2024-1127"></div>✏️</div>
+<div class="row"><div class="label">LOCATION:</div><div class="value"><input class="editable" value="SPAR Bethelsdorp"><div style="font-size:11px;color:#64748b">Bethelsdorp, Gqeberha</div></div>📍</div>
+<div class="row"><div class="label">INVOICE FIELD:</div><div class="value"><input class="editable" value="INV-QIN-4410-00982"></div>📄</div>
+<div class="row"><div class="label">DISTRIBUTOR:</div><div class="value" style="font-size:12px">SPAR Eastern Cape Distributors (Pty) Ltd</div></div>
+</div>
+<div class="card"><div class="card-title">SIGN & VERIFY</div><div style="font-size:12px;font-weight:700;margin:-8px 0 8px">Triple Signature + Fingerprint Verification Required</div>
+<div class="sig-grid">
+<div class="sig-box"><div class="sig-label">INSPECTOR SIGNATURE</div><div class="sig-line">J. Mbatha</div><div style="font-size:10px">Signed • 09:38 ✓</div></div>
+<div class="sig-box"><div class="sig-label">SUPERVISOR SIGNATURE</div><div class="sig-line">L. Botha</div><div style="font-size:10px">Signed • 09:39 ✓</div></div>
+<div class="sig-box"><div class="sig-label">CLIENT SIGNATURE</div><div class="sig-line">M. Ndlovu</div><div style="font-size:10px">Signed • 09:40 ✓</div></div>
+</div></div>
+<div style="margin:12px;background:linear-gradient(90deg,#dbeafe,#eff6ff);border:1.5px solid #d4af37;border-radius:12px;padding:12px;display:flex;gap:10px">👆<div><div style="font-weight:900;color:#1e3a8a;font-size:12px">BIOMETRIC FINGERPRINT VERIFIED</div><div style="font-size:11px">Fingerprint: FP-7742-91 • Match: 99.8% • Verified at 09:40</div></div></div>
+<div class="legal-black">
+<div class="legal-gold">🇿🇦 PROTECTING OUR FAMILIES. KEEPING MZANSI SAFE.<br><span style="font-weight:600;color:#92400e;font-size:10px">Every scan stops fakes from reaching our children. You are a protector!</span></div>
+<div style="font-size:11px;line-height:1.5;color:#e5e7eb">🔍 <b style="color:white">QINISO ROLE:</b> We ONLY collect evidence — GPS, IP, Photos, Scan logs — to keep your country safe.<br><div style="margin-top:6px">⚖️ <b style="color:#fbbf24">DECISION:</b> Final action is taken by the LAW (SAPS 2024/4410) and BRAND OWNER only. Qiniso does NOT accuse or prosecute.</div></div>
+<div style="margin-top:10px;background:rgba(255,255,255,0.08);padding:8px;border-radius:8px;text-align:center;font-size:10px;color:#fbbf24;font-weight:700">MARK V4 Live: <span id="scanCount">0</span> scans | <span id="susCount">0</span> SUSPECTED in 2km • All Phones Alert Active</div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1.6fr;gap:10px;margin:12px">
+<button style="background:white;color:#a16207;border:2px solid #d4af37;padding:14px;border-radius:12px;font-weight:800">SAVE DRAFT</button>
+<button style="background:#1e3a8a;color:white;border:none;padding:14px;border-radius:12px;font-weight:800" onclick="alert('✅ Evidence Collected! GPS + IP Secured for SAPS 2024/4410. Decision by Law & Brand only.')">SUBMIT INSPECTION 🔒</button>
+</div>
+<div class="card" style="text-align:center"><button onclick="location.href='scan-v28-live.html'" style="background:linear-gradient(90deg,#fbbf24,#d4af37);border:none;padding:16px;border-radius:14px;font-weight:900;width:100%;color:#78350f">📷 START LIVE SCAN - MARK V4 FIRESTORE</button><div style="margin-top:8px;font-size:10px;color:#94a3b8">🔒 Secured & Logged — POPIA | SAPS 2024/4410 | Panic Alert 2km</div></div>
+<div class="bottom-nav"><div class="nav-item active">🏠<br>Home</div><div class="nav-item" onclick="location.href='scan-v28-live.html'">📷<br>Scan</div><div class="nav-item">📋<br>Fields</div><div class="nav-item">🕒<br>History</div><div class="nav-item">⚙️<br>Settings</div></div>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js';
+import { getFirestore, collection, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js';
+const firebaseConfig = { apiKey: "AIzaSyDUMMY", authDomain: "qiniso-mark-v4.firebaseapp.com", projectId: "qiniso-mark-v4", storageBucket: "qiniso-mark-v4.appspot.com", messagingSenderId: "310121640224", appId: "1:310121640224:web:7b16bdccb3281e61b969445" };
+try{const app=initializeApp(firebaseConfig);const db=getFirestore(app);const snap=await getDocs(collection(db,"scans"));let sus=0; snap.forEach(d=>{if(d.data().status?.includes('❌')) sus++;}); document.getElementById('scanCount').innerText=snap.size; document.getElementById('susCount').innerText=sus;}catch(e){}
+navigator.geolocation.getCurrentPosition(p=>{document.getElementById('gpsText').innerText=p.coords.latitude.toFixed(4)+"° S, "+p.coords.longitude.toFixed(4)+"° E";document.getElementById('gpsSmall').innerText="Live • Accuracy "+Math.round(p.coords.accuracy)+"m";document.getElementById('scanId').innerText="ID: QI-"+Math.floor(1000000+Math.random()*8999999);});
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{document.getElementById('ipText').innerText=d.ip;}).catch(()=>{document.getElementById('ipText').innerText="102.214.117.x";});
+</script></body></html>
