@@ -1,58 +1,68 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO ADMIN DASHBOARD - LIVE</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8",
-  authDomain: "qiniso-mark-v4.firebaseapp.com",
-  projectId: "qiniso-mark-v4",
-  storageBucket: "qiniso-mark-v4.firebasestorage.app",
-  messagingSenderId: "519121640224",
-  appId: "1:519121640224:web:f516bddbc5281e06fa9545"
-};
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
-window.db=db; window.fs={collection,onSnapshot,query,orderBy};
-</script>
-</head>
-<body class="bg-[#0f1e3d] p-2">
-<div class="bg-white rounded-2xl p-4 border-b-4 border-yellow-500">
-<h1 class="font-black text-[16px] text-[#0f1e3d]">📊 QINISO LIVE DASHBOARD - SAPS 2024/4410</h1>
-<p class="text-[10px]">🔴 LIVE - All customer scans appear here instantly!</p>
-<div class="grid grid-cols-3 gap-2 mt-3">
-<div class="bg-green-100 border-2 border-green-600 rounded-xl p-2 text-center"><div id="safeCount" class="font-black text-[20px]">0</div><div class="text-[8px] font-bold">✅ SAFE</div></div>
-<div class="bg-red-100 border-2 border-red-600 rounded-xl p-2 text-center"><div id="suspectCount" class="font-black text-[20px] text-red-700">0</div><div class="text-[8px] font-bold">❌ SUSPECT</div></div>
-<div class="bg-orange-100 border-2 border-orange-600 rounded-xl p-2 text-center"><div id="wrongCount" class="font-black text-[20px] text-orange-700">0</div><div class="text-[8px] font-bold">📍❌ WRONG LOC</div></div>
-</div>
-</div>
-
-<div id="mapView" class="mt-3 bg-white rounded-2xl h-64 border-2 border-yellow-500 flex items-center justify-center text-[10px] font-bold">🗺️ LIVE MAP - Pins will show here<br><span class="text-[8px] text-slate-500">Every scan = pin on map with GPS</span></div>
-
-<div class="mt-3 bg-white rounded-2xl p-3">
-<h2 class="font-black text-[12px]">📋 LIVE SCANS TABLE - NEWEST FIRST</h2>
-<table class="w-full mt-2 text-[8px]"><thead><tr class="bg-[#0f1e3d] text-white"><th class="p-2 rounded-l-lg">TIME</th><th class="p-2">PRODUCT</th><th class="p-2">STATUS</th><th class="p-2">GPS</th><th class="p-2 rounded-r-lg">ACTION</th></tr></thead><tbody id="scanTable"></tbody></table>
-</div>
-
-<script type="module">
-let safe=0,suspect=0,wrong=0;
-const q=window.fs.query(window.fs.collection(window.db,'customer_scans'), window.fs.orderBy('time','desc'));
-window.fs.onSnapshot(q,(snap)=>{
-  let html=''; safe=0; suspect=0; wrong=0; let pins='';
-  snap.forEach(doc=>{
-    let d=doc.data();
-    if(d.suspect||d.expired) suspect++; else safe++;
-    if(d.wrongLocation) wrong++;
-    let color=d.suspect||d.expired?'bg-red-100 border-red-500':'bg-green-100 border-green-500';
-    html+=`<tr class="${color} border-2"><td class="p-2">${d.date?new Date(d.date).toLocaleTimeString():''}<br>${d.gps||''}</td><td class="p-2 font-black">${d.product||d.barcode}<br><span class="text-[7px]">${d.brand||''}</span></td><td class="p-2 font-black">${d.expired?'❌ EXPIRED':d.suspect?'❌ SUSPECT':d.wrongLocation?'⚠️ WRONG LOC':'✅ SAFE'}</td><td class="p-2"><a href="${d.map||'https://maps.google.com/?q='+d.gps}" target="_blank" class="text-blue-600 underline">📍 MAP</a><br>${d.ip||''}</td><td class="p-2"><button onclick="window.open('${d.map}','_blank')" class="bg-[#0f1e3d] text-white px-2 py-1 rounded-full text-[7px]">👮 SAPS</button></td></tr>`;
-    pins+=`📍 ${d.product} - ${d.gps} - ${d.suspect?'SUSPECT':'SAFE'}<br>`;
-  });
-  document.getElementById('scanTable').innerHTML=html||'<tr><td colspan=5 class="p-4 text-center">No scans yet - Scan from index.html</td></tr>';
-  document.getElementById('safeCount').innerText=safe;
-  document.getElementById('suspectCount').innerText=suspect;
-  document.getElementById('wrongCount').innerText=wrong;
-  document.getElementById('mapView').innerHTML=pins||'No scans yet';
-});
-</script>
-</body></html>
+<select id="roleSelect" class="border-2 border-[#0f1e3d] rounded-xl p-3 text-[10px] font-black bg-white" onchange="filterRole(this.value)">
+<option value="ADMIN">👑 ADMIN - See ALL (You)</option>
+<option value="SAPS">👮 SAPS - See ALL + Map</option>
+<option value="NCC">🏛️ NCC - See ALL Suspect</option>
+<option value="HEALTH">🏥 HEALTH - Food Only</option>
+<option value="CIP">🏭 CIP - All Brands</option>
+<option value="SARS">💰 SARS - All</option>
+<option value="NRCS">🔬 NRCS - Standards</option>
+<option value="SPAR">🏪 SPAR</option>
+<option value="SHOPRITE">🏪 SHOPRITE</option>
+<option value="PICKNPAY">🏪 PICK N PAY</option>
+<option value="WOOLWORTHS">🏪 WOOLWORTHS</option>
+<option value="BOXER">🏪 BOXER</option>
+<option value="CHECKERS">🏪 CHECKERS</option>
+<!-- 50 BRANDS -->
+<option value="COCA_COLA">🥤 COCA-COLA</option>
+<option value="KOO">🫘 KOO</option>
+<option value="LUCKY_STAR">🐟 LUCKY STAR</option>
+<option value="ALBANY">🍞 ALBANY</option>
+<option value="SASKO">🍞 SASKO</option>
+<option value="BLUE_RIBBON">🍞 BLUE RIBBON</option>
+<option value="CLOVER">🥛 CLOVER</option>
+<option value="NESTLE">☕ NESTLÉ / MAGGI / MILO</option>
+<option value="TIGER">🐯 TIGER BRANDS / TASTIC / ACE</option>
+<option value="UNILEVER">🧴 UNILEVER / KNORR / RAMA</option>
+<option value="PEPSI">🥤 PEPSI</option>
+<option value="FANTA">🍊 FANTA</option>
+<option value="SPRITE">💚 SPRITE</option>
+<option value="STONEY">🥤 STONEY</option>
+<option value="SCHWEPPES">🥤 SCHWEPPES</option>
+<option value="SIMBA">🦁 SIMBA / LAYS / DORITOS</option>
+<option value="CADBURY">🍫 CADBURY</option>
+<option value="BEACON">🍬 BEACON</option>
+<option value="ALL_GOLD">🍅 ALL GOLD</option>
+<option value="BLACK_CAT">🥜 BLACK CAT</option>
+<option value="RHODES">🍅 RHODES / BULL BRAND</option>
+<option value="ENTERPRISE">🌭 ENTERPRISE / ESKORT</option>
+<option value="RAINBOW">🍗 RAINBOW / KFC</option>
+<option value="HULETTS">🍬 HULETTS / SELATI SUGAR</option>
+<option value="SUNFOIL">🌻 SUNFOIL / DLITE OIL</option>
+<option value="KELLOGGS">🥣 KELLOGGS</option>
+<option value="BOKOMO">🥣 BOKOMO / WEET-BIX</option>
+<option value="JUNGLE">🦁 JUNGLE OATS</option>
+<option value="OROS">🍊 OROS / ENERGADE</option>
+<option value="MAYNRDS">🍬 MAYNARDS / JELLY TOTS</option>
+<option value="FATTIS">🍝 FATTIS & MONIS</option>
+<option value="SPEKKO">🍚 SPEKKO / WHITE STAR</option>
+<option value="IWISA">🌽 IWISA / ACE MEALIE MEAL</option>
+<option value="KNORR">🍲 KNORR</option>
+<option value="ROBERTSONS">🌶️ ROBERTSONS</option>
+<option value="NOLA">🥫 NOLA / HUGO</option>
+<option value="WOOL">🧶 MAQ / SUNLIGHT / OMO</option>
+<option value="COLGATE">🪥 COLGATE / PALMOLIVE</option>
+<option value="PAMPERS">👶 PAMPERS / HUGGIES</option>
+<option value="DETOL">🧼 DETTOL / SAVLON</option>
+<option value="GLEN">🥃 GLEN / JOHNNIE WALKER</option>
+<option value="HEINEKEN">🍺 HEINEKEN / CASTLE</option>
+<option value="SAVANNA">🍺 SAVANNA / HUNTERS</option>
+<option value="BUD">🍺 BUD / AMSTEL</option>
+<option value="NESCAFE">☕ NESCAFÉ / RICOFFY</option>
+<option value="JACOBS">☕ JACOBS / KOFFIEHUIS</option>
+<option value="BULL">🐂 BULL BRAND / KOO</option>
+<option value="KOO2">🫘 KOO BEANS / KOO VEG</option>
+<option value="LUCKY2">🐟 LUCKY STAR PILCHARDS</option>
+<option value="SPAR_BRAND">🏷️ SPAR BRAND</option>
+<option value="PNP_BRAND">🏷️ PICK N PAY BRAND</option>
+<option value="WOOLIES_BRAND">🏷️ WOOLWORTHS BRAND</option>
+</select>
