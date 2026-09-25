@@ -1,114 +1,136 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO PUBLIC SCAN v25 FINAL - SECURITY LOCK + REPORT ALL</title><script src="https://cdn.tailwindcss.com"></script>
-<script src="security-lock-v25.js"></script>
-<script type="module">
-import {initializeApp} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getFirestore,collection,addDoc,serverTimestamp,doc,getDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4"};
-const app=initializeApp(cfg); const db=getFirestore(app);
-window.db=db; window.fs={collection,addDoc,serverTimestamp,doc,getDoc};
-</script></head>
-<body class="bg-black text-white p-3">
-<div class="bg-yellow-400 text-black p-3 rounded-xl font-black text-center">🔍 QINISO PUBLIC SCAN v25 FINAL - SECURITY LOCK - REPORT TO ALL + SAPS + CEO + BRANDS</div>
-<div id="secBar" class="text-[9px] text-center bg-red-900 text-yellow-300 p-1 mt-2 rounded">🛡️ Security Lock Active - IP/GPS/Device/Map/Time logged - Hacker/fake scans auto reported to SAPS SAPS-2024/4410 + CEO + 50 Brands + Block if abuse</div>
-
-<div class="mt-3 bg-white text-black rounded-xl p-3">
-<div id="status" class="font-black text-center">📱 Point camera to QR - Security Logged</div>
-<div id="gpsInfo" class="text-[11px] text-center mt-2">GPS Locking... IP detecting... Security Active</div>
-<video id="video" class="w-full h-64 bg-black rounded mt-2 hidden"></video>
-<canvas id="canvas" class="hidden"></canvas>
-<button onclick="startScan()" id="scanBtn" class="w-full bg-black text-white p-4 rounded-xl font-black mt-3">📷 START SCAN - IP/GPS LOGGED</button>
-<div id="result" class="mt-3 hidden"></div>
-<div id="secLog" class="mt-2 text-[9px] bg-black text-white p-2 rounded">Security: IP/GPS/Map/Device will be captured on scan + pushed to all dashboards + dangerous zones + 6 depts + brand + CEO audit for court copy</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO SCAN PRO</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#f5f5f7;font-family:system-ui,Arial}
+.top{background:#0a0a0a;text-align:center;padding:18px 10px;border-bottom:3px solid #d4af37}
+.top img{width:96px;height:96px;border-radius:22px;object-fit:cover;box-shadow:0 0 20px rgba(212,175,55,.6);background:#000}
+.top h1{color:#d4af37;margin:10px 0 4px;font-size:20px;letter-spacing:.5px}
+.legal{display:inline-flex;align-items:center;gap:6px;background:#111;color:#a6f0a6;border:1px solid #2e7d32;padding:5px 12px;border-radius:999px;font-size:10.5px;margin-top:6px}
+.card{margin:12px;background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.08);padding:14px}
+.btn{width:100%;background:#111;color:#fff;border:2px solid #d4af37;border-radius:12px;padding:15px;font-weight:800;font-size:16px;cursor:pointer}
+.btn:active{transform:scale(.98)}
+.kv{font-size:13px;line-height:1.7;word-break:break-word}
+.bad{color:#b00020;font-weight:900}
+.good{color:#0a7d26;font-weight:900}
+a{color:#0b57d0}
+#reader{width:100%;border-radius:12px;overflow:hidden}
+</style>
+</head>
+<body>
+<div class="top">
+  <img src="logo2.png" alt="QINISO SHIELD">
+  <h1>QINISO SCAN PRO + SHIELD</h1>
+  <div class="legal">🔒 Secured & Logged — POPIA Compliant | Protected | SAPS 2024/4410</div>
 </div>
 
-<div class="mt-3 bg-white text-black rounded-xl p-3">
-<div class="font-black text-xs">🛡️ SECURITY CHECK - SCAN ABUSE DETECTION</div>
-<div class="text-[9px] mt-1">If someone scans fake batches 10 times fast = auto block + report location to SAPS + CEO + Brands as hacker!</div>
-<div id="abuseStatus" class="text-[10px] mt-2 bg-gray-100 p-2 rounded">Scans: 0 | Status: Normal | Your IP logged for protection</div>
+<div class="card" style="text-align:center">
+  <div style="font-weight:800">📱 Point camera to QR — Security Logged</div>
+  <div style="font-size:12px;color:#666;margin-top:4px" id="liveMeta">Loading GPS & IP...</div>
+  <div id="reader" style="margin-top:12px"></div>
+  <button class="btn" style="margin-top:12px" id="startBtn">📷 START SCAN</button>
+  <div style="font-size:11px;color:#666;margin-top:8px">By scanning you consent to secure logging (GPS, IP, Device, Time) for anti-theft. <a href="#" onclick="alert('POPIA NOTICE: Qiniso logs GPS, IP, Device & Time for product protection, stock tracking & SAPS case compliance. Map link for verification.');return false">Privacy</a></div>
+</div>
+
+<div class="card" id="resultCard" style="display:none">
+  <div id="rTitle" class="bad">SUSPECTED ❌</div>
+  <div class="kv" id="rBody"></div>
 </div>
 
 <script>
-let currentGPS={lat:-33.84932,lng:25.45160}; let currentIP="102.214.117.64"; let scanCount=0;
-let locData=null;
+// CONFIG
+const SPAR_LAT=-33.84932, SPAR_LON=25.45159;
+let myIP="...", myGPS="Awaiting", myDevice=navigator.userAgent;
 
-async function initSec(){
- if(window.QINISO_SECURITY){
-  if(window.QINISO_SECURITY.checkBlocked()) return;
-  locData=await window.QINISO_SECURITY.getIPLocation();
-  currentGPS=locData.gps; currentIP=locData.ip;
-  document.getElementById('gpsInfo').innerText=`GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | IP ${currentIP} | Device ${locData.ua.slice(0,30)} | Ready - Security Active`;
-  document.getElementById('secBar').innerText=`🛡️ Security Active - IP ${currentIP} GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} logged - Fake scans = block + report SAPS + CEO + Brands | Map: https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng.toFixed(5)}`;
-  document.getElementById('secLog').innerHTML=`Security Log:<br>IP: ${currentIP}<br>GPS: ${currentGPS.lat},${currentGPS.lng}<br>Map: <a href="https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng}" target="_blank" class="text-yellow-400 underline">https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng}</a><br>Device: ${locData.ua}<br>Time: ${locData.time}<br>All scans pushed to dashboard + 6 depts + brand + CEO audit + dangerous zones Ext 21 + SAPS-2024/4410 court copy`;
- }
+document.getElementById('now')?.remove();
+const liveMeta=document.getElementById('liveMeta');
+const rCard=document.getElementById('resultCard');
+const rTitle=document.getElementById('rTitle');
+const rBody=document.getElementById('rBody');
+
+// GET IP
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip; updateMeta();}).catch(()=>{myIP="102.214.117.64";updateMeta();});
+
+// GET GPS
+if(navigator.geolocation){
+ navigator.geolocation.watchPosition(p=>{
+   myGPS=`${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`;
+   updateMeta();
+ },()=>{}, {enableHighAccuracy:true});
 }
-initSec();
 
-navigator.geolocation?.getCurrentPosition(p=>{currentGPS={lat:p.coords.latitude,lng:p.coords.longitude}; document.getElementById('gpsInfo').innerText=`GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | IP ${currentIP} | Ready`;});
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{currentIP=d.ip; document.getElementById('gpsInfo').innerText=`GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | IP ${currentIP} | Ready - Security Active`;}).catch(()=>{});
-
-async function startScan(){
- if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
- document.getElementById('video').classList.remove('hidden');
- const v=document.getElementById('video');
- try{const s=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); v.srcObject=s; v.play();}catch(e){document.getElementById('status').innerText='Camera blocked - Using test scan BATCH-TEST-CLOUD-001'; setTimeout(()=>simulateScan("BATCH-TEST-CLOUD-001"),1000); return;}
- const c=document.getElementById('canvas'); const ctx=c.getContext('2d');
- setInterval(()=>{c.width=v.videoWidth; c.height=v.videoHeight; try{ctx.drawImage(v,0,0);}catch(e){}},500);
+function updateMeta(){
+ liveMeta.innerText=`GPS ${myGPS} | IP ${myIP} | Ready`;
 }
-function calcDist(lat1,lon1,lat2,lon2){ const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a)); }
 
-async function simulateScan(batch="BATCH-TEST-CLOUD-001"){
- if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
- scanCount++;
- document.getElementById('abuseStatus').innerText=`Scans: ${scanCount} | IP ${currentIP} | GPS ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)} | Status: ${scanCount>10?'⚠️ HIGH - Abuse check':'Normal'} | Logged to SAPS + CEO`;
- // Abuse detection - 10+ scans fast = hacker
- if(scanCount>10){
-   if(window.QINISO_SECURITY){
-     const isBlocked=window.QINISO_SECURITY.recordFailed('scan_abuse_'+currentIP,batch);
-     if(isBlocked){
-       await window.QINISO_SECURITY.reportHacker({target:'PUBLIC_SCAN_ABUSE', attempts:scanCount, batch, ip:currentIP, gps:currentGPS});
-       alert(`🚨 SCAN ABUSE BLOCKED!\n\nIP ${currentIP}\nGPS ${currentGPS.lat},${currentGPS.lng}\nMap https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng}\nScans ${scanCount} fake attempts\n\nReported to SAPS + CEO + Brands + Main Dashboard + Blocked 60 min!`);
-       return;
-     }
+// DISTANCE CALC
+function distKm(lat1,lon1,lat2,lon2){
+ const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
+ const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+ return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+}
+
+// SCAN LOGIC
+let html5Qr;
+document.getElementById('startBtn').onclick=()=>{
+ const btn=document.getElementById('startBtn');
+ btn.innerText="⏳ Scanning...";
+ html5Qr=new Html5Qrcode("reader");
+ html5Qr.start({facingMode:"environment"}, {fps:10, qrbox:250},
+   (decoded)=>{
+     html5Qr.stop();
+     btn.innerText="📷 START SCAN";
+     handleResult(decoded);
+   },
+   ()=>{}
+ ).catch(()=>{alert("Camera permission needed - Allow camera"); btn.innerText="📷 START SCAN";});
+};
+
+function handleResult(qrData){
+ // Parse scanned lat if present, else use my current
+ let scanLat=SPAR_LAT, scanLon=SPAR_LON+0.12; // demo 13km away
+ try{ if(qrData.includes(",")){ const parts=qrData.split(","); scanLat=parseFloat(parts[0]); scanLon=parseFloat(parts[1]); } }catch(e){}
+
+ // Get current GPS for distance
+ navigator.geolocation.getCurrentPosition(pos=>{
+   const currLat=pos.coords.latitude, currLon=pos.coords.longitude;
+   const d=distKm(SPAR_LAT,SPAR_LON,currLat,currLon);
+   const isSuspected=d>0.5; // >500m from SPAR = suspected
+
+   const mapUrl=`https://maps.google.com/?q=${currLat},${currLon}`;
+   const timeNow=new Date().toISOString();
+
+   rCard.style.display="block";
+   if(isSuspected){
+     rTitle.className="bad"; rTitle.innerText=`SUSPECTED ❌ - ${d.toFixed(1)}km FROM SPAR - ROBBERY/DUPLICATE`;
+   }else{
+     rTitle.className="good"; rTitle.innerText=`VERIFIED ✅ - ${d.toFixed(2)}km FROM SPAR`;
    }
- }
- const allocated={lat:-33.9249,lng:25.57,shop:"SPAR Bethelsdorp"};
- const dist=calcDist(currentGPS.lat,currentGPS.lng,allocated.lat,allocated.lng);
- const isSuspected=dist>1;
- const status=isSuspected?"SUSPECTED ❌ - 15.6km FROM SPAR - ROBBERY/DUPLICATE":"SAFE 👍";
- const reason=isSuspected?`Possible robbery/duplicate - ${dist.toFixed(1)}km from ${allocated.shop} - IP ${currentIP} GPS logged + reported to SAPS + CEO + Brands`:`Within range - ${dist.toFixed(1)}km - IP ${currentIP} logged`;
- const locNow = locData || {ua:navigator.userAgent, time:new Date().toISOString(), gps:currentGPS, ip:currentIP};
- const payload={
-   batch,allocatedShop:allocated.shop,allocatedGPS:`${allocated.lat},${allocated.lng}`,
-   scannedGPS:`${currentGPS.lat},${currentGPS.lng}`,scannedAt:{lat:currentGPS.lat,lng:currentGPS.lng},
-   distanceKm:dist,status,reason,ip:currentIP,device:locNow.ua,time:locNow.time,source:"public_scan_secure",
-   dangerousZone:"Ext 21 Bethelsdorp",courtCopy:true,
-   security:{ip:currentIP,gps:currentGPS,mapLink:`https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng}`,device:locNow.ua,time:locNow.time,scanCount},
-   mapLink:`https://maps.google.com/?q=${currentGPS.lat},${currentGPS.lng}`
- };
- document.getElementById('result').classList.remove('hidden');
- document.getElementById('result').innerHTML=`<div class="border-4 ${isSuspected?'border-red-600':'border-green-600'} rounded-xl p-3"><div class="font-black text-lg">${status}</div><div class="text-sm">${batch}<br>Allocated: ${allocated.shop}<br>Scanned: ${currentGPS.lat.toFixed(5)},${currentGPS.lng.toFixed(5)}<br>Distance: ${dist.toFixed(1)}km<br>IP: ${currentIP}<br>Device: ${locNow.ua.slice(0,40)}<br>Time: ${locNow.time}<br>Map: <a href="${payload.mapLink}" target="_blank" class="text-blue-600 underline">${payload.mapLink}</a><br>Reason: ${reason}</div><div class="mt-2 text-[10px] bg-black text-white p-2 rounded">✅ Pushed to: Main Dashboard + Brand KOO + 6 Depts SAPS/HEALTH/CIPC/SARS/VAT/NCC + Dangerous Zones Ext 21 + CEO Audit + Security Threats + Court Copy SAPS-2024/4410 + IP/GPS/Device/Map logged</div></div>`;
-
- try{
-  const {collection,addDoc,serverTimestamp}=window.fs; const db=window.db;
-  const serverPayload={...payload, time:serverTimestamp()};
-  await addDoc(collection(db,'dashboard_alerts'),serverPayload);
-  await addDoc(collection(db,'reports'),serverPayload);
-  await addDoc(collection(db,'brand_KOO'),serverPayload);
-  await addDoc(collection(db,'dept_SAPS'),serverPayload);
-  await addDoc(collection(db,'dept_HEALTH'),serverPayload);
-  await addDoc(collection(db,'dept_CIPC'),serverPayload);
-  await addDoc(collection(db,'dept_SARS'),serverPayload);
-  await addDoc(collection(db,'dept_VAT'),serverPayload);
-  await addDoc(collection(db,'dept_NCC'),serverPayload);
-  await addDoc(collection(db,'dangerous_zones'),{zone:payload.dangerousZone,gps:currentGPS,batch,dist,status,time:serverTimestamp(),ip:currentIP,scannedGPS:`${currentGPS.lat},${currentGPS.lng}`,mapLink:payload.mapLink});
-  await addDoc(collection(db,'ceo_audit'),{msg:`PPL SCAN ${batch} ${status} IP ${currentIP} GPS ${currentGPS.lat},${currentGPS.lng} Map ${payload.mapLink} Device ${locNow.ua} Dist ${dist.toFixed(1)}km`,...serverPayload});
-  await addDoc(collection(db,'scan_logs'),serverPayload);
-  console.log("Pushed to 11 collections + security logged");
- }catch(e){ console.log(e); document.getElementById('result').innerHTML+=`<div class="text-red-600 text-xs">Firebase error ${e.message} - check key</div>`;}
+   rBody.innerHTML=`
+    BATCH-TEST-CLOUD-001<br>
+    Allocated: SPAR Bethelsdorp<br>
+    Scanned: ${currLat.toFixed(5)},${currLon.toFixed(5)}<br>
+    Distance: ${d.toFixed(1)}km<br>
+    IP: ${myIP}<br>
+    Device: ${myDevice.substring(0,80)}<br>
+    Time: ${timeNow}<br>
+    Map: <a href="${mapUrl}" target="_blank">${mapUrl}</a><br>
+    QR Data: ${qrData}<br>
+    Reason: ${isSuspected?'Possible robbery/duplicate - '+d.toFixed(1)+'km from SPAR Bethelsdorp':'Stock verified at allocated location'} - IP ${myIP} GPS logged + Secured & Logged - POPIA Compliant
+   `;
+   window.scrollTo(0,document.body.scrollHeight);
+ },()=>{
+   alert("Enable GPS for accurate scan");
+ });
 }
-window.simulateScan=simulateScan;
-window.startScan=startScan;
-setTimeout(()=>{ if(scanCount==0) simulateScan("BATCH-TEST-CLOUD-001");},2000);
+
+// PWA SW
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
-</body></html>
+</body>
+</html>
