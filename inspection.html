@@ -1,5 +1,10 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>INSPECTION FIELD TOOL v25-3 FINAL - STORAGE + SECURITY LOCK</title><script src="https://cdn.tailwindcss.com"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO INSPECTION FIELD TOOL PRO</title>
+<link rel="manifest" href="manifest.json">
+<script src="https://cdn.tailwindcss.com"></script>
 <script src="security-lock-v25.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -8,10 +13,18 @@ import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/fi
 const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4",storageBucket:"qiniso-mark-v4.appspot.com"};
 const app=initializeApp(cfg); const db=getFirestore(app); const storage=getStorage(app);
 window.db=db; window.storage=storage; window.f={collection,addDoc,serverTimestamp,doc,setDoc,ref,uploadBytes,getDownloadURL};
-</script></head>
+</script>
+<style>.top-logo{width:86px;height:86px;border-radius:20px;box-shadow:0 0 18px #d4af37}</style>
+</head>
 <body class="bg-[#0a0e1a] text-white p-2">
-<div class="bg-yellow-400 text-black p-2 rounded-xl text-center font-black">🛡️ INSPECTION FIELD TOOL v25-3 FINAL - STORAGE + SECURITY LOCK + TRIPLE FP - ANTI-HACKER</div>
-<div id="secStatus" class="text-[9px] text-center bg-black text-yellow-400 p-1">🛡️ Security Lock Active - Hacker attempts report IP/GPS to SAPS + CEO + Brands</div>
+
+<!-- NEW BRANDED HEADER WITH LOGO - REPLACES YELLOW V25 BANNER -->
+<div class="bg-[#0a0a0a] border-2 border-[#d4af37] rounded-2xl p-3 text-center">
+  <div class="flex justify-center"><img src="logo2.png" class="top-logo" alt="QINISO"></div>
+  <div class="text-[#d4af37] font-black text-[15px] mt-2 tracking-wide">QINISO INSPECTION FIELD TOOL PRO + SHIELD</div>
+  <div class="inline-flex mt-1 bg-[#111] text-[#a6f0a6] border border-green-700 rounded-full px-3 py-1 text-[10px]">🔒 Secured & Logged — POPIA Compliant | Protected | SAPS 2024/4410</div>
+  <div id="secStatus" class="text-[9px] text-center text-yellow-400 mt-1">🛡️ Security Lock Active - IP/GPS/Device Logged - Protected Verification</div>
+</div>
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
 <div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📍 SCAN INFO + GPS + IP - Auto captured</div>
@@ -30,7 +43,7 @@ window.db=db; window.storage=storage; window.f={collection,addDoc,serverTimestam
 </div>
 </div>
 
-<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📸 9 EVIDENCE - UPLOAD TO FIREBASE STORAGE (YES STORAGE)</div>
+<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📸 9 EVIDENCE - UPLOAD TO FIREBASE STORAGE</div>
 <div class="grid grid-cols-3 gap-2 mt-2 text-[9px]">
 <div class="border p-2 rounded">1. Fridge/Front<input type="file" id="ev1" accept="image/*" class="w-full mt-1"><div id="prog1" class="text-[8px] text-blue-600"></div></div>
 <div class="border p-2 rounded">2. Shelf Products<input type="file" id="ev2" accept="image/*" class="w-full mt-1"><div id="prog2" class="text-[8px] text-blue-600"></div></div>
@@ -45,27 +58,27 @@ window.db=db; window.storage=storage; window.f={collection,addDoc,serverTimestam
 <div class="mt-2"><button onclick="recordVoice()" class="bg-red-600 text-white px-3 py-1 rounded text-xs">🔴 Record Voice Statement</button><span id="voiceStatus" class="text-[9px] ml-2">No voice</span><audio id="voicePlay" controls class="w-full mt-1 hidden"></audio></div>
 </div>
 
-<div class="bg-black border-2 border-yellow-400 rounded-xl p-3 mt-2"><div class="font-black text-yellow-400 text-xs">🔒 SEAL + UPLOAD TO STORAGE + PUSH TO ALL + SECURITY LOGGED</div><div id="sealStatus" class="text-[10px] text-white mt-1">Ready - Will upload 9 photos to Storage + GPS/IP logged + Anti-hacker shield active</div><button onclick="sealInspection()" class="w-full bg-yellow-400 text-black p-3 rounded-xl font-black mt-2">🔒 SEAL + UPLOAD TO FIREBASE STORAGE + SECURITY REPORT</button></div>
+<div class="bg-black border-2 border-[#d4af37] rounded-xl p-3 mt-2"><div class="font-black text-[#d4af37] text-xs">🔒 SEAL + UPLOAD TO STORAGE + PUSH TO ALL + SECURITY LOGGED</div><div id="sealStatus" class="text-[10px] text-white mt-1">Ready - Will upload 9 photos to Storage + GPS/IP logged + Shield active</div><button onclick="sealInspection()" class="w-full bg-[#d4af37] text-black p-3 rounded-xl font-black mt-2">🔒 SEAL + UPLOAD TO FIREBASE STORAGE + SECURITY REPORT</button></div>
 
 <script>
 let fps={inspector:null,owner:null,witness:null}; let voiceBlob=null;
-async function initIP(){if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); document.getElementById('ipView').innerText=loc.ip; document.getElementById('secStatus').innerText=`🛡️ Security Active - Your IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} logged - Hacker attempts auto-block + report to SAPS + CEO + Brands`;}} initIP();
+async function initIP(){if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); document.getElementById('ipView').innerText=loc.ip; document.getElementById('secStatus').innerText=`🛡️ Secured & Logged - IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} | POPIA Compliant | SAPS 2024/4410`;}} initIP();
 function fp(role){const fpCode='FP-'+role.toUpperCase()+'-'+Date.now().toString().slice(-6)+'-'+Math.random().toString(36).substring(2,8).toUpperCase(); fps[role]=fpCode; document.getElementById('fp'+(role==='inspector'?'Insp':role==='owner'?'Owner':'Wit')).innerText='✅ FP '+fpCode+' IP 102.214.117.64';}
 async function recordVoice(){const stream=await navigator.mediaDevices.getUserMedia({audio:true}); const rec=new MediaRecorder(stream); let chunks=[]; rec.ondataavailable=e=>chunks.push(e.data); rec.onstop=()=>{voiceBlob=new Blob(chunks,{type:'audio/webm'}); document.getElementById('voiceStatus').innerText='✅ Voice '+voiceBlob.size+' bytes'; document.getElementById('voicePlay').src=URL.createObjectURL(voiceBlob); document.getElementById('voicePlay').classList.remove('hidden');}; rec.start(); document.getElementById('voiceStatus').innerText='🔴 Recording 5 sec...'; setTimeout(()=>rec.stop(),5000);}
-async function uploadFile(file,path,progId){if(!file)return null; const{ref,uploadBytes,getDownloadURL}=window.f; const storageRef=ref(window.storage,path); document.getElementById(progId).innerText='⏳ Uploading to Storage...'; const snap=await uploadBytes(storageRef,file); const url=await getDownloadURL(snap.ref); document.getElementById(progId).innerText='✅ Storage: '+url.slice(0,40); return url;}
+async function uploadFile(file,path,progId){if(!file)return null; const{ref,uploadBytes,getDownloadURL}=window.f; const storageRef=ref(window.storage,path); document.getElementById(progId).innerText='⏳ Uploading to Storage...'; const snap=await uploadBytes(storageRef,file); const url=await getDownloadURL(snap.ref); document.getElementById(progId).innerText='✅ Storage OK'; return url;}
 async function sealInspection(){
 if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
-const pass=document.getElementById('inspPass').value; if(pass && pass!=='inspectoradmin123' && pass!=='admin123' && pass!=='qinisoadmin123'){ const isBlocked=window.QINISO_SECURITY.recordFailed('inspector_login','BATCH-TEST-CLOUD-001'); if(isBlocked) return; alert('Wrong inspector password! Attempt logged - IP/GPS reported to SAPS + CEO!'); return;}
+const pass=document.getElementById('inspPass').value; if(pass && pass!=='inspectoradmin123' && pass!=='admin123' && pass!=='qinisoadmin123'){ const isBlocked=window.QINISO_SECURITY.recordFailed('inspector_login','BATCH-TEST-CLOUD-001'); if(isBlocked) return; alert('Wrong inspector password! Attempt logged - IP/GPS reported!'); return;}
 const batch=document.getElementById('batch').value||'BATCH-TEST-CLOUD-001'; const shop=document.getElementById('shop').value; const shopGPS=document.getElementById('shopGPS').value; const inv=document.getElementById('inv').value; const invStatus=document.getElementById('invStatus').value||'DELETED UNDER REVIEW'; const dist=document.getElementById('dist').value; const factory=document.getElementById('factory').value||'China Factory XYZ'; const inspName=document.getElementById('inspName').value||'Inspector'; const ownerName=document.getElementById('ownerName').value||'Owner'; const witName=document.getElementById('witName').value||'Witness'; const witRole=document.getElementById('witRole').value; const chainFull=`${inv} ${invStatus} → ${dist} → ${factory} SUSPECT`; if(!fps.inspector||!fps.witness)return alert('Need Inspector + Witness FP!');
 const loc=await window.QINISO_SECURITY.getIPLocation();
-document.getElementById('sealStatus').innerText=`⏳ Uploading 9 evidence to Firebase Storage... IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} - Security logged`;
+document.getElementById('sealStatus').innerText=`⏳ Uploading 9 evidence to Firebase Storage... IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng}`;
 let evUrls={}; for(let i=1;i<=9;i++){const file=document.getElementById('ev'+i).files[0]; if(file){const url=await uploadFile(file,`inspections/${batch}/evidence_${i}_${Date.now()}_${file.name}`,`prog${i}`); evUrls['ev'+i]=url;}}
 let voiceUrl=null; if(voiceBlob){voiceUrl=await uploadFile(voiceBlob,`inspections/${batch}/voice_${Date.now()}.webm`,'voiceStatus');}
 const{collection,addDoc,serverTimestamp}=window.f;
 const data={batch,shop,gps:loc.gps,shopGPS,ip:loc.ip,distanceKm:15.6,status:'SEALED TRIPLE + STORAGE',chain:{full:chainFull,factory,distributor:dist,invoice:inv,invoiceStatus:invStatus},inspector:{name:inspName,fp:fps.inspector},owner:{name:ownerName,fp:fps.owner||'REFUSED',consent:document.getElementById('ownerConsent').checked},witness:{name:witName,role:witRole,fp:fps.witness},ev:evUrls,voice:voiceUrl,evCount:Object.keys(evUrls).length,security:{ip:loc.ip,gps:loc.gps,mapLink:`https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng}`,device:loc.ua,time:loc.time},created:serverTimestamp(),courtCopy:true,caseNo:'SAPS-2024/4410'};
 await addDoc(collection(window.db,'inspection_reports_final'),data); await addDoc(collection(window.db,'dashboard_alerts'),{batch,shop,gps:`${loc.gps.lat},${loc.gps.lng}`,ip:loc.ip,status:'SEALED INSPECTION STORAGE',chain:data.chain,time:serverTimestamp()}); await addDoc(collection(window.db,'dept_SAPS'),{batch,shop,status:'SEALED RAID READY - GPS IP LOGGED',chain:data.chain,inspector:inspName,ip:loc.ip,gps:`${loc.gps.lat},${loc.gps.lng}`,time:serverTimestamp()});
-document.getElementById('sealStatus').innerText=`✅ SEALED + STORAGE UPLOAD + SECURITY LOGGED!\n\nBatch ${batch} IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} Map https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng}\n9 Evidence: ${Object.keys(evUrls).length} photos Storage + Voice ${voiceUrl?'YES':'NO'}\nChain ${chainFull} Suspect ${factory}\nPushed to ALL dashboards + CEO + 6 Depts + 50 Brands + Dangerous Zones!\nCourt Copy SAPS-2024/4410`;
-alert(`✅ SEALED + STORAGE + SECURITY!\n\nBatch ${batch}\nIP ${loc.ip}\nGPS ${loc.gps.lat},${loc.gps.lng}\nMap https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng}\nEvidence ${Object.keys(evUrls).length} Storage\nChain ${chainFull}\n\nLogged to CEO + SAPS + All Brands!`);
+document.getElementById('sealStatus').innerText=`✅ SEALED + STORAGE UPLOAD + SECURITY LOGGED! IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng}`;
+alert(`✅ SEALED + STORAGE + SECURITY!\n\nBatch ${batch}\nIP ${loc.ip}\nGPS ${loc.gps.lat},${loc.gps.lng}\nEvidence ${Object.keys(evUrls).length} Storage`);
 }
 window.fp=fp; window.recordVoice=recordVoice; window.sealInspection=sealInspection;
 </script></body></html>
