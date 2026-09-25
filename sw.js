@@ -4,7 +4,7 @@ self.addEventListener('install', e => {
       return cache.addAll([
         '/Qiniso-dashboard-/scan.html',
         '/Qiniso-dashboard-/security-lock-v25.js',
-        '/Qiniso-dashboard-/logo.png2'
+        '/Qiniso-dashboard-/logo2.png'
       ]);
     })
   );
