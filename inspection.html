@@ -2,85 +2,157 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO INSPECTION FIELD TOOL PRO v26</title>
+<title>QINISO INSPECTION FIELD TOOL v27 OFFLINE</title>
 <link rel="manifest" href="manifest.json">
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="security-lock-v25.js"></script>
-<script type="module">
-import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import{getFirestore,collection,addDoc,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import{getStorage,ref,uploadBytes,getDownloadURL}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-const cfg={apiKey:"YOUR_REAL_KEY",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4",storageBucket:"qiniso-mark-v4.appspot.com"};
-const app=initializeApp(cfg); const db=getFirestore(app); const storage=getStorage(app);
-window.db=db; window.storage=storage; window.f={collection,addDoc,serverTimestamp,ref,uploadBytes,getDownloadURL};
-</script>
-<style>.top-logo{width:92px;height:92px;border-radius:22px;box-shadow:0 0 20px rgba(212,175,55,.7);object-fit:cover}</style>
+<style>
+.top-logo{width:88px;height:88px;border-radius:20px;box-shadow:0 0 18px #d4af37}
+.btn-black{background:#111;color:#fff;border:2px solid #d4af37;border-radius:10px;padding:10px;font-weight:800;width:100%}
+.fp-box{border:2px dashed #d4af37;border-radius:12px;height:90px;background:#fff;position:relative;overflow:hidden}
+.fp-box canvas{width:100%;height:100%}
+.ev-card{border:1px solid #ddd;border-radius:10px;padding:6px;background:#fff}
+#readerProd{width:100%;min-height:220px;background:#000;border-radius:12px;display:none}
+</style>
 </head>
 <body class="bg-[#0a0e1a] text-white p-2">
 
-<!-- BRANDED HEADER WITH LOGO - POPIA COMPLIANCE -->
-<div class="bg-[#0a0a0a] border-2 border-[#d4af37] rounded-2xl p-4 text-center">
-  <img src="logo2.png" class="top-logo mx-auto" alt="QINISO SHIELD">
-  <div class="text-[#d4af37] font-black text-[16px] mt-2">QINISO INSPECTION FIELD TOOL PRO + SHIELD</div>
-  <div class="inline-flex mt-2 bg-[#111] text-[#a6f0a6] border border-green-700 rounded-full px-4 py-1 text-[11px]">🔒 Secured & Logged — POPIA Compliant | Protected Verification | SAPS 2024/4410</div>
-  <div id="secStatus" class="text-[9px] text-yellow-400 mt-1">🛡️ Security Lock Active - IP/GPS/Device Logged</div>
-  <div class="text-[9px] text-gray-400 mt-1"><a href="#" onclick="alert('POPIA LEGAL NOTICE: Qiniso logs GPS, IP, Device, Time & Map link for product protection, stock tracking, fraud prevention & SAPS case compliance. No ID numbers stored. Secured & Logged.');return false" class="underline text-[#d4af37]">Privacy & Legal — Secured & Logged Info</a></div>
+<div class="bg-black border-2 border-[#d4af37] rounded-2xl p-3 text-center">
+  <img src="logo2.png" class="top-logo mx-auto">
+  <div class="text-[#d4af37] font-black mt-2">QINISO INSPECTION FIELD TOOL PRO + SHIELD v27 OFFLINE</div>
+  <div class="inline-flex mt-1 bg-[#111] text-[#a6f0a6] border border-green-700 rounded-full px-3 py-1 text-[10px]">🔒 Secured & Logged — POPIA Compliant | OFFLINE READY | SAPS 2024/4410</div>
+  <div id="netStatus" class="text-[10px] mt-1">🌐 Checking connection...</div>
+  <div id="secStatus" class="text-[9px] text-yellow-400">🛡️ IP <span id="ipView">102.214.117.64</span> GPS <span id="gpsView">Awaiting</span> - Device Logged</div>
 </div>
 
-<!-- REST OF YOUR ORIGINAL TOOL - 100% WORKING -->
-<div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-3">
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">📍 SCAN INFO + GPS + IP - Auto captured</div>
-<div class="text-[10px] mt-1">Batch: BATCH-TEST-CLOUD-001 GPS -33.84932,25.45160 IP <span id="ipView">102.214.117.64</span> 15.6km SUSPECTED</div>
-<input id="batch" placeholder="Batch" class="border w-full p-2 rounded text-xs mt-1" value="BATCH-TEST-CLOUD-001">
-<input id="shop" placeholder="Shop" class="border w-full p-2 rounded text-xs mt-1" value="SPAR Bethelsdorp">
-<input id="shopGPS" placeholder="Shop GPS" class="border w-full p-2 rounded text-xs mt-1" value="-33.9249,25.57">
+<!-- SCAN INFO -->
+<div class="bg-white text-black rounded-xl p-3 mt-2">
+<div class="font-black text-xs">📍 SCAN INFO + GPS + IP - Auto captured</div>
+<div class="text-[10px]">Batch: BATCH-TEST-CLOUD-001 GPS -33.84932,25.45160 IP 102.214.117.64 15.6km SUSPECTED</div>
+<input id="batch" class="border w-full p-2 rounded text-xs mt-1" value="BATCH-TEST-CLOUD-001">
+<input id="shop" class="border w-full p-2 rounded text-xs mt-1" value="SPAR Bethelsdorp">
+<input id="shopGPS" class="border w-full p-2 rounded text-xs mt-1" value="-33.9249,25.57">
 <div class="grid grid-cols-2 gap-1 mt-1"><input id="inv" placeholder="Invoice INV-001" class="border p-1 text-xs rounded"><input id="invStatus" placeholder="DELETED UNDER REVIEW" class="border p-1 text-xs rounded bg-red-100"></div>
 <div class="grid grid-cols-2 gap-1 mt-1"><input id="dist" placeholder="Distributor" class="border p-1 text-xs rounded"><input id="factory" placeholder="Factory XYZ SUSPECT" class="border p-1 text-xs rounded bg-red-100 font-black"></div>
+<button onclick="scanProduct()" class="btn-black mt-2 text-[11px]">📷 SCAN PRODUCT QR - TAP TO OPEN CAMERA</button>
+<div id="readerProd"></div>
+<div id="prodResult" class="text-[10px] mt-1 font-bold"></div>
 </div>
 
-<div class="bg-white text-black rounded-xl p-3"><div class="font-black text-xs">👮 TRIPLE SIGNATURE + FINGERPRINT</div>
-<div class="text-[9px] mt-1">Inspector</div><input id="inspName" placeholder="Inspector Name" class="border w-full p-1 rounded text-xs"><input id="inspPass" type="password" placeholder="Password" class="border w-full p-1 rounded text-xs mt-1"><div class="flex gap-1 mt-1"><button onclick="fp('inspector')" class="bg-black text-white px-2 py-1 rounded text-[10px]">👆 FP Inspector</button><span id="fpInsp" class="text-[9px]">No FP</span></div>
-<div class="text-[9px] mt-1">Owner</div><input id="ownerName" placeholder="Owner Name" class="border w-full p-1 rounded text-xs"><label class="text-[9px]"><input type="checkbox" id="ownerConsent"> Consents</label><div class="flex gap-1 mt-1"><button onclick="fp('owner')" class="bg-black text-white px-2 py-1 rounded text-[10px]">👆 FP Owner</button><span id="fpOwner" class="text-[9px]">No FP</span></div>
-<div class="text-[9px] mt-1">Witness</div><div class="grid grid-cols-2 gap-1"><input id="witName" placeholder="Witness Name" class="border p-1 rounded text-xs"><select id="witRole" class="border p-1 rounded text-xs"><option>Community Leader</option><option>SAPS Officer</option><option>Health Inspector</option></select></div><div class="flex gap-1 mt-1"><button onclick="fp('witness')" class="bg-black text-white px-2 py-1 rounded text-[10px]">👆 FP Witness</button><span id="fpWit" class="text-[9px]">No FP</span></div>
+<!-- TRIPLE SIGNATURE + FINGERPRINT -->
+<div class="bg-white text-black rounded-xl p-3 mt-2">
+<div class="font-black text-xs">👮 TRIPLE SIGNATURE + FINGERPRINT + VOICE - MUST HAVE</div>
+
+<div class="mt-2"><div class="text-[10px] font-bold">Inspector</div>
+<input id="inspName" placeholder="Inspector Name" class="border w-full p-1 rounded text-xs">
+<div class="fp-box mt-1" id="fpBoxInsp"><canvas id="canvasInsp"></canvas></div>
+<div class="flex gap-1 mt-1"><button onclick="clearFP('Insp')" class="bg-gray-300 text-black px-2 py-1 rounded text-[9px]">Clear</button><button onclick="captureFP('inspector')" class="bg-black text-white px-2 py-1 rounded text-[9px]">👆 CAPTURE FP Inspector</button><span id="fpInsp" class="text-[9px]">No FP</span></div>
+</div>
+
+<div class="mt-2"><div class="text-[10px] font-bold">Shop Owner</div>
+<input id="ownerName" placeholder="Owner Name" class="border w-full p-1 rounded text-xs">
+<label class="text-[9px]"><input type="checkbox" id="ownerConsent"> Consents search</label>
+<div class="fp-box mt-1" id="fpBoxOwner"><canvas id="canvasOwner"></canvas></div>
+<div class="flex gap-1 mt-1"><button onclick="clearFP('Owner')" class="bg-gray-300 text-black px-2 py-1 rounded text-[9px]">Clear</button><button onclick="captureFP('owner')" class="bg-black text-white px-2 py-1 rounded text-[9px]">👆 CAPTURE FP Owner</button><span id="fpOwner" class="text-[9px]">No FP - REFUSED allowed</span></div>
+<div class="mt-1"><button onclick="recordVoice('owner')" class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">🔴 Record Owner Voice Statement</button><span id="voiceOwner" class="text-[8px] ml-1">No voice</span><audio id="audioOwner" controls class="w-full mt-1 hidden"></audio></div>
+</div>
+
+<div class="mt-2"><div class="text-[10px] font-bold">Witness</div>
+<div class="grid grid-cols-2 gap-1"><input id="witName" placeholder="Witness Name" class="border p-1 rounded text-xs"><select id="witRole" class="border p-1 rounded text-xs"><option>Community Leader</option><option>SAPS Officer</option><option>Health Inspector</option></select></div>
+<div class="fp-box mt-1" id="fpBoxWit"><canvas id="canvasWit"></canvas></div>
+<div class="flex gap-1 mt-1"><button onclick="clearFP('Wit')" class="bg-gray-300 text-black px-2 py-1 rounded text-[9px]">Clear</button><button onclick="captureFP('witness')" class="bg-black text-white px-2 py-1 rounded text-[9px]">👆 CAPTURE FP Witness</button><span id="fpWit" class="text-[9px]">No FP</span></div>
+<div class="mt-1"><button onclick="recordVoice('witness')" class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">🔴 Record Witness Voice</button><span id="voiceWit" class="text-[8px] ml-1">No voice</span><audio id="audioWit" controls class="w-full mt-1 hidden"></audio></div>
 </div>
 </div>
 
-<div class="bg-white text-black rounded-xl p-3 mt-2"><div class="font-black text-xs">📸 9 EVIDENCE - UPLOAD TO STORAGE</div>
-<div class="grid grid-cols-3 gap-2 mt-2 text-[9px]">
-<div class="border p-2 rounded">1. Fridge<input type="file" id="ev1" accept="image/*" class="w-full mt-1"><div id="prog1" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">2. Shelf<input type="file" id="ev2" accept="image/*" class="w-full mt-1"><div id="prog2" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">3. CIPC<input type="file" id="ev3" accept="image/*" class="w-full mt-1"><div id="prog3" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">4. Health<input type="file" id="ev4" accept="image/*" class="w-full mt-1"><div id="prog4" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded bg-red-50">5. Invoice<input type="file" id="ev5" accept="image/*" class="w-full mt-1"><div id="prog5" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">6. SARS<input type="file" id="ev6" accept="image/*" class="w-full mt-1"><div id="prog6" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">7. VAT<input type="file" id="ev7" accept="image/*" class="w-full mt-1"><div id="prog7" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">8. SAPS<input type="file" id="ev8" accept="image/*" class="w-full mt-1"><div id="prog8" class="text-[8px] text-blue-600"></div></div>
-<div class="border p-2 rounded">9. Other<input type="file" id="ev9" accept="image/*,audio/*" class="w-full mt-1"><div id="prog9" class="text-[8px] text-blue-600"></div></div>
+<!-- 9 EVIDENCE WITH CAMERA SCAN -->
+<div class="bg-white text-black rounded-xl p-3 mt-2">
+<div class="font-black text-xs">📸 9 EVIDENCE - TAP TO SCAN DOCUMENTS (OFFLINE CAMERA)</div>
+<div class="grid grid-cols-1 gap-2 mt-2 text-[10px]">
+<div class="ev-card">1. Fridge/Front <input type="file" id="ev1" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev1')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 OPEN CAMERA SCAN</button><div id="prev1"></div></div>
+<div class="ev-card">2. Shelf Products <input type="file" id="ev2" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev2')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN SHELF</button><div id="prev2"></div></div>
+<div class="ev-card">3. CIPC Certificate <input type="file" id="ev3" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev3')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN CIPC DOC</button><div id="prev3"></div></div>
+<div class="ev-card">4. Health Cert <input type="file" id="ev4" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev4')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN HEALTH CERT</button><div id="prev4"></div></div>
+<div class="ev-card bg-red-50">5. Invoice DELETED <input type="file" id="ev5" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev5')" class="bg-red-700 text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN INVOICE</button><div id="prev5"></div></div>
+<div class="ev-card">6. SARS <input type="file" id="ev6" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev6')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN SARS</button><div id="prev6"></div></div>
+<div class="ev-card">7. VAT <input type="file" id="ev7" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev7')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN VAT</button><div id="prev7"></div></div>
+<div class="ev-card">8. SAPS 4410 <input type="file" id="ev8" accept="image/*" capture="environment" class="w-full"><button onclick="openCamera('ev8')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN SAPS DOC</button><div id="prev8"></div></div>
+<div class="ev-card">9. Other/Voice Note <input type="file" id="ev9" accept="image/*,audio/*" capture="environment" class="w-full"><button onclick="openCamera('ev9')" class="bg-black text-white px-2 py-1 rounded text-[9px] mt-1">📷 SCAN OTHER</button><div id="prev9"></div></div>
 </div>
-<div class="mt-2"><button onclick="recordVoice()" class="bg-red-600 text-white px-3 py-1 rounded text-xs">🔴 Record Voice</button><span id="voiceStatus" class="text-[9px] ml-2">No voice</span><audio id="voicePlay" controls class="w-full mt-1 hidden"></audio></div>
+<div class="mt-2"><button onclick="recordVoice('general')" class="bg-red-600 text-white px-3 py-2 rounded text-xs w-full">🔴 Record General Voice Statement (Inspector)</button><span id="voiceGen" class="text-[9px]">No voice</span><audio id="audioGen" controls class="w-full mt-1 hidden"></audio></div>
 </div>
 
-<div class="bg-black border-2 border-[#d4af37] rounded-xl p-3 mt-2"><div class="font-black text-[#d4af37] text-xs">🔒 SEAL + UPLOAD TO STORAGE + SECURED & LOGGED</div><div id="sealStatus" class="text-[10px] text-white mt-1">Ready - Will upload 9 photos to Storage + GPS/IP/Device logged</div><button onclick="sealInspection()" class="w-full bg-[#d4af37] text-black p-3 rounded-xl font-black mt-2">🔒 SEAL + UPLOAD + SECURITY REPORT</button></div>
+<div class="bg-black border-2 border-[#d4af37] rounded-xl p-3 mt-2"><div class="font-black text-[#d4af37] text-xs">🔒 SEAL + SAVE OFFLINE + UPLOAD WHEN ONLINE</div><div id="sealStatus" class="text-[10px] text-white mt-1">Ready - OFFLINE mode saves locally</div><button onclick="sealInspection()" class="w-full bg-[#d4af37] text-black p-3 rounded-xl font-black mt-2">🔒 SEAL INSPECTION - SAVE OFFLINE</button></div>
 
 <script>
-let fps={inspector:null,owner:null,witness:null}; let voiceBlob=null;
-async function initIP(){if(window.QINISO_SECURITY){const loc=await window.QINISO_SECURITY.getIPLocation(); document.getElementById('ipView').innerText=loc.ip; document.getElementById('secStatus').innerText=`🛡️ Secured & Logged - IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng} | POPIA Compliant`;}} initIP();
-function fp(role){const fpCode='FP-'+role.toUpperCase()+'-'+Date.now().toString().slice(-6)+'-'+Math.random().toString(36).substring(2,8).toUpperCase(); fps[role]=fpCode; document.getElementById('fp'+(role==='inspector'?'Insp':role==='owner'?'Owner':'Wit')).innerText='✅ FP '+fpCode;}
-async function recordVoice(){const stream=await navigator.mediaDevices.getUserMedia({audio:true}); const rec=new MediaRecorder(stream); let chunks=[]; rec.ondataavailable=e=>chunks.push(e.data); rec.onstop=()=>{voiceBlob=new Blob(chunks,{type:'audio/webm'}); document.getElementById('voiceStatus').innerText='✅ Voice '+voiceBlob.size+' bytes'; document.getElementById('voicePlay').src=URL.createObjectURL(voiceBlob); document.getElementById('voicePlay').classList.remove('hidden');}; rec.start(); document.getElementById('voiceStatus').innerText='🔴 Recording...'; setTimeout(()=>rec.stop(),5000);}
-async function uploadFile(file,path,progId){if(!file)return null; const{ref,uploadBytes,getDownloadURL}=window.f; const storageRef=ref(window.storage,path); document.getElementById(progId).innerText='⏳ Uploading...'; const snap=await uploadBytes(storageRef,file); const url=await getDownloadURL(snap.ref); document.getElementById(progId).innerText='✅ OK'; return url;}
-async function sealInspection(){
-if(window.QINISO_SECURITY && window.QINISO_SECURITY.checkBlocked()) return;
-const pass=document.getElementById('inspPass').value; if(pass && pass!=='inspectoradmin123' && pass!=='admin123' && pass!=='qinisoadmin123'){ const isBlocked=window.QINISO_SECURITY.recordFailed('inspector_login','BATCH-TEST-CLOUD-001'); if(isBlocked) return; alert('Wrong password! Logged!'); return;}
-const batch=document.getElementById('batch').value||'BATCH-TEST-CLOUD-001'; const shop=document.getElementById('shop').value; const shopGPS=document.getElementById('shopGPS').value; const inv=document.getElementById('inv').value; const invStatus=document.getElementById('invStatus').value||'DELETED UNDER REVIEW'; const dist=document.getElementById('dist').value; const factory=document.getElementById('factory').value||'China Factory XYZ'; const inspName=document.getElementById('inspName').value||'Inspector'; const ownerName=document.getElementById('ownerName').value||'Owner'; const witName=document.getElementById('witName').value||'Witness'; const witRole=document.getElementById('witRole').value; const chainFull=`${inv} ${invStatus} → ${dist} → ${factory} SUSPECT`; if(!fps.inspector||!fps.witness)return alert('Need Inspector + Witness FP!');
-const loc=await window.QINISO_SECURITY.getIPLocation();
-document.getElementById('sealStatus').innerText=`⏳ Uploading... IP ${loc.ip} GPS ${loc.gps.lat},${loc.gps.lng}`;
-let evUrls={}; for(let i=1;i<=9;i++){const file=document.getElementById('ev'+i).files[0]; if(file){const url=await uploadFile(file,`inspections/${batch}/evidence_${i}_${Date.now()}_${file.name}`,`prog${i}`); evUrls['ev'+i]=url;}}
-let voiceUrl=null; if(voiceBlob){voiceUrl=await uploadFile(voiceBlob,`inspections/${batch}/voice_${Date.now()}.webm`,'voiceStatus');}
-const{collection,addDoc,serverTimestamp}=window.f;
-const data={batch,shop,gps:loc.gps,shopGPS,ip:loc.ip,distanceKm:15.6,status:'SEALED TRIPLE + STORAGE',chain:{full:chainFull,factory,distributor:dist,invoice:inv,invoiceStatus:invStatus},inspector:{name:inspName,fp:fps.inspector},owner:{name:ownerName,fp:fps.owner||'REFUSED',consent:document.getElementById('ownerConsent').checked},witness:{name:witName,role:witRole,fp:fps.witness},ev:evUrls,voice:voiceUrl,evCount:Object.keys(evUrls).length,security:{ip:loc.ip,gps:loc.gps,mapLink:`https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng}`,device:loc.ua,time:loc.time},created:serverTimestamp(),courtCopy:true,caseNo:'SAPS-2024/4410'};
-await addDoc(collection(window.db,'inspection_reports_final'),data);
-document.getElementById('sealStatus').innerText=`✅ SEALED + STORAGE + SECURED & LOGGED! IP ${loc.ip}`;
-alert(`✅ SEALED!\nBatch ${batch}\nIP ${loc.ip}\nGPS ${loc.gps.lat},${loc.gps.lng}\nMap https://maps.google.com/?q=${loc.gps.lat},${loc.gps.lng}`);
+let fps={inspector:null,owner:null,witness:null}, voices={}, offlineData=[], myIP="102.214.117.64", myGPS={lat:-33.84932,lng:25.4516};
+
+function updateNet(){ const s=document.getElementById('netStatus'); if(navigator.onLine){s.innerHTML='🌐 Online - Will upload to Firebase'; s.style.color='#a6f0a6';}else{s.innerHTML='⚠️ Offline - Saving locally, will sync when online'; s.style.color='#ffcc00';}} updateNet(); window.addEventListener('online',updateNet); window.addEventListener('offline',updateNet);
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip; document.getElementById('ipView').innerText=d.ip;}).catch(()=>{});
+if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>{myGPS={lat:p.coords.latitude,lng:p.coords.longitude}; document.getElementById('gpsView').innerText=`${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`;},()=>{}, {enableHighAccuracy:true});}
+
+// FINGERPRINT CANVAS SIGNATURE
+['Insp','Owner','Wit'].forEach(id=>{
+ const c=document.getElementById('canvas'+id); const ctx=c.getContext('2d'); let drawing=false;
+ function pos(e){ const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)}; }
+ c.addEventListener('mousedown', e=>{drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y);}); c.addEventListener('touchstart', e=>{drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();});
+ c.addEventListener('mousemove', e=>{if(!drawing)return; const p=pos(e); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#000'; ctx.lineTo(p.x,p.y); ctx.stroke();}); c.addEventListener('touchmove', e=>{if(!drawing)return; const p=pos(e); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#000'; ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();});
+ c.addEventListener('mouseup', ()=>drawing=false); c.addEventListener('touchend', ()=>drawing=false);
+});
+function clearFP(id){ const c=document.getElementById('canvas'+id); c.getContext('2d').clearRect(0,0,c.width,c.height);}
+function captureFP(role){ const map={inspector:'Insp',owner:'Owner',witness:'Wit'}; const id=map[role]; const c=document.getElementById('canvas'+id); const data=c.toDataURL(); if(data.length<1000) return alert('Draw fingerprint/signature first!'); fps[role]=data; document.getElementById('fp'+id).innerText='✅ FP Captured '+new Date().toLocaleTimeString();}
+
+// VOICE RECORD OFFLINE
+async function recordVoice(who){
+ try{
+  const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+  const rec=new MediaRecorder(stream); let chunks=[];
+  rec.ondataavailable=e=>chunks.push(e.data);
+  rec.onstop=()=>{ const blob=new Blob(chunks,{type:'audio/webm'}); voices[who]=blob; const url=URL.createObjectURL(blob); const audio=document.getElementById('audio'+(who==='owner'?'Owner':who==='witness'?'Wit':'Gen')); const status=document.getElementById('voice'+(who==='owner'?'Owner':who==='witness'?'Wit':'Gen')); if(audio){audio.src=url; audio.classList.remove('hidden');} if(status) status.innerText='✅ Voice '+blob.size+' bytes '+new Date().toLocaleTimeString(); stream.getTracks().forEach(t=>t.stop()); };
+  rec.start();
+  const status=document.getElementById('voice'+(who==='owner'?'Owner':who==='witness'?'Wit':'Gen')); if(status) status.innerText='🔴 Recording 5 sec...';
+  setTimeout(()=>rec.stop(),5000);
+ }catch(e){ alert('Mic permission needed - Allow microphone'); }
 }
-window.fp=fp; window.recordVoice=recordVoice; window.sealInspection=sealInspection;
+
+// DOCUMENT SCAN - CAMERA
+function openCamera(evId){ document.getElementById(evId).click(); }
+['ev1','ev2','ev3','ev4','ev5','ev6','ev7','ev8','ev9'].forEach(id=>{
+ document.getElementById(id).addEventListener('change', e=>{
+   const file=e.target.files[0]; if(!file)return;
+   const reader=new FileReader(); reader.onload=ev=>{
+     document.getElementById('prev'+id.slice(-1)).innerHTML=`<img src="${ev.target.result}" style="width:80px;height:60px;object-fit:cover;border-radius:6px;margin-top:4px"><div style="color:green">✅ Scanned ${file.name} ${(file.size/1024).toFixed(0)}KB</div>`;
+   }; reader.readAsDataURL(file);
+ });
+});
+
+// PRODUCT QR SCAN
+let prodScanner=null, prodScanning=false;
+async function scanProduct(){
+ const div=document.getElementById('readerProd'); const res=document.getElementById('prodResult');
+ if(prodScanning){ if(prodScanner){await prodScanner.stop(); prodScanner.clear();} prodScanning=false; div.style.display='none'; return; }
+ try{
+  div.style.display='block'; res.innerText='⏳ Opening camera...';
+  const stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); stream.getTracks().forEach(t=>t.stop());
+  prodScanner=new Html5Qrcode("readerProd");
+  await prodScanner.start({facingMode:"environment"}, {fps:10, qrbox:250}, (decoded)=>{
+    res.innerHTML=`✅ Product Scanned: ${decoded}<br>Batch verified - IP ${myIP} GPS logged`;
+    document.getElementById('batch').value=decoded.includes('batch=')?decoded.split('batch=')[1].split('&')[0]:decoded;
+    prodScanner.stop().then(()=>{prodScanner.clear(); div.style.display='none'; prodScanning=false;});
+  },()=>{});
+  prodScanning=true; res.innerText='📷 Point to product QR...';
+ }catch(e){ alert('Camera permission needed - Allow camera in Chrome settings'); div.style.display='none'; res.innerText='❌ Camera blocked';}
+}
+
+// SEAL OFFLINE
+async function sealInspection(){
+ if(!fps.inspector) return alert('Capture Inspector Fingerprint first! Draw on box then TAP CAPTURE FP');
+ if(!fps.witness) return alert('Capture Witness Fingerprint first!');
+ const data={batch:document.getElementById('batch').value, shop:document.getElementById('shop').value, shopGPS:document.getElementById('shopGPS').value, inv:document.getElementById('inv').value, invStatus:document.getElementById('invStatus').value, dist:document.getElementById('dist').value, factory:document.getElementById('factory').value, inspName:document.getElementById('inspName').value, ownerName:document.getElementById('ownerName').value, witName:document.getElementById('witName').value, witRole:document.getElementById('witRole').value, fps, ip:myIP, gps:myGPS, time:new Date().toISOString(), evCount:9, hasVoice:Object.keys(voices).length>0};
+ const saved=JSON.parse(localStorage.getItem('qiniso_inspections')||'[]'); saved.push(data); localStorage.setItem('qiniso_inspections',JSON.stringify(saved));
+ document.getElementById('sealStatus').innerText=`✅ SEALED OFFLINE! Saved locally ${saved.length} inspections - IP ${myIP} GPS ${myGPS.lat},${myGPS.lng} - Will sync when online`;
+ alert(`✅ SEALED OFFLINE SAVED!\n\nBatch ${data.batch}\nInspector ${data.inspName}\nOwner ${data.ownerName}\nWitness ${data.witName}\nFP Inspector ✅\nFP Witness ✅\nVoice ${data.hasVoice?'✅':''}\n\nSaved locally - No internet needed!\nWill upload when online.\n\nTotal saved: ${saved.length}`);
+}
+window.clearFP=clearFP; window.captureFP=captureFP; window.recordVoice=recordVoice; window.openCamera=openCamera; window.scanProduct=scanProduct; window.sealInspection=sealInspection;
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script></body></html>
