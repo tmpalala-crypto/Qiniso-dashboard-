@@ -1,68 +1,132 @@
-<select id="roleSelect" class="border-2 border-[#0f1e3d] rounded-xl p-3 text-[10px] font-black bg-white" onchange="filterRole(this.value)">
-<option value="ADMIN">👑 ADMIN - See ALL (You)</option>
-<option value="SAPS">👮 SAPS - See ALL + Map</option>
-<option value="NCC">🏛️ NCC - See ALL Suspect</option>
-<option value="HEALTH">🏥 HEALTH - Food Only</option>
+<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO SECURE DASHBOARD V5 - 50 BRANDS</title>
+<script src="security-lock-v3.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const firebaseConfig = { apiKey: "AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8", authDomain: "qiniso-mark-v4.firebaseapp.com", projectId: "qiniso-mark-v4", storageBucket: "qiniso-mark-v4.firebasestorage.app", messagingSenderId: "519121640224", appId: "1:519121640224:web:f516bddbc5281e06fa9545" };
+const app=initializeApp(firebaseConfig); const db=getFirestore(app);
+window.db=db; window.fs={collection,onSnapshot,query,orderBy};
+</script>
+</head>
+<body class="bg-[#0f1e3d] p-2">
+<div class="bg-white rounded-[20px] p-4 border-2 border-[#0f1e3d]" style="border-bottom:4px solid #d4af37">
+<div class="flex items-center gap-3">
+<img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" oncontextmenu="return false" draggable="false" class="w-16 h-16 rounded-xl border-2 border-yellow-500 bg-white object-cover">
+<div class="flex-1"><div class="font-black text-[14px] text-[#0f1e3d]">QINISO DASHBOARD V5 - 50 BRANDS + SAPS</div><div class="text-[8px] font-black text-green-700">🔐 V3 Secured + Logo Protected • SAPS 2024/4410</div></div>
+<div class="bg-[#0f1e3d] text-yellow-400 text-[7px] font-black px-2 py-1 rounded-xl border border-yellow-500">🔒 SECURE<br>50 BRANDS</div>
+</div>
+<div class="mt-3 bg-yellow-50 border-2 border-[#0f1e3d] rounded-xl p-3">
+<div class="font-black text-[10px]">🔐 SELECT ROLE - Each brand sees ONLY their product:</div>
+<select id="roleSelect" class="w-full border-2 border-[#0f1e3d] rounded-xl p-3 text-[10px] font-black bg-white mt-2">
+<option value="ADMIN">👑 ADMIN (You) - ALL</option>
+<option value="SAPS">👮 SAPS - ALL</option>
+<option value="NCC">🏛️ NCC - ALL Suspect</option>
+<option value="HEALTH">🏥 HEALTH - Food/Expired</option>
 <option value="CIP">🏭 CIP - All Brands</option>
-<option value="SARS">💰 SARS - All</option>
-<option value="NRCS">🔬 NRCS - Standards</option>
-<option value="SPAR">🏪 SPAR</option>
-<option value="SHOPRITE">🏪 SHOPRITE</option>
-<option value="PICKNPAY">🏪 PICK N PAY</option>
-<option value="WOOLWORTHS">🏪 WOOLWORTHS</option>
-<option value="BOXER">🏪 BOXER</option>
-<option value="CHECKERS">🏪 CHECKERS</option>
-<!-- 50 BRANDS -->
-<option value="COCA_COLA">🥤 COCA-COLA</option>
-<option value="KOO">🫘 KOO</option>
-<option value="LUCKY_STAR">🐟 LUCKY STAR</option>
-<option value="ALBANY">🍞 ALBANY</option>
-<option value="SASKO">🍞 SASKO</option>
-<option value="BLUE_RIBBON">🍞 BLUE RIBBON</option>
-<option value="CLOVER">🥛 CLOVER</option>
-<option value="NESTLE">☕ NESTLÉ / MAGGI / MILO</option>
-<option value="TIGER">🐯 TIGER BRANDS / TASTIC / ACE</option>
-<option value="UNILEVER">🧴 UNILEVER / KNORR / RAMA</option>
-<option value="PEPSI">🥤 PEPSI</option>
-<option value="FANTA">🍊 FANTA</option>
-<option value="SPRITE">💚 SPRITE</option>
-<option value="STONEY">🥤 STONEY</option>
-<option value="SCHWEPPES">🥤 SCHWEPPES</option>
-<option value="SIMBA">🦁 SIMBA / LAYS / DORITOS</option>
-<option value="CADBURY">🍫 CADBURY</option>
-<option value="BEACON">🍬 BEACON</option>
-<option value="ALL_GOLD">🍅 ALL GOLD</option>
-<option value="BLACK_CAT">🥜 BLACK CAT</option>
-<option value="RHODES">🍅 RHODES / BULL BRAND</option>
-<option value="ENTERPRISE">🌭 ENTERPRISE / ESKORT</option>
-<option value="RAINBOW">🍗 RAINBOW / KFC</option>
-<option value="HULETTS">🍬 HULETTS / SELATI SUGAR</option>
-<option value="SUNFOIL">🌻 SUNFOIL / DLITE OIL</option>
-<option value="KELLOGGS">🥣 KELLOGGS</option>
-<option value="BOKOMO">🥣 BOKOMO / WEET-BIX</option>
-<option value="JUNGLE">🦁 JUNGLE OATS</option>
-<option value="OROS">🍊 OROS / ENERGADE</option>
-<option value="MAYNRDS">🍬 MAYNARDS / JELLY TOTS</option>
-<option value="FATTIS">🍝 FATTIS & MONIS</option>
-<option value="SPEKKO">🍚 SPEKKO / WHITE STAR</option>
-<option value="IWISA">🌽 IWISA / ACE MEALIE MEAL</option>
-<option value="KNORR">🍲 KNORR</option>
-<option value="ROBERTSONS">🌶️ ROBERTSONS</option>
-<option value="NOLA">🥫 NOLA / HUGO</option>
-<option value="WOOL">🧶 MAQ / SUNLIGHT / OMO</option>
-<option value="COLGATE">🪥 COLGATE / PALMOLIVE</option>
-<option value="PAMPERS">👶 PAMPERS / HUGGIES</option>
-<option value="DETOL">🧼 DETTOL / SAVLON</option>
-<option value="GLEN">🥃 GLEN / JOHNNIE WALKER</option>
-<option value="HEINEKEN">🍺 HEINEKEN / CASTLE</option>
-<option value="SAVANNA">🍺 SAVANNA / HUNTERS</option>
-<option value="BUD">🍺 BUD / AMSTEL</option>
-<option value="NESCAFE">☕ NESCAFÉ / RICOFFY</option>
-<option value="JACOBS">☕ JACOBS / KOFFIEHUIS</option>
-<option value="BULL">🐂 BULL BRAND / KOO</option>
-<option value="KOO2">🫘 KOO BEANS / KOO VEG</option>
-<option value="LUCKY2">🐟 LUCKY STAR PILCHARDS</option>
-<option value="SPAR_BRAND">🏷️ SPAR BRAND</option>
-<option value="PNP_BRAND">🏷️ PICK N PAY BRAND</option>
-<option value="WOOLIES_BRAND">🏷️ WOOLWORTHS BRAND</option>
+<option value="SARS">💰 SARS</option>
+<option value="NRCS">🔬 NRCS</option>
+<option value="COCA_COLA">1. 🥤 COCA-COLA</option>
+<option value="KOO">2. 🫘 KOO</option>
+<option value="LUCKY STAR">3. 🐟 LUCKY STAR</option>
+<option value="ALBANY">4. 🍞 ALBANY</option>
+<option value="SASKO">5. 🍞 SASKO</option>
+<option value="BLUE RIBBON">6. 🍞 BLUE RIBBON</option>
+<option value="CLOVER">7. 🥛 CLOVER</option>
+<option value="NESTLE">8. ☕ NESTLÉ</option>
+<option value="TIGER">9. 🐯 TIGER BRANDS</option>
+<option value="UNILEVER">10. 🧴 UNILEVER</option>
+<option value="PEPSI">11. 🥤 PEPSI</option>
+<option value="FANTA">12. 🍊 FANTA</option>
+<option value="SPRITE">13. 💚 SPRITE</option>
+<option value="STONEY">14. 🥤 STONEY</option>
+<option value="SIMBA">15. 🦁 SIMBA / LAYS</option>
+<option value="CADBURY">16. 🍫 CADBURY</option>
+<option value="BEACON">17. 🍬 BEACON</option>
+<option value="ALL GOLD">18. 🍅 ALL GOLD</option>
+<option value="BLACK CAT">19. 🥜 BLACK CAT</option>
+<option value="RHODES">20. 🍅 RHODES</option>
+<option value="ENTERPRISE">21. 🌭 ENTERPRISE</option>
+<option value="RAINBOW">22. 🍗 RAINBOW</option>
+<option value="HULETTS">23. 🍬 HULETTS SUGAR</option>
+<option value="SUNFOIL">24. 🌻 SUNFOIL</option>
+<option value="KELLOGGS">25. 🥣 KELLOGGS</option>
+<option value="BOKOMO">26. 🥣 BOKOMO</option>
+<option value="JUNGLE">27. 🦁 JUNGLE OATS</option>
+<option value="OROS">28. 🍊 OROS</option>
+<option value="FATTIS">29. 🍝 FATTIS & MONIS</option>
+<option value="SPEKKO">30. 🍚 SPEKKO</option>
+<option value="IWISA">31. 🌽 IWISA</option>
+<option value="KNORR">32. 🍲 KNORR</option>
+<option value="ROBERTSONS">33. 🌶️ ROBERTSONS</option>
+<option value="NOLA">34. 🥫 NOLA</option>
+<option value="OMO">35. 🧼 OMO / SUNLIGHT</option>
+<option value="COLGATE">36. 🪥 COLGATE</option>
+<option value="PAMPERS">37. 👶 PAMPERS</option>
+<option value="DETTOL">38. 🧼 DETTOL</option>
+<option value="HEINEKEN">39. 🍺 HEINEKEN</option>
+<option value="SAVANNA">40. 🍺 SAVANNA</option>
+<option value="NESCAFE">41. ☕ NESCAFÉ</option>
+<option value="JACOBS">42. ☕ JACOBS</option>
+<option value="BULL BRAND">43. 🐂 BULL BRAND</option>
+<option value="SPAR">44. 🏪 SPAR</option>
+<option value="SHOPRITE">45. 🏪 SHOPRITE</option>
+<option value="PICK N PAY">46. 🏪 PICK N PAY</option>
+<option value="WOOLWORTHS">47. 🏪 WOOLWORTHS</option>
+<option value="BOXER">48. 🏪 BOXER</option>
+<option value="CHECKERS">49. 🏪 CHECKERS</option>
+<option value="MAQ">50. 🧴 MAQ / WASHING</option>
 </select>
+<div class="grid grid-cols-2 gap-2 mt-2"><input id="brandPass" type="password" placeholder="🔑 Code: QINISO2024" class="border-2 border-yellow-500 rounded-xl p-3 text-[10px] font-black"><button onclick="loginRole()" class="bg-yellow-500 text-[#0f1e3d] font-black py-3 rounded-xl text-[10px] border-2 border-[#0f1e3d]">🔓 LOGIN</button></div>
+<div id="loginStatus" class="mt-2 text-[9px] font-black text-center">👑 ADMIN - ALL products</div>
+</div>
+<div class="grid grid-cols-4 gap-2 mt-3">
+<div class="bg-green-100 border-2 border-green-600 rounded-xl p-2 text-center"><div id="safeCount" class="font-black text-[16px]">0</div><div class="text-[6px] font-bold">✅ SAFE</div></div>
+<div class="bg-red-100 border-2 border-red-600 rounded-xl p-2 text-center"><div id="suspectCount" class="font-black text-[16px]">0</div><div class="text-[6px] font-bold">❌ FAKE</div></div>
+<div class="bg-orange-100 border-2 border-orange-600 rounded-xl p-2 text-center"><div id="wrongCount" class="font-black text-[16px]">0</div><div class="text-[6px] font-bold">📍 WRONG</div></div>
+<div class="bg-blue-100 border-2 border-blue-600 rounded-xl p-2 text-center"><div id="totalCount" class="font-black text-[16px]">0</div><div class="text-[6px] font-bold">TOTAL</div></div>
+</div>
+</div>
+<div id="mapView" class="mt-3 bg-white rounded-2xl h-56 border-2 border-yellow-500 p-2 overflow-auto text-[8px]">🗺️ MAP - Pins for selected brand</div>
+<div class="mt-3 bg-white rounded-2xl p-3 border-2 border-[#0f1e3d]">
+<h2 class="font-black text-[11px]">📋 TABLE - <span id="filterLabel">ALL PRODUCTS</span></h2>
+<div class="overflow-auto"><table class="w-full text-[7px] mt-2"><thead><tr class="bg-[#0f1e3d] text-white"><th class="p-2">TIME/GPS</th><th class="p-2">PRODUCT</th><th class="p-2">STATUS</th><th class="p-2">LOC</th><th class="p-2">ACTION</th></tr></thead><tbody id="scanTable"></tbody></table></div>
+</div>
+<script type="module">
+let currentRole='ADMIN', allDocs=[];
+window.loginRole=()=>{
+  let role=document.getElementById('roleSelect').value;
+  let pass=document.getElementById('brandPass').value;
+  if(pass!=='QINISO2024'){ alert('❌ Use code: QINISO2024 for demo'); return; }
+  currentRole=role;
+  document.getElementById('filterLabel').innerText=role+' ONLY';
+  document.getElementById('loginStatus').innerText='✅ Logged as: '+role+' - Seeing '+role+' ONLY';
+  document.getElementById('loginStatus').className='mt-2 text-[9px] font-black text-center bg-green-100 border border-green-600 rounded-lg p-2';
+  renderTable();
+};
+function renderTable(){
+  let filtered=allDocs;
+  if(!['ADMIN','SAPS','NCC','CIP','SARS','NRCS','HEALTH'].includes(currentRole)){
+    let kw=currentRole.split(' ')[0].toUpperCase();
+    filtered=allDocs.filter(d=>{
+      let b=(d.brand||'').toUpperCase(); let p=(d.product||'').toUpperCase();
+      return b.includes(kw) || p.includes(kw) || b.includes(currentRole.toUpperCase()) || p.includes(currentRole.toUpperCase());
+    });
+  } else if(currentRole==='HEALTH'){
+    filtered=allDocs.filter(d=> d.suspect||d.expired);
+  }
+  let html='', safe=0, sus=0, wrong=0, pins='';
+  filtered.forEach(d=>{
+    if(d.suspect||d.expired) sus++; else safe++; if(d.wrongLocation) wrong++;
+    html+=`<tr class="${d.suspect?'bg-red-50':'bg-green-50'} border"><td class="p-2">${d.date?new Date(d.date).toLocaleTimeString():''}<br>${d.gps||''}<br><a href="${d.map}" target="_blank" class="text-blue-600 underline">📍Map</a></td><td class="p-2 font-black">${d.product||d.barcode}<br><span class="bg-yellow-100 px-1 rounded text-[6px]">${d.brand||''}</span></td><td class="p-2 font-black">${d.expired?'❌ EXP':d.suspect?'❌ FAKE':d.wrongLocation?'⚠️ WRONG':'✅ SAFE'}</td><td class="p-2 text-[6px]">${d.scannedAt||''}<br>${d.wrongLocation?'📍❌':'📍✅'}</td><td class="p-2"><button onclick="window.open('${d.map}','_blank')" class="bg-[#0f1e3d] text-white px-2 py-1 rounded-full text-[6px]">👮</button></td></tr>`;
+    pins+=`📍 ${d.brand} | ${d.product} | ${d.gps}<br>`;
+  });
+  document.getElementById('scanTable').innerHTML=html||'<tr><td colspan=5 class="p-4 text-center">No data for '+currentRole+'</td></tr>';
+  document.getElementById('safeCount').innerText=safe; document.getElementById('suspectCount').innerText=sus; document.getElementById('wrongCount').innerText=wrong; document.getElementById('totalCount').innerText=filtered.length;
+  document.getElementById('mapView').innerHTML=pins||'No pins for '+currentRole;
+}
+const q=window.fs.query(window.fs.collection(window.db,'customer_scans'), window.fs.orderBy('time','desc'));
+window.fs.onSnapshot(q,snap=>{ allDocs=[]; snap.forEach(doc=> allDocs.push(doc.data())); renderTable(); });
+</script>
+</body></html>
