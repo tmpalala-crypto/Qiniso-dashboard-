@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO SCAN PRO</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO SCAN PRO + SHIELD v26</title>
 <link rel="manifest" href="manifest.json">
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script src="security-lock-v25.js"></script>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#f5f5f7;font-family:system-ui,Arial}
 .top{background:#0a0a0a;text-align:center;padding:18px 10px;border-bottom:3px solid #d4af37}
 .top img{width:96px;height:96px;border-radius:22px;object-fit:cover;box-shadow:0 0 20px rgba(212,175,55,.6);background:#000}
-.top h1{color:#d4af37;margin:10px 0 4px;font-size:20px;letter-spacing:.5px}
+.top h1{color:#d4af37;margin:10px 0 4px;font-size:20px}
 .legal{display:inline-flex;align-items:center;gap:6px;background:#111;color:#a6f0a6;border:1px solid #2e7d32;padding:5px 12px;border-radius:999px;font-size:10.5px;margin-top:6px}
 .card{margin:12px;background:#fff;border-radius:16px;box-shadow:0 4px 14px rgba(0,0,0,.08);padding:14px}
 .btn{width:100%;background:#111;color:#fff;border:2px solid #d4af37;border-radius:12px;padding:15px;font-weight:800;font-size:16px;cursor:pointer}
-.btn:active{transform:scale(.98)}
 .kv{font-size:13px;line-height:1.7;word-break:break-word}
-.bad{color:#b00020;font-weight:900}
-.good{color:#0a7d26;font-weight:900}
-a{color:#0b57d0}
-#reader{width:100%;border-radius:12px;overflow:hidden}
+.bad{color:#b00020;font-weight:900}.good{color:#0a7d26;font-weight:900}
+a{color:#0b57d0}#reader{width:100%;border-radius:12px;overflow:hidden}
 </style>
 </head>
 <body>
@@ -27,14 +24,15 @@ a{color:#0b57d0}
   <img src="logo2.png" alt="QINISO SHIELD">
   <h1>QINISO SCAN PRO + SHIELD</h1>
   <div class="legal">🔒 Secured & Logged — POPIA Compliant | Protected | SAPS 2024/4410</div>
+  <div id="secStatus" style="font-size:9px;color:#d4af37;margin-top:4px">🛡️ Shield Active - Secured & Logged</div>
 </div>
 
 <div class="card" style="text-align:center">
   <div style="font-weight:800">📱 Point camera to QR — Security Logged</div>
   <div style="font-size:12px;color:#666;margin-top:4px" id="liveMeta">Loading GPS & IP...</div>
   <div id="reader" style="margin-top:12px"></div>
-  <button class="btn" style="margin-top:12px" id="startBtn">📷 START SCAN</button>
-  <div style="font-size:11px;color:#666;margin-top:8px">By scanning you consent to secure logging (GPS, IP, Device, Time) for anti-theft. <a href="#" onclick="alert('POPIA NOTICE: Qiniso logs GPS, IP, Device & Time for product protection, stock tracking & SAPS case compliance. Map link for verification.');return false">Privacy</a></div>
+  <button class="btn" style="margin-top:12px" id="startBtn">📷 START SCAN - IP/GPS LOGGED</button>
+  <div style="font-size:11px;color:#666;margin-top:8px">By scanning you consent to POPIA secure logging (GPS, IP, Device, Time, Map). <a href="#" onclick="alert('POPIA LEGAL POPUP:\n\nQiniso logs GPS, IP, Device, Time & Map link for:\n• Product protection\n• Stock tracking\n• Fraud prevention\n• SAPS case 2024/4410 compliance\n\nNo ID numbers stored.\nData is Secured & Logged.\nProtected Verification.');return false" style="color:#0b57d0;font-weight:bold">Privacy & Legal - Secured & Logged</a></div>
 </div>
 
 <div class="card" id="resultCard" style="display:none">
@@ -43,93 +41,33 @@ a{color:#0b57d0}
 </div>
 
 <script>
-// CONFIG
 const SPAR_LAT=-33.84932, SPAR_LON=25.45159;
 let myIP="...", myGPS="Awaiting", myDevice=navigator.userAgent;
+const liveMeta=document.getElementById('liveMeta'), rCard=document.getElementById('resultCard'), rTitle=document.getElementById('rTitle'), rBody=document.getElementById('rBody');
 
-document.getElementById('now')?.remove();
-const liveMeta=document.getElementById('liveMeta');
-const rCard=document.getElementById('resultCard');
-const rTitle=document.getElementById('rTitle');
-const rBody=document.getElementById('rBody');
-
-// GET IP
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip; updateMeta();}).catch(()=>{myIP="102.214.117.64";updateMeta();});
-
-// GET GPS
-if(navigator.geolocation){
- navigator.geolocation.watchPosition(p=>{
-   myGPS=`${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`;
-   updateMeta();
- },()=>{}, {enableHighAccuracy:true});
-}
-
-function updateMeta(){
- liveMeta.innerText=`GPS ${myGPS} | IP ${myIP} | Ready`;
-}
-
-// DISTANCE CALC
-function distKm(lat1,lon1,lat2,lon2){
- const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
- const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
- return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-
-// SCAN LOGIC
+// IP
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{myIP=d.ip; updateMeta(); if(window.QINISO_SECURITY) document.getElementById('secStatus').innerText=`🛡️ Secured & Logged - IP ${d.ip} | POPIA Compliant`;}).catch(()=>{myIP="102.214.117.64";updateMeta();});
+if(navigator.geolocation){navigator.geolocation.watchPosition(p=>{myGPS=`${p.coords.latitude.toFixed(5)},${p.coords.longitude.toFixed(5)}`; updateMeta();},{},{enableHighAccuracy:true});}
+function updateMeta(){liveMeta.innerText=`GPS ${myGPS} | IP ${myIP} | Device logged | Ready`;}
+function distKm(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180,a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
 let html5Qr;
 document.getElementById('startBtn').onclick=()=>{
- const btn=document.getElementById('startBtn');
- btn.innerText="⏳ Scanning...";
+ const btn=document.getElementById('startBtn'); btn.innerText="⏳ Scanning...";
  html5Qr=new Html5Qrcode("reader");
  html5Qr.start({facingMode:"environment"}, {fps:10, qrbox:250},
-   (decoded)=>{
-     html5Qr.stop();
-     btn.innerText="📷 START SCAN";
-     handleResult(decoded);
-   },
-   ()=>{}
- ).catch(()=>{alert("Camera permission needed - Allow camera"); btn.innerText="📷 START SCAN";});
+   (decoded)=>{html5Qr.stop(); btn.innerText="📷 START SCAN - IP/GPS LOGGED"; handleResult(decoded);},()=>{}
+ ).catch(()=>{alert("Allow camera"); btn.innerText="📷 START SCAN";});
 };
-
 function handleResult(qrData){
- // Parse scanned lat if present, else use my current
- let scanLat=SPAR_LAT, scanLon=SPAR_LON+0.12; // demo 13km away
- try{ if(qrData.includes(",")){ const parts=qrData.split(","); scanLat=parseFloat(parts[0]); scanLon=parseFloat(parts[1]); } }catch(e){}
-
- // Get current GPS for distance
  navigator.geolocation.getCurrentPosition(pos=>{
-   const currLat=pos.coords.latitude, currLon=pos.coords.longitude;
-   const d=distKm(SPAR_LAT,SPAR_LON,currLat,currLon);
-   const isSuspected=d>0.5; // >500m from SPAR = suspected
-
-   const mapUrl=`https://maps.google.com/?q=${currLat},${currLon}`;
-   const timeNow=new Date().toISOString();
-
+   const currLat=pos.coords.latitude, currLon=pos.coords.longitude, d=distKm(SPAR_LAT,SPAR_LON,currLat,currLon), isSuspected=d>0.5, mapUrl=`https://maps.google.com/?q=${currLat},${currLon}`, timeNow=new Date().toISOString();
    rCard.style.display="block";
-   if(isSuspected){
-     rTitle.className="bad"; rTitle.innerText=`SUSPECTED ❌ - ${d.toFixed(1)}km FROM SPAR - ROBBERY/DUPLICATE`;
-   }else{
-     rTitle.className="good"; rTitle.innerText=`VERIFIED ✅ - ${d.toFixed(2)}km FROM SPAR`;
-   }
-   rBody.innerHTML=`
-    BATCH-TEST-CLOUD-001<br>
-    Allocated: SPAR Bethelsdorp<br>
-    Scanned: ${currLat.toFixed(5)},${currLon.toFixed(5)}<br>
-    Distance: ${d.toFixed(1)}km<br>
-    IP: ${myIP}<br>
-    Device: ${myDevice.substring(0,80)}<br>
-    Time: ${timeNow}<br>
-    Map: <a href="${mapUrl}" target="_blank">${mapUrl}</a><br>
-    QR Data: ${qrData}<br>
-    Reason: ${isSuspected?'Possible robbery/duplicate - '+d.toFixed(1)+'km from SPAR Bethelsdorp':'Stock verified at allocated location'} - IP ${myIP} GPS logged + Secured & Logged - POPIA Compliant
-   `;
+   if(isSuspected){rTitle.className="bad"; rTitle.innerText=`SUSPECTED ❌ - ${d.toFixed(1)}km FROM SPAR - ROBBERY/DUPLICATE`;}else{rTitle.className="good"; rTitle.innerText=`VERIFIED ✅ - ${d.toFixed(2)}km FROM SPAR`;}
+   rBody.innerHTML=`BATCH-TEST-CLOUD-001<br>Allocated: SPAR Bethelsdorp<br>Scanned: ${currLat.toFixed(5)},${currLon.toFixed(5)}<br>Distance: ${d.toFixed(1)}km<br>IP: ${myIP}<br>Device: ${myDevice.substring(0,90)}<br>Time: ${timeNow}<br>Map: <a href="${mapUrl}" target="_blank">${mapUrl}</a><br>QR Data: ${qrData}<br>Reason: ${isSuspected?'Possible robbery/duplicate - '+d.toFixed(1)+'km from SPAR Bethelsdorp - IP '+myIP+' GPS logged + reported':'Stock verified'} - Secured & Logged — POPIA Compliant`;
    window.scrollTo(0,document.body.scrollHeight);
- },()=>{
-   alert("Enable GPS for accurate scan");
- });
+   if(window.QINISO_SECURITY) { window.QINISO_SECURITY.getIPLocation().then(()=>{}); }
+ },()=>{alert("Enable GPS");});
 }
-
-// PWA SW
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{});}
 </script>
 </body>
