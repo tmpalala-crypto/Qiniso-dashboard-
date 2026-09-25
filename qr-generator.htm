@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO QR WITH LOGO GENERATOR</title>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<style>
+body{margin:0;background:#0a0e1a;color:#fff;font-family:system-ui;padding:12px;text-align:center}
+.top img{width:86px;height:86px;border-radius:20px;box-shadow:0 0 18px #d4af37}
+.card{background:#fff;color:#000;border-radius:16px;padding:14px;margin:12px auto;max-width:420px}
+.btn{width:100%;background:#111;color:#fff;border:2px solid #d4af37;border-radius:12px;padding:12px;font-weight:800;margin-top:8px;cursor:pointer}
+input{width:100%;padding:10px;border-radius:10px;border:1px solid #ccc;margin-top:6px;font-size:13px}
+#qrWrap{position:relative;display:inline-block;margin-top:12px}
+canvas{border-radius:16px}
+</style>
+</head>
+<body>
+<div class="top"><img src="logo2.png"><div style="color:#d4af37;font-weight:900;margin-top:6px">QINISO QR WITH LOGO GENERATOR</div></div>
+
+<div class="card">
+  <div style="font-weight:800;font-size:13px">Generate QR with Shield Logo inside</div>
+  <input id="batch" placeholder="Batch e.g. BATCH-TEST-CLOUD-001" value="BATCH-TEST-CLOUD-001">
+  <input id="shop" placeholder="Shop GPS e.g. -33.84932,25.45159" value="-33.84932,25.45159">
+  <button class="btn" onclick="genQR()">🛡️ GENERATE QR WITH LOGO</button>
+  <div id="qrWrap"><canvas id="qrCanvas"></canvas></div>
+  <div style="font-size:11px;color:#666;margin-top:6px">QR contains Batch + GPS + IP logging link<br>Logo is embedded in center (POPIA Compliant)</div>
+  <button class="btn" onclick="downloadQR()" style="background:#d4af37;color:#000">⬇️ DOWNLOAD QR PNG (with logo)</button>
+</div>
+
+<script>
+const logoImg=new Image(); logoImg.src='logo2.png'; logoImg.crossOrigin='anonymous';
+function genQR(){
+ const batch=document.getElementById('batch').value||'BATCH-TEST-CLOUD-001';
+ const shop=document.getElementById('shop').value||'-33.84932,25.45159';
+ const data=`https://tmpalala-crypto.github.io/Qiniso-dashboard-/scan.html?batch=${batch}&gps=${shop}&t=${Date.now()}`;
+ const canvas=document.getElementById('qrCanvas');
+ QRCode.toCanvas(canvas, data, {width:340, margin:2, color:{dark:'#000000', light:'#ffffff'}, errorCorrectionLevel:'H'}, function(err){
+   if(err) return alert(err);
+   const ctx=canvas.getContext('2d');
+   const logoSize=72;
+   const x=(canvas.width-logoSize)/2, y=(canvas.height-logoSize)/2;
+   // white background for logo
+   ctx.fillStyle='#fff'; ctx.beginPath(); ctx.roundRect(x-6,y-6,logoSize+12,logoSize+12,14); ctx.fill();
+   ctx.strokeStyle='#d4af37'; ctx.lineWidth=3; ctx.stroke();
+   ctx.drawImage(logoImg, x, y, logoSize, logoSize);
+ });
+}
+function downloadQR(){
+ const canvas=document.getElementById('qrCanvas');
+ const link=document.createElement('a'); link.download=`QINISO-QR-${document.getElementById('batch').value||'batch'}-with-logo.png`; link.href=canvas.toDataURL(); link.click();
+}
+logoImg.onload=()=>genQR();
+</script>
+</body>
+</html>
