@@ -7,15 +7,19 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
+// YOUR REAL FIREBASE CONFIG - QINISO-MARK-V4
 const firebaseConfig = {
-  apiKey: "AIzaSyDMwHyVNe7E9pPqC7PH0-REPLACE-REAL-KEY",
+  apiKey: "AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8",
   authDomain: "qiniso-mark-v4.firebaseapp.com",
   projectId: "qiniso-mark-v4",
-  storageBucket: "qiniso-mark-v4.appspot.com",
-  messagingSenderId: "310121640224",
-  appId: "1:310121640224:web:7b16bdccb3281e61b969445"
+  storageBucket: "qiniso-mark-v4.firebasestorage.app",
+  messagingSenderId: "519121640224",
+  appId: "1:519121640224:web:f516bddbc5281e06fa9545",
+  measurementId: "G-LDDNVQDSB5"
 };
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 const db = getFirestore(app);
 window.db=db; window.f={collection,addDoc,serverTimestamp};
 </script>
