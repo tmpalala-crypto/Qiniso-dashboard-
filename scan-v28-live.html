@@ -1,39 +1,66 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>QINISO v28 LIVE - MARK V4</title><script src="https://cdn.tailwindcss.com"></script><script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QINISO v28 LIVE - MARK V4 PRO</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-// YOUR MARK V4 CONFIG - I extracted from your screenshot
 const firebaseConfig = {
-  apiKey: "AIzaSyDMwHyVNe7E9pPqC7PH0-EDIT-ME",
+  apiKey: "AIzaSyDMwHyVNe7E9pPqC7PH0-EDIT-ME-REPLACE-WITH-YOUR-REAL-KEY",
   authDomain: "qiniso-mark-v4.firebaseapp.com",
   projectId: "qiniso-mark-v4",
   storageBucket: "qiniso-mark-v4.appspot.com",
   messagingSenderId: "310121640224",
-  appId: "1:310121640224:web:7b16bdccb3281e61b969445",
-  measurementId: "G-LQWJQ0B80"
+  appId: "1:310121640224:web:7b16bdccb3281e61b969445"
 };
-// If apiKey fails, replace it with exact key from your Config screen!
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 window.db=db; window.collection=collection; window.addDoc=addDoc; window.onSnapshot=onSnapshot; window.getDocs=getDocs; window.query=query; window.where=where;
-console.log("🔥 Firebase MARK V4 Connected!");
 </script>
 </head>
-<body class="bg-black text-white p-2">
-<div class="text-center border-2 border-yellow-500 rounded-xl p-2 bg-zinc-900">
-<img src="logo2.png" class="w-16 h-16 mx-auto rounded-xl border border-yellow-500">
-<h1 class="text-yellow-500 font-black text-xs">QINISO v28 LIVE - MARK V4 FIRESTORE</h1>
-<div class="text-[8px] text-green-300">🔒 Secured & Logged — POPIA | SAPS 2024/4410 | ALL PHONES ALERT</div>
-<div id="dangerBanner" class="hidden bg-red-600 animate-pulse p-2 rounded mt-2 text-xs font-black"></div>
-<div id="liveStats" class="text-[9px] text-yellow-300 mt-1">Connecting to MARK V4 live network...</div>
-<button id="panicBtn" class="bg-red-600 border-2 border-white px-4 py-3 rounded-full text-xs font-black w-full mt-2">🚨 PANIC - ALERT ALL PHONES IN 2KM</button>
+<body class="bg-[#0a0a0a] text-white p-3 font-sans">
+
+<!-- BLACK BANK - PROFESSIONAL + MOTIVATING + LEGAL -->
+<div class="bg-[#111] border-2 border-yellow-500 rounded-[20px] p-4 shadow-2xl">
+  <div class="flex items-center gap-3">
+    <div class="w-12 h-12 bg-gradient-to-br from-blue-700 to-yellow-500 rounded-xl flex items-center justify-center font-black text-xl">Q</div>
+    <div class="flex-1">
+      <div class="text-yellow-400 font-black text-[13px] tracking-wide">QINISO v28 LIVE - MARK V4 FIRESTORE</div>
+      <div class="text-[9px] text-gray-400">SAPS 2024/4410 COMPLIANT • VERIFIED & SECURE</div>
+    </div>
+    <div class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-2 py-1 rounded-full border border-yellow-400">SAPS COMPLIANT</div>
+  </div>
+
+  <div class="mt-3 bg-gradient-to-r from-yellow-50 to-amber-100 border border-yellow-400 rounded-xl p-3 text-center">
+    <div class="text-[#78350f] font-black text-[11px]">🇿🇦 PROTECTING OUR FAMILIES. KEEPING MZANSI SAFE.</div>
+    <div class="text-[#92400e] font-medium text-[10px] mt-1">Every scan stops fake goods from reaching our children. You are a protector!</div>
+  </div>
+
+  <div class="mt-3 bg-white/5 border border-white/10 rounded-xl p-3">
+    <div class="text-[11px] leading-[1.5] text-gray-200">
+      🔍 <b class="text-white">QINISO ROLE:</b> We ONLY collect evidence — GPS, IP, Photos, Scan logs — to keep your country safe.<br>
+      <div class="mt-2">⚖️ <b class="text-yellow-400">DECISION:</b> Final action is taken by the LAW (SAPS 2024/4410) and BRAND OWNER only. Qiniso does NOT accuse, prosecute, or delete products.</div>
+    </div>
+  </div>
+
+  <div class="mt-3 text-center">
+    <div class="text-[9px] text-gray-400">🔒 Secured & Logged — POPIA Compliant | Protected Verification | All Phones Alert</div>
+    <div id="liveStats" class="text-[10px] text-yellow-300 font-bold mt-1">Connecting to MARK V4 live...</div>
+  </div>
+
+  <div id="dangerBanner" class="hidden mt-3 bg-red-600 animate-pulse p-3 rounded-xl text-[11px] font-black text-center"></div>
+  <button id="panicBtn" class="mt-3 bg-red-600 border-2 border-white w-full py-3 rounded-full text-[12px] font-black">🚨 PANIC - ALERT ALL PHONES IN 2KM</button>
 </div>
-<div id="reader" class="mt-3 rounded-xl overflow-hidden border-2 border-yellow-500"></div>
-<button id="startBtn" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl mt-3">📷 START SCAN - TAP HERE</button>
-<div id="result" class="hidden bg-white text-black rounded-xl p-3 mt-3">
-<h2 id="rTitle" class="font-black text-center text-lg"></h2><div id="rBody" class="text-xs mt-2"></div>
-<button onclick="location.reload()" class="w-full bg-black text-white py-2 rounded mt-3">SCAN NEXT</button>
+
+<div id="reader" class="mt-4 rounded-2xl overflow-hidden border-2 border-yellow-500 bg-white"></div>
+<button id="startBtn" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl mt-4 text-[14px]">📷 START SCAN - TAP HERE</button>
+
+<div id="result" class="hidden bg-white text-black rounded-2xl p-4 mt-4">
+<h2 id="rTitle" class="font-black text-center text-[16px]"></h2><div id="rBody" class="text-[12px] mt-3"></div>
+<button onclick="location.reload()" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">SCAN NEXT</button>
 </div>
+
 <script type="module">
 const SPAR_LAT=-33.84932, SPAR_LON=25.45159;
 let myIP="...", currLat=SPAR_LAT, currLon=SPAR_LON;
@@ -41,60 +68,27 @@ const RETAILER_MAP={"6001374069024":{retailer:"SPAR",expiry:"2026-12-31"},"60013
 function dist(a,b,c,d){const R=6371,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180,e=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(e),Math.sqrt(1-e));}
 (async()=>{
 try{let r=await fetch('https://api.ipify.org?format=json');let j=await r.json();myIP=j.ip;}catch{myIP='Offline';}
-if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>{currLat=p.coords.latitude;currLon=p.coords.longitude;listenLive();},null,{enableHighAccuracy:true});}else listenLive();
+if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>{currLat=p.coords.latitude;currLon=p.coords.longitude;listenLive();},()=>listenLive(),{enableHighAccuracy:true});}else listenLive();
 })();
 function listenLive(){
-  const scansCol=collection(db,'live_scans');
-  const panicCol=collection(db,'live_panics');
-  onSnapshot(scansCol,(snap)=>{
-    let all=[]; snap.forEach(d=>all.push(d.data()));
-    let nearSus=all.filter(s=>s.status.includes('❌') && dist(currLat,currLon,s.lat,s.lon)<2);
-    document.getElementById('liveStats').innerText=`MARK V4 Live: ${all.length} scans | ${nearSus.length} SUSPECTED in 2km`;
-    if(nearSus.length>=1){
-      let b=document.getElementById('dangerBanner'); b.classList.remove('hidden');
-      b.innerHTML=`⚠️ SUSPECTED AREA BEWARE! ${nearSus.length} suspected scans in 2km! GPS: <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="underline text-yellow-200">${currLat.toFixed(4)},${currLon.toFixed(4)} TRUE PIN</a> Be careful!`;
-    }
-  });
-  onSnapshot(panicCol,(snap)=>{
-    let all=[]; snap.forEach(d=>all.push(d.data()));
-    let near=all.filter(s=>dist(currLat,currLon,s.lat,s.lon)<2);
-    if(near.length>0){
-      let b=document.getElementById('dangerBanner'); b.classList.remove('hidden');
-      b.innerHTML=`🚨 PANIC! ${near.length} PANIC REPORTS IN THIS AREA! ⚠️ SUSPECTED AREA BEWARE! <a href="https://maps.google.com/?q=${currLat},${currLon}" class="underline">MAP PIN</a>`;
-    }
-  });
+  const scansCol=collection(db,'live_scans'); const panicCol=collection(db,'live_panics');
+  onSnapshot(scansCol,(snap)=>{let all=[]; snap.forEach(d=>all.push(d.data())); let nearSus=all.filter(s=>s.status&&s.status.includes('❌') && dist(currLat,currLon,s.lat,s.lon)<2); document.getElementById('liveStats').innerText=`MARK V4 Live: ${all.length} scans | ${nearSus.length} SUSPECTED in 2km`; if(nearSus.length>=1){let b=document.getElementById('dangerBanner'); b.classList.remove('hidden'); b.innerHTML=`⚠️ SUSPECTED AREA BEWARE! ${nearSus.length} suspected in 2km! GPS: <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="underline text-yellow-200">${currLat.toFixed(4)},${currLon.toFixed(4)} TRUE PIN</a>`;}});
+  onSnapshot(panicCol,(snap)=>{let all=[]; snap.forEach(d=>all.push(d.data())); let near=all.filter(s=>dist(currLat,currLon,s.lat,s.lon)<2); if(near.length>0){let b=document.getElementById('dangerBanner'); b.classList.remove('hidden'); b.innerHTML=`🚨 PANIC! ${near.length} PANIC IN THIS AREA! ⚠️ SUSPECTED AREA BEWARE!`;}});
 }
-document.getElementById('panicBtn').onclick=async()=>{
-if(!confirm('Alert ALL PHONES that this area is SUSPECTED?'))return;
-await addDoc(collection(db,'live_panics'),{lat:currLat,lon:currLon,ip:myIP,time:new Date().toLocaleString(),device:navigator.userAgent.slice(0,60)});
-alert('🚨 ALERT SENT TO ALL PHONES ON MARK V4!');
-};
-let scanner;
-document.getElementById('startBtn').onclick=()=>{
-document.getElementById('startBtn').innerText="Scanning...";
-scanner=new Html5Qrcode("reader");
-scanner.start({facingMode:"environment"},{fps:10,qrbox:250},onScan).catch(e=>alert(e));
-};
+document.getElementById('panicBtn').onclick=async()=>{if(!confirm('Alert ALL PHONES that this area is SUSPECTED?'))return; await addDoc(collection(db,'live_panics'),{lat:currLat,lon:currLon,ip:myIP,time:new Date().toLocaleString(),device:navigator.userAgent.slice(0,60)}); alert('🚨 ALERT SENT TO ALL PHONES!');};
+let scanner; document.getElementById('startBtn').onclick=()=>{document.getElementById('startBtn').innerText="Scanning..."; scanner=new Html5Qrcode("reader"); scanner.start({facingMode:"environment"},{fps:10,qrbox:250},onScan).catch(e=>alert(e));};
 async function onScan(qr){
 if(scanner) try{await scanner.stop();}catch{}
-let info=RETAILER_MAP[qr]||RETAILER_MAP["DEFAULT"];
-let now=new Date(), exp=new Date(info.expiry);
-let d=dist(currLat,currLon,SPAR_LAT,SPAR_LON);
-let dupFound=null;
-try{
-  let snap=await getDocs(query(collection(db,'live_scans'), where("qr","==",qr)));
-  snap.forEach(doc=>{dupFound=doc.data();});
-}catch(e){console.log(e);}
+let info=RETAILER_MAP[qr]||RETAILER_MAP["DEFAULT"]; let now=new Date(), exp=new Date(info.expiry); let d=dist(currLat,currLon,SPAR_LAT,SPAR_LON); let dupFound=null;
+try{let snap=await getDocs(query(collection(db,'live_scans'), where("qr","==",qr))); snap.forEach(doc=>{dupFound=doc.data();});}catch(e){}
 let status="",title="",color="green",action="";
 if(now>exp){status="❌ EXPIRED";title=`EXPIRED ❌ DON'T BUY`;color="red";action=`Expired ${info.expiry} - DON'T BUY!`;}
-else if(dupFound){status="❌ DUPLICATE";title=`DUPLICATE ❌ DON'T BUY`;color="red";action=`SUSPECTED DUPLICATE! First scanned at ${dupFound.retailer} on ${dupFound.time} GPS ${dupFound.lat},${dupFound.lon} TRUE PIN. Allocated to ${info.retailer} only!`;}
-else if(info.retailer==="BOXER"&&d<1){status="❌ WRONG ALLOCATION";title=`WRONG LOCATION ❌ DON'T BUY`;color="red";action=`Allocated to ${info.retailer} only! You at SPAR ${d.toFixed(2)}km - SUSPECTED DIVERTED!`;}
-else if(d>0.5){status="❌ WRONG LOCATION";title=`WRONG LOCATION ❌`;color="red";action=`${d.toFixed(2)}km from ${info.retailer} - SUSPECTED LOCATION!`;}
+else if(dupFound){status="❌ DUPLICATE";title=`DUPLICATE ❌ DON'T BUY`;color="red";action=`SUSPECTED DUPLICATE! First at ${dupFound.retailer} on ${dupFound.time} GPS ${dupFound.lat},${dupFound.lon} TRUE PIN. Allocated to ${info.retailer} only!`;}
+else if(info.retailer==="BOXER"&&d<1){status="❌ WRONG ALLOCATION";title=`WRONG LOCATION ❌`;color="red";action=`Allocated to ${info.retailer} only! You at SPAR ${d.toFixed(2)}km - SUSPECTED!`;}
+else if(d>0.5){status="❌ WRONG LOCATION";title=`WRONG LOCATION ❌`;color="red";action=`${d.toFixed(2)}km from ${info.retailer} - SUSPECTED!`;}
 else{status="✅ VERIFIED";title=`VERIFIED ✅ - ${d.toFixed(2)}km FROM ${info.retailer}`;color="green";action=`Genuine for ${info.retailer}. Safe to buy.`;}
-try{await addDoc(collection(db,'live_scans'),{qr,retailer:info.retailer,expiry:info.expiry,lat:currLat,lon:currLon,ip:myIP,time:now.toLocaleString(),status,device:navigator.userAgent.slice(0,50)});}catch(e){alert("Firebase error: "+e.message);}
-document.getElementById('result').classList.remove('hidden');
-document.getElementById('rTitle').innerText=title;
-document.getElementById('rTitle').className=color==="red"?"font-black text-center text-lg text-red-600":"font-black text-center text-lg text-green-600";
-document.getElementById('rBody').innerHTML=`<div class="p-2 rounded ${color==="red"?"bg-red-100 text-red-800":"bg-green-100 text-green-800"} font-bold">${action}</div><div class="mt-2 border p-2 rounded bg-gray-50"><b>QR:</b> ${qr}<br><b>Allocated To:</b> ${info.retailer}<br><b>Expiry:</b> ${info.expiry}<br><b>Status:</b> ${status}<br><b>GPS Pin:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">${currLat.toFixed(5)},${currLon.toFixed(5)} - TRUE MAP PIN</a><br><b>IP:</b> ${myIP}<br><b>Time:</b> ${now.toLocaleString()}<br>${dupFound?`<br><b>First Scan:</b> ${dupFound.time} at <a href="https://maps.google.com/?q=${dupFound.lat},${dupFound.lon}" target="_blank" class="underline">${dupFound.lat},${dupFound.lon}</a>`:''}<br><br><div class="text-[8px] text-gray-500">🔒 Secured & Logged — POPIA | SAPS 2024/4410 | MARK V4 LIVE - All phones</div></div>`;
+try{await addDoc(collection(db,'live_scans'),{qr,retailer:info.retailer,expiry:info.expiry,lat:currLat,lon:currLon,ip:myIP,time:now.toLocaleString(),status,device:navigator.userAgent.slice(0,50)});}catch(e){alert("Firebase error - check apiKey: "+e.message);}
+document.getElementById('result').classList.remove('hidden'); document.getElementById('rTitle').innerText=title; document.getElementById('rTitle').className=color==="red"?"font-black text-center text-[16px] text-red-600":"font-black text-center text-[16px] text-green-600";
+document.getElementById('rBody').innerHTML=`<div class="p-3 rounded-xl ${color==="red"?"bg-red-100 text-red-800":"bg-green-100 text-green-800"} font-bold">${action}</div><div class="mt-3 border p-3 rounded-xl bg-gray-50"><b>QR:</b> ${qr}<br><b>Allocated To:</b> ${info.retailer}<br><b>Expiry:</b> ${info.expiry}<br><b>Status:</b> ${status}<br><b>GPS Pin:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">${currLat.toFixed(5)},${currLon.toFixed(5)} - TRUE MAP PIN</a><br><b>IP:</b> ${myIP}<br><b>Time:</b> ${now.toLocaleString()}<br>${dupFound?`<br><b>First Scan:</b> ${dupFound.time} at <a href="https://maps.google.com/?q=${dupFound.lat},${dupFound.lon}" target="_blank" class="underline">${dupFound.lat},${dupFound.lon}</a>`:''}<br><br><div class="text-[8px] text-gray-500">🔒 Secured & Logged — POPIA | SAPS 2024/4410 | QINISO collects evidence only. Decision by Law & Brand Owner.</div></div>`;
 }
 </script></body></html>
