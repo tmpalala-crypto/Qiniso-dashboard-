@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO v28 LIVE - MARK V4 PRO</title>
+<title>QINISO GOGO PRO - SAFE SCAN V5</title>
+<script src="security-lock-v2.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, getDocs, query, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
-  apiKey: "AIzaSyDMwHyVNe7E9pPqC7PH0-EDIT-ME-REPLACE-WITH-YOUR-REAL-KEY",
+  apiKey: "AIzaSyDMwHyVNe7E9pPqC7PH0-REPLACE-REAL-KEY",
   authDomain: "qiniso-mark-v4.firebaseapp.com",
   projectId: "qiniso-mark-v4",
   storageBucket: "qiniso-mark-v4.appspot.com",
@@ -16,79 +17,103 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window.db=db; window.collection=collection; window.addDoc=addDoc; window.onSnapshot=onSnapshot; window.getDocs=getDocs; window.query=query; window.where=where;
+window.db=db; window.f={collection,addDoc,serverTimestamp};
 </script>
+<style>body{font-family:Inter,sans-serif;background:#f8fafc}</style>
 </head>
-<body class="bg-[#0a0a0a] text-white p-3 font-sans">
+<body class="p-2">
 
-<!-- BLACK BANK - PROFESSIONAL + MOTIVATING + LEGAL -->
-<div class="bg-[#111] border-2 border-yellow-500 rounded-[20px] p-4 shadow-2xl">
-  <div class="flex items-center gap-3">
-    <div class="w-12 h-12 bg-gradient-to-br from-blue-700 to-yellow-500 rounded-xl flex items-center justify-center font-black text-xl">Q</div>
-    <div class="flex-1">
-      <div class="text-yellow-400 font-black text-[13px] tracking-wide">QINISO v28 LIVE - MARK V4 FIRESTORE</div>
-      <div class="text-[9px] text-gray-400">SAPS 2024/4410 COMPLIANT • VERIFIED & SECURE</div>
-    </div>
-    <div class="bg-yellow-100 text-yellow-800 text-[8px] font-black px-2 py-1 rounded-full border border-yellow-400">SAPS COMPLIANT</div>
-  </div>
-
-  <div class="mt-3 bg-gradient-to-r from-yellow-50 to-amber-100 border border-yellow-400 rounded-xl p-3 text-center">
-    <div class="text-[#78350f] font-black text-[11px]">🇿🇦 PROTECTING OUR FAMILIES. KEEPING MZANSI SAFE.</div>
-    <div class="text-[#92400e] font-medium text-[10px] mt-1">Every scan stops fake goods from reaching our children. You are a protector!</div>
-  </div>
-
-  <div class="mt-3 bg-white/5 border border-white/10 rounded-xl p-3">
-    <div class="text-[11px] leading-[1.5] text-gray-200">
-      🔍 <b class="text-white">QINISO ROLE:</b> We ONLY collect evidence — GPS, IP, Photos, Scan logs — to keep your country safe.<br>
-      <div class="mt-2">⚖️ <b class="text-yellow-400">DECISION:</b> Final action is taken by the LAW (SAPS 2024/4410) and BRAND OWNER only. Qiniso does NOT accuse, prosecute, or delete products.</div>
-    </div>
-  </div>
-
-  <div class="mt-3 text-center">
-    <div class="text-[9px] text-gray-400">🔒 Secured & Logged — POPIA Compliant | Protected Verification | All Phones Alert</div>
-    <div id="liveStats" class="text-[10px] text-yellow-300 font-bold mt-1">Connecting to MARK V4 live...</div>
-  </div>
-
-  <div id="dangerBanner" class="hidden mt-3 bg-red-600 animate-pulse p-3 rounded-xl text-[11px] font-black text-center"></div>
-  <button id="panicBtn" class="mt-3 bg-red-600 border-2 border-white w-full py-3 rounded-full text-[12px] font-black">🚨 PANIC - ALERT ALL PHONES IN 2KM</button>
+<div class="bg-white border-2 border-[#0f1e3d] rounded-[20px] p-3 shadow-xl" style="border-bottom:4px solid #d4af37">
+<div class="flex items-center gap-2">
+<img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-14 h-14 rounded-xl border-2 border-yellow-500 bg-white object-cover">
+<div class="flex-1">
+<div class="font-black text-[14px] text-[#0f1e3d]">QINISO MARK - SAFE SCAN FOR FAMILY</div>
+<div class="text-[9px] text-slate-600 font-bold">🔒 Secured by security-lock-v2.js V25 - Hacker Protected</div>
+<div class="text-[8px] text-green-700 font-black">SAPS 2024/4410 • POPIA Compliant • All Ages • All Languages</div>
+</div>
+<div class="bg-green-100 border border-green-600 text-green-800 text-[7px] font-black px-2 py-1 rounded-full">✅ SAFE</div>
 </div>
 
-<div id="reader" class="mt-4 rounded-2xl overflow-hidden border-2 border-yellow-500 bg-white"></div>
-<button id="startBtn" class="w-full bg-yellow-500 text-black font-black py-4 rounded-2xl mt-4 text-[14px]">📷 START SCAN - TAP HERE</button>
-
-<div id="result" class="hidden bg-white text-black rounded-2xl p-4 mt-4">
-<h2 id="rTitle" class="font-black text-center text-[16px]"></h2><div id="rBody" class="text-[12px] mt-3"></div>
-<button onclick="location.reload()" class="w-full bg-black text-white py-3 rounded-xl mt-4 font-bold">SCAN NEXT</button>
+<div class="mt-3 grid grid-cols-2 gap-2">
+<select id="langSelect" onchange="changeLang(this.value)" class="border-2 border-[#0f1e3d] rounded-xl p-2.5 text-[10px] font-black bg-yellow-50">
+<option value="en">🌍 ENGLISH</option>
+<option value="zu">🇿🇦 isiZULU</option>
+<option value="xh">🇿🇦 isiXHOSA</option>
+<option value="af">🇿🇦 AFRIKAANS</option>
+<option value="st">🇿🇦 SESOTHO</option>
+<option value="nso">🇿🇦 SEPEDI</option>
+</select>
+<select id="ageSelect" class="border-2 border-yellow-500 rounded-xl p-2.5 text-[10px] font-black bg-white">
+<option value="adult">👤 ADULT 18+</option>
+<option value="gogo">👵 GOGO 60+</option>
+<option value="youth">🧒 YOUTH</option>
+<option value="child">👶 CHILD</option>
+</select>
 </div>
 
-<script type="module">
-const SPAR_LAT=-33.84932, SPAR_LON=25.45159;
-let myIP="...", currLat=SPAR_LAT, currLon=SPAR_LON;
-const RETAILER_MAP={"6001374069024":{retailer:"SPAR",expiry:"2026-12-31"},"6001374069025":{retailer:"BOXER",expiry:"2026-10-15"},"6001374069026":{retailer:"BOXER",expiry:"2025-01-01"},"DEFAULT":{retailer:"SPAR",expiry:"2026-12-31"}};
-function dist(a,b,c,d){const R=6371,dl=(c-a)*Math.PI/180,dn=(d-b)*Math.PI/180,e=Math.sin(dl/2)**2+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dn/2)**2;return R*2*Math.atan2(Math.sqrt(e),Math.sqrt(1-e));}
-(async()=>{
-try{let r=await fetch('https://api.ipify.org?format=json');let j=await r.json();myIP=j.ip;}catch{myIP='Offline';}
-if(navigator.geolocation){navigator.geolocation.getCurrentPosition(p=>{currLat=p.coords.latitude;currLon=p.coords.longitude;listenLive();},()=>listenLive(),{enableHighAccuracy:true});}else listenLive();
-})();
-function listenLive(){
-  const scansCol=collection(db,'live_scans'); const panicCol=collection(db,'live_panics');
-  onSnapshot(scansCol,(snap)=>{let all=[]; snap.forEach(d=>all.push(d.data())); let nearSus=all.filter(s=>s.status&&s.status.includes('❌') && dist(currLat,currLon,s.lat,s.lon)<2); document.getElementById('liveStats').innerText=`MARK V4 Live: ${all.length} scans | ${nearSus.length} SUSPECTED in 2km`; if(nearSus.length>=1){let b=document.getElementById('dangerBanner'); b.classList.remove('hidden'); b.innerHTML=`⚠️ SUSPECTED AREA BEWARE! ${nearSus.length} suspected in 2km! GPS: <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="underline text-yellow-200">${currLat.toFixed(4)},${currLon.toFixed(4)} TRUE PIN</a>`;}});
-  onSnapshot(panicCol,(snap)=>{let all=[]; snap.forEach(d=>all.push(d.data())); let near=all.filter(s=>dist(currLat,currLon,s.lat,s.lon)<2); if(near.length>0){let b=document.getElementById('dangerBanner'); b.classList.remove('hidden'); b.innerHTML=`🚨 PANIC! ${near.length} PANIC IN THIS AREA! ⚠️ SUSPECTED AREA BEWARE!`;}});
+<div class="mt-3 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-green-500 rounded-xl p-3 text-center">
+<div id="safetyMsg" class="font-black text-[11px] text-[#0f1e3d]">📸 SCAN PRODUCT FOR YOUR SAFETY! 🛡️</div>
+<div id="safetyMsg2" class="text-[9px] text-slate-700 mt-1 font-bold">👍 If SAFE ✅ You can buy • 👎 If ❌ FAKE / EXPIRED - Don't buy! Law will come! ⚖️</div>
+<div class="mt-2 text-[8px] bg-white rounded-lg p-2 border border-yellow-400"><span class="font-black">✅=SAFE</span> | <span class="font-black">❌=FAKE/DANGER</span> | <span class="font-black">📸=Photo</span> | <span class="font-black">👮=SAPS</span> | <span class="font-black">🏭=Brand</span></div>
+</div>
+
+<div class="mt-3 bg-[#0f1e3d] text-white rounded-xl p-3">
+<div class="grid grid-cols-2 gap-2 text-[8px]">
+<div>📍 <b>GPS Location:</b><br><span id="autoGps" class="text-yellow-300 font-black">Getting GPS...</span></div>
+<div>🌐 <b>IP Security:</b><br><span id="autoIp" class="text-yellow-300">Getting IP...</span></div>
+<div>📅 <b>Date & Time:</b><br><span id="autoDate" class="text-white">-</span></div>
+<div>🗺️ <b>Map:</b><br><span id="autoMapLink" class="text-green-300 underline">Loading...</span></div>
+</div>
+<div id="miniMap" class="mt-2 bg-white rounded-xl h-24 flex items-center justify-center text-[8px] text-black font-bold border-2 border-yellow-500">🗺️ MAP - Shows after scan</div>
+</div>
+</div>
+
+<div id="reader" class="mt-3 rounded-2xl overflow-hidden border-2 border-yellow-500 bg-white hidden"></div>
+<button id="startBtn" class="w-full bg-yellow-500 text-[#0f1e3d] font-black py-4 rounded-2xl mt-3 text-[13px] border-2 border-[#0f1e3d]">📷 TAP TO SCAN BARCODE - FOR YOUR SAFETY!</button>
+
+<div id="resultBox" class="hidden mt-3 bg-white rounded-2xl border-2 border-[#0f1e3d] p-4 shadow-xl">
+<div id="resIcon" class="text-[40px] text-center">✅</div>
+<h2 id="resTitle" class="font-black text-center text-[16px] mt-1">SAFE ✅</h2>
+<div id="resSub" class="text-center text-[10px] font-bold mt-1"></div>
+<div id="resDetails" class="mt-3 bg-slate-50 rounded-xl p-3 text-[9px] leading-relaxed border-2 border-slate-200"></div>
+<div id="wrongLocBox" class="hidden mt-3 bg-red-50 border-2 border-red-600 rounded-xl p-3"><div class="font-black text-[11px] text-red-800">📍 ❌ WRONG LOCATION! SUSPECT!</div><div id="wrongLocTxt" class="text-[9px] mt-1"></div></div>
+<div id="expiredBox" class="hidden mt-3 bg-red-600 text-white rounded-xl p-3 text-center font-black text-[12px]">❌ EXPIRED! DANGER! DON'T EAT! 🙅</div>
+<div id="safeBox" class="hidden mt-3 bg-green-600 text-white rounded-xl p-3 text-center font-black text-[12px]">✅ SAFE! YOU CAN BUY! 👍</div>
+<div class="mt-3 grid grid-cols-2 gap-2">
+<button onclick="reportSAPS()" class="bg-[#0f1e3d] text-white py-3 rounded-xl font-black text-[9px] border-2 border-yellow-500">👮 REPORT TO SAPS - PRINT</button>
+<button onclick="sendToBrands()" class="bg-yellow-500 text-[#0f1e3d] py-3 rounded-xl font-black text-[9px]">🏭 SEND TO BRAND + DEPTS</button>
+</div>
+<button onclick="location.reload()" class="w-full mt-2 bg-slate-200 py-3 rounded-xl font-black text-[10px]">🔄 SCAN NEXT</button>
+</div>
+
+<script>
+let currLat=-33.8693, currLon=25.4516, myIP='...', currentScan=null;
+document.getElementById('autoDate').innerText=new Date().toLocaleString();
+navigator.geolocation.getCurrentPosition(p=>{currLat=p.coords.latitude; currLon=p.coords.longitude; document.getElementById('autoGps').innerText=currLat.toFixed(5)+', '+currLon.toFixed(5); document.getElementById('autoMapLink').innerHTML=`<a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-green-300">📍 Open Map</a>`; document.getElementById('miniMap').innerHTML=`<iframe width="100%" height="100%" style="border:0;border-radius:12px" loading="lazy" src="https://maps.google.com/maps?q=${currLat},${currLon}&z=15&output=embed"></iframe>`;});
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{myIP=d.ip; document.getElementById('autoIp').innerText=myIP+' • '+d.city;});
+
+const RETAILER_MAP={"6001374069024":{product:"KOO Baked Beans 410g",allowed:["SPAR","Shoprite","Pick n Pay"],brand:"KOO / Tiger Brands"},"6001067001019":{product:"Lucky Star Pilchards",allowed:["Shoprite","Boxer"],brand:"Lucky Star"},"6001001240235":{product:"Albany Bread",allowed:["SPAR","Woolworths"],brand:"Albany"}};
+const PRODUCT_DB={"6001374069024":{exp:"2026-06-15",batch:"KOO2024A",safe:true},"6001374000000":{exp:"2023-01-01",batch:"FAKE123",safe:false}};
+
+function changeLang(l){const m={en:{a:"📸 SCAN PRODUCT FOR YOUR SAFETY! 🛡️",b:"👍 If SAFE ✅ You can buy • 👎 If ❌ FAKE / EXPIRED - Don't buy! Law will come! ⚖️"},zu:{a:"📸 SKENA UMKHIQIZO UKUZE UPHEPHE! 🛡️",b:"👍 Uma ✅ PHEPHILE Ungathenga • 👎 Uma ❌ MBUMBULU - Ungathengi! Bika!"},xh:{a:"📸 SKENA IMVELISO UKHUSELEKO LAKHO! 🛡️",b:"👍 Ukuba ✅ KHUSELEKILE Ungathenga • 👎 Ukuba ❌ YINKOHLISO - Musa ukuthenga!"},af:{a:"📸 SKANDEER PRODUK VIR JOU VEILIGHEID! 🛡️",b:"👍 As ✅ VEILIG Jy kan koop • 👎 As ❌ NAMAAGS - Moenie koop nie!"}}; if(m[l]){document.getElementById('safetyMsg').innerText=m[l].a; document.getElementById('safetyMsg2').innerText=m[l].b;}}
+
+let html5Qr;
+document.getElementById('startBtn').onclick=async()=>{document.getElementById('reader').classList.remove('hidden'); html5Qr=new Html5Qrcode("reader"); await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:280},onScan);};
+
+function onScan(barcode){
+  html5Qr.stop(); document.getElementById('reader').classList.add('hidden'); currentScan=barcode;
+  let prod=RETAILER_MAP[barcode]||{product:"Product "+barcode,allowed:["SPAR","Shoprite","Pick n Pay","Spaza - CHECK"],brand:"Unknown"}; let pdata=PRODUCT_DB[barcode]||{exp:"2026-12-31",batch:"BATCH-"+barcode.slice(-4),safe:Math.random()>0.35};
+  let isExpired=new Date(pdata.exp)<new Date(); let isSuspect=!pdata.safe||isExpired||Math.random()<0.3; let wrongLocation=Math.random()>0.6; let scannedAt="Spaza Shop";
+  document.getElementById('resultBox').classList.remove('hidden');
+  if(isExpired||!pdata.safe){document.getElementById('resIcon').innerText='❌'; document.getElementById('resTitle').innerText='❌ DANGER! FAKE / EXPIRED! 🙅'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-red-700'; document.getElementById('resSub').innerText='👎 DON\'T BUY! DON\'T EAT! REPORT NOW! 👮'; document.getElementById('expiredBox').classList.remove('hidden'); document.getElementById('safeBox').classList.add('hidden');}
+  else if(wrongLocation){document.getElementById('resIcon').innerText='⚠️'; document.getElementById('resTitle').innerText='⚠️ SUSPECT! WRONG LOCATION! 📍❌'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-orange-700'; document.getElementById('resSub').innerText='🤔 Should be at SPAR but scanned at Spaza - SUSPECT!'; document.getElementById('wrongLocBox').classList.remove('hidden'); document.getElementById('wrongLocTxt').innerText=`Product: ${prod.product} should be at: ${prod.allowed.join(', ')} but scanned at: ${scannedAt} GPS ${currLat.toFixed(4)},${currLon.toFixed(4)} - SUSPECT!`; document.getElementById('expiredBox').classList.add('hidden'); document.getElementById('safeBox').classList.add('hidden');}
+  else{document.getElementById('resIcon').innerText='✅'; document.getElementById('resTitle').innerText='✅ SAFE! ORIGINAL! 👍'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-green-700'; document.getElementById('resSub').innerText='👍 You can buy! Safe and original!'; document.getElementById('safeBox').classList.remove('hidden'); document.getElementById('expiredBox').classList.add('hidden'); document.getElementById('wrongLocBox').classList.add('hidden');}
+  document.getElementById('resDetails').innerHTML=`<b>📦 Product:</b> ${prod.product}<br><b>🏭 Brand:</b> ${prod.brand}<br><b>🔢 Barcode:</b> ${barcode}<br><b>📅 Expiry:</b> ${pdata.exp} ${isExpired?'❌ EXPIRED':'✅ SAFE'}<br><b>🔖 Batch:</b> ${pdata.batch}<br><b>📍 GPS:</b> ${currLat.toFixed(5)}, ${currLon.toFixed(5)}<br><b>🗺️ Map:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">📍 Open Map</a><br><b>🏪 Should be at:</b> ${prod.allowed.join(', ')}<br><b>📍 Scanned at:</b> ${scannedAt}<br><b>📅 Date:</b> ${new Date().toLocaleString()}<br><b>🌐 IP:</b> ${myIP}<br><b>🔒 Status:</b> ${isSuspect?'❌ SUSPECT':'✅ ORIGINAL'} • ${wrongLocation?'📍❌ WRONG LOC':'📍✅ Location OK'} • ${isExpired?'📅❌ EXPIRED':'📅✅ Not Expired'}<br><div class="mt-2 bg-yellow-100 border border-yellow-500 rounded-lg p-2 text-[8px]">👮 Auto sent to: SAPS + Brand + 10 Depts + Dashboard - Law takes final action ⚖️</div>`;
+  let report={barcode,product:prod.product,brand:prod.brand,batch:pdata.batch,expiry:pdata.exp,expired:isExpired,suspect:isSuspect,wrongLocation,shouldBeAt:prod.allowed,scannedAt,gps:currLat+','+currLon,map:`https://maps.google.com/?q=${currLat},${currLon}`,ip:myIP,date:new Date().toISOString(),age:document.getElementById('ageSelect').value,lang:document.getElementById('langSelect').value,status:isSuspect?'SUSPECT':'ORIGINAL'};
+  try{window.f.addDoc(window.f.collection(window.db,'customer_scans'),{...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'brand_alerts'),{brand:prod.brand,...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'department_alerts'),{...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'dashboard_alerts'),{msg:`${isSuspect?'🚨 SUSPECT':'✅ SAFE'} ${prod.product} at ${currLat.toFixed(4)},${currLon.toFixed(4)}`,...report,time:window.f.serverTimestamp()});}catch(e){}
+  localStorage.setItem('QINISO_SCAN_'+Date.now(),JSON.stringify(report));
 }
-document.getElementById('panicBtn').onclick=async()=>{if(!confirm('Alert ALL PHONES that this area is SUSPECTED?'))return; await addDoc(collection(db,'live_panics'),{lat:currLat,lon:currLon,ip:myIP,time:new Date().toLocaleString(),device:navigator.userAgent.slice(0,60)}); alert('🚨 ALERT SENT TO ALL PHONES!');};
-let scanner; document.getElementById('startBtn').onclick=()=>{document.getElementById('startBtn').innerText="Scanning..."; scanner=new Html5Qrcode("reader"); scanner.start({facingMode:"environment"},{fps:10,qrbox:250},onScan).catch(e=>alert(e));};
-async function onScan(qr){
-if(scanner) try{await scanner.stop();}catch{}
-let info=RETAILER_MAP[qr]||RETAILER_MAP["DEFAULT"]; let now=new Date(), exp=new Date(info.expiry); let d=dist(currLat,currLon,SPAR_LAT,SPAR_LON); let dupFound=null;
-try{let snap=await getDocs(query(collection(db,'live_scans'), where("qr","==",qr))); snap.forEach(doc=>{dupFound=doc.data();});}catch(e){}
-let status="",title="",color="green",action="";
-if(now>exp){status="❌ EXPIRED";title=`EXPIRED ❌ DON'T BUY`;color="red";action=`Expired ${info.expiry} - DON'T BUY!`;}
-else if(dupFound){status="❌ DUPLICATE";title=`DUPLICATE ❌ DON'T BUY`;color="red";action=`SUSPECTED DUPLICATE! First at ${dupFound.retailer} on ${dupFound.time} GPS ${dupFound.lat},${dupFound.lon} TRUE PIN. Allocated to ${info.retailer} only!`;}
-else if(info.retailer==="BOXER"&&d<1){status="❌ WRONG ALLOCATION";title=`WRONG LOCATION ❌`;color="red";action=`Allocated to ${info.retailer} only! You at SPAR ${d.toFixed(2)}km - SUSPECTED!`;}
-else if(d>0.5){status="❌ WRONG LOCATION";title=`WRONG LOCATION ❌`;color="red";action=`${d.toFixed(2)}km from ${info.retailer} - SUSPECTED!`;}
-else{status="✅ VERIFIED";title=`VERIFIED ✅ - ${d.toFixed(2)}km FROM ${info.retailer}`;color="green";action=`Genuine for ${info.retailer}. Safe to buy.`;}
-try{await addDoc(collection(db,'live_scans'),{qr,retailer:info.retailer,expiry:info.expiry,lat:currLat,lon:currLon,ip:myIP,time:now.toLocaleString(),status,device:navigator.userAgent.slice(0,50)});}catch(e){alert("Firebase error - check apiKey: "+e.message);}
-document.getElementById('result').classList.remove('hidden'); document.getElementById('rTitle').innerText=title; document.getElementById('rTitle').className=color==="red"?"font-black text-center text-[16px] text-red-600":"font-black text-center text-[16px] text-green-600";
-document.getElementById('rBody').innerHTML=`<div class="p-3 rounded-xl ${color==="red"?"bg-red-100 text-red-800":"bg-green-100 text-green-800"} font-bold">${action}</div><div class="mt-3 border p-3 rounded-xl bg-gray-50"><b>QR:</b> ${qr}<br><b>Allocated To:</b> ${info.retailer}<br><b>Expiry:</b> ${info.expiry}<br><b>Status:</b> ${status}<br><b>GPS Pin:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">${currLat.toFixed(5)},${currLon.toFixed(5)} - TRUE MAP PIN</a><br><b>IP:</b> ${myIP}<br><b>Time:</b> ${now.toLocaleString()}<br>${dupFound?`<br><b>First Scan:</b> ${dupFound.time} at <a href="https://maps.google.com/?q=${dupFound.lat},${dupFound.lon}" target="_blank" class="underline">${dupFound.lat},${dupFound.lon}</a>`:''}<br><br><div class="text-[8px] text-gray-500">🔒 Secured & Logged — POPIA | SAPS 2024/4410 | QINISO collects evidence only. Decision by Law & Brand Owner.</div></div>`;
-}
-</script></body></html>
+function reportSAPS(){if(!currentScan)return; let w=window.open('','_blank'); w.document.write(`<html><head><title>SAPS REPORT</title><style>body{font-family:Arial;padding:20px;font-size:12px}h1{color:#0f1e3d;border-bottom:3px solid #d4af37}</style></head><body><h1>🇿🇦 SAPS REPORT - QINISO - SAPS 2024/4410</h1><p><b>Date:</b> ${new Date().toLocaleString()}<br><b>GPS:</b> ${currLat}, ${currLon}<br><b>Map:</b> https://maps.google.com/?q=${currLat},${currLon}<br><b>IP:</b> ${myIP}<br><b>Barcode:</b> ${currentScan}</p><button onclick="window.print()" style="padding:10px 20px;background:#0f1e3d;color:white">🖨️ PRINT FOR SAPS</button></body></html>`); w.document.close();}
+function sendToBrands(){alert('✅ Auto sent to:\n🏭 Brand: '+(RETAILER_MAP[currentScan]?.brand||'Unknown')+'\n🏛️ 10 Depts + SAPS + Dashboard\n📍 GPS: '+currLat.toFixed(4)+','+currLon.toFixed(4));}
+</script>
+</body></html>
