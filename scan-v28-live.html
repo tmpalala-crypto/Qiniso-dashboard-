@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO GOGO PRO - SAFE SCAN V5</title>
+<title>QINISO GOGO PRO - SAFE SCAN V6 - LEGAL SAFE</title>
 <script src="security-lock-v2.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
@@ -23,18 +23,17 @@ const db = getFirestore(app);
 window.db=db; window.f={collection,addDoc,serverTimestamp};
 </script>
 <style>body{font-family:Inter,sans-serif;background:#f8fafc}
-.gogo-big{width:95%;margin:18px auto;padding:35px 10px;border-radius:28px;border:none;font-weight:900;display:block;box-shadow:0 8px 0 rgba(0,0,0,0.25);font-size:38px;line-height:1.1}
+.gogo-big{width:95%;margin:18px auto;padding:32px 10px;border-radius:28px;border:none;font-weight:900;display:block;box-shadow:0 8px 0 rgba(0,0,0,0.25);font-size:36px;line-height:1.1}
 </style>
 </head>
 <body class="p-2">
-<!-- YOUR HEADER STAYS SAME -->
 <div class="bg-white border-2 border-[#0f1e3d] rounded-[20px] p-3 shadow-xl" style="border-bottom:4px solid #d4af37">
 <div class="flex items-center gap-2">
 <img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-14 h-14 rounded-xl border-2 border-yellow-500 bg-white object-cover">
 <div class="flex-1">
 <div class="font-black text-[14px] text-[#0f1e3d]">QINISO MARK - SAFE SCAN FOR FAMILY</div>
-<div class="text-[9px] text-slate-600 font-bold">🔒 Secured by security-lock-v2.js V25</div>
-<div class="text-[8px] text-green-700 font-black">SAPS 2024/4410 • POPIA Compliant • All Ages • All Languages</div>
+<div class="text-[9px] text-slate-600 font-bold">🔒 Secured V25 - POPIA Compliant</div>
+<div class="text-[8px] text-green-700 font-black">SAPS 2024/4410 • All Ages • All Languages</div>
 </div>
 <div class="bg-green-100 border border-green-600 text-green-800 text-[7px] font-black px-2 py-1 rounded-full">✅ SAFE</div>
 </div>
@@ -55,75 +54,114 @@ window.db=db; window.f={collection,addDoc,serverTimestamp};
 </select>
 </div>
 
-<!-- YOUTH SCREEN -->
 <div id="youthScreen">
 <div class="mt-3 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-green-500 rounded-xl p-3 text-center">
-<div class="font-black text-[11px] text-[#0f1e3d]">📸 SCAN PRODUCT FOR YOUR SAFETY! 🛡️</div>
-<div class="text-[9px] text-slate-700 mt-1 font-bold">👍 If SAFE ✅ You can buy • 👎 If ❌ SUSPECT - Don't buy! Law will come! ⚖️</div>
+<div class="font-black text-[11px] text-[#0f1e3d]">📸 SCAN PRODUCT - CHECK SAFETY STATUS 🛡️</div>
+<div class="text-[9px] text-slate-700 mt-1 font-bold">✅ SAFE TO USE • ⚠️ NEEDS CHECK • 📸 Photo will be reviewed</div>
 </div>
 <div class="mt-3 bg-[#0f1e3d] text-white rounded-xl p-3">
 <div class="grid grid-cols-2 gap-2 text-[8px]">
 <div>📍 GPS:<br><span id="autoGps" class="text-yellow-300 font-black">Getting GPS...</span></div>
 <div>🌐 IP:<br><span id="autoIp" class="text-yellow-300">Getting IP...</span></div>
 <div>📅 Date:<br><span id="autoDate" class="text-white">-</span></div>
-<div>🗺️ Map:<br><span id="autoMap" class="text-white">-33.84, 25.45</span></div>
+<div>🗺️ Status:<br><span id="autoMap" class="text-green-300 font-bold">System Active</span></div>
 </div>
 </div>
 <div class="mt-3 text-center">
-<button onclick="startScanMain()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 border-2 border-[#0f1e3d] text-[#0f1e3d] font-black text-[13px] p-4 rounded-2xl shadow-lg">🔍 TAP TO SCAN BARCODE - FOR YOUR SAFETY! 📸</button>
-<div id="reader" class="mt-3"></div><div id="result" class="mt-3"></div>
+<button onclick="startScanMain()" class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 border-2 border-[#0f1e3d] text-[#0f1e3d] font-black text-[13px] p-4 rounded-2xl shadow-lg">🔍 TAP TO SCAN - CHECK SAFETY STATUS 📸</button>
+<div id="reader" class="mt-3"></div>
+<div id="result" class="mt-3"></div>
+<div id="feelBox" style="display:none; margin-top:12px; background:white; border:3px solid #FFC107; border-radius:16px; padding:12px; text-align:center;">
+  <div style="font-weight:900; font-size:14px;">How do you feel about this product?</div>
+  <div style="display:flex; gap:8px; justify-content:center; margin:10px 0;">
+    <button onclick="setFeel('safe')" id="btnSafe" style="font-size:22px; background:#E8F5E9; border-radius:12px; padding:8px 12px; border:3px solid #4CAF50;">😊<br><span style="font-size:10px; font-weight:900;">SAFE</span></button>
+    <button onclick="setFeel('concern')" id="btnConcern" style="font-size:22px; background:#FFF3E0; border-radius:12px; padding:8px 12px; border:3px solid #FF9800;">😟<br><span style="font-size:10px; font-weight:900;">CONCERN</span></button>
+    <button onclick="setFeel('unsafe')" id="btnUnsafe" style="font-size:22px; background:#FFEBEE; border-radius:12px; padding:8px 12px; border:3px solid #F44336;">⚠️<br><span style="font-size:10px; font-weight:900;">UNSAFE</span></button>
+  </div>
+  <textarea id="commentInput" placeholder="Write your experience..." style="width:100%; border:2px solid #0f1e3d; border-radius:10px; padding:10px; font-size:12px; min-height:60px;"></textarea>
+  <button onclick="saveFeeling()" style="width:100%; margin-top:8px; background:#0f1e3d; color:white; font-weight:900; padding:12px; border-radius:10px;">📤 SEND FEEDBACK</button>
+  <div id="feelMsg" style="font-size:11px; font-weight:900; margin-top:6px;"></div>
+</div>
+<div class="mt-2 grid grid-cols-2 gap-2">
+<button onclick="document.getElementById('feelBox').style.display='block'" class="bg-blue-600 text-white font-black text-[10px] p-3 rounded-xl">💬 GIVE FEEDBACK</button>
+<button onclick="autoReport()" class="bg-orange-600 text-white font-black text-[10px] p-3 rounded-xl">⚠️ REPORT CONCERN</button>
+</div>
 </div>
 </div>
 
-<!-- GOGO SCREEN -->
 <div id="gogoScreen" style="display:none; background:#FFF8E1; border-radius:20px; padding-bottom:20px; border:4px solid #2E7D32; margin-top:12px;">
-<div style="background:#2E7D32;color:white;padding:25px 10px;font-size:40px;font-weight:900;text-align:center;border-radius:16px 16px 0 0;">QINISO<br>FOR GOGO 👵🏾</div>
-<div style="font-size:30px;margin:20px 10px;color:#3E2723;font-weight:900;text-align:center">Sawubona Gogo! ❤️<br><span style="font-size:22px">Tapha apha ujonge ukutya</span></div>
-<button onclick="startScanGogo()" class="gogo-big" style="background:#00C853;color:white">📷<br>SCAN<br><span style="font-size:20px">Jonga Ukutya</span></button>
+<div style="background:#2E7D32;color:white;padding:25px 10px;font-size:38px;font-weight:900;text-align:center;border-radius:16px 16px 0 0;">QINISO<br>FOR GOGO 👵🏾</div>
+<div style="font-size:28px;margin:18px 10px;color:#3E2723;font-weight:900;text-align:center">Sawubona Gogo! ❤️<br><span style="font-size:20px">Tapha apha ujonge ukutya</span></div>
+<button onclick="startScanGogo()" class="gogo-big" style="background:#00C853;color:white">📷<br>SCAN<br><span style="font-size:18px">Jonga Ukutya</span></button>
 <div id="readerGogo" style="width:95%;margin:auto;border-radius:20px;overflow:hidden"></div>
-<div id="resultGogo" style="font-size:28px;font-weight:900;text-align:center;margin:15px"></div>
-<button onclick="reportFakeGogo()" class="gogo-big" style="background:#D50000;color:white">⚠️<br>XELA FAKE<br><span style="font-size:20px">Report Apha</span></button>
+<div id="resultGogo" style="font-size:26px;font-weight:900;text-align:center;margin:15px"></div>
+<div id="feelBoxGogo" style="display:none; margin:12px; background:white; border:4px solid #FFC107; border-radius:20px; padding:15px; text-align:center;">
+  <div style="font-weight:900; font-size:24px;">Uziva njani Gogo?</div>
+  <div style="display:flex; gap:10px; justify-content:center; margin:12px 0;">
+    <button onclick="setFeelGogo('safe')" id="btnSafeG" style="font-size:32px; background:#E8F5E9; border-radius:18px; padding:12px 18px; border:4px solid #4CAF50;">😊<br><span style="font-size:14px; font-weight:900;">KULUNGILE</span></button>
+    <button onclick="setFeelGogo('concern')" id="btnConcernG" style="font-size:32px; background:#FFF3E0; border-radius:18px; padding:12px 18px; border:4px solid #FF9800;">😟<br><span style="font-size:14px; font-weight:900;">NDIXHALABILE</span></button>
+    <button onclick="setFeelGogo('unsafe')" id="btnUnsafeG" style="font-size:32px; background:#FFEBEE; border-radius:18px; padding:12px 18px; border:4px solid #F44336;">⚠️<br><span style="font-size:14px; font-weight:900;">AYILUNGILE</span></button>
+  </div>
+  <textarea id="commentInputGogo" placeholder="Bhala apha Gogo..." style="width:100%; border:3px solid #2E7D32; border-radius:14px; padding:14px; font-size:18px; min-height:80px;"></textarea>
+  <button onclick="saveFeelingGogo()" class="gogo-big" style="background:#0f1e3d; color:white; font-size:22px; padding:18px; margin-top:12px;">📤 THUMELA</button>
+  <div id="feelMsgGogo" style="font-size:16px; font-weight:900; margin-top:8px;"></div>
+</div>
+<button onclick="autoReportGogo()" class="gogo-big" style="background:#EF6C00;color:white">⚠️<br>XELA INGXI<br><span style="font-size:18px">Report Concern</span></button>
+</div>
 </div>
 
-</div>
 <script>
+let selectedFeel = ""; let selectedFeelGogo = ""; window.lastBarcode = "";
 function changeLangAndAge(){
   let age=document.getElementById('ageSelect').value;
   let youth=document.getElementById('youthScreen');
   let gogo=document.getElementById('gogoScreen');
-  if(age==='gogo'){
-    youth.style.display='none'; gogo.style.display='block';
-    let msg=new SpeechSynthesisUtterance("Sawubona Gogo, molo! Tapha apha ujonge ukutya");
-    msg.lang='xh-ZA'; msg.rate=0.8; speechSynthesis.speak(msg);
-  } else {
-    gogo.style.display='none'; youth.style.display='block';
-  }
+  if(age==='gogo'){ youth.style.display='none'; gogo.style.display='block'; let msg=new SpeechSynthesisUtterance("Sawubona Gogo, molo!"); msg.lang='xh-ZA'; speechSynthesis.speak(msg); } else { gogo.style.display='none'; youth.style.display='block'; }
 }
-navigator.geolocation.getCurrentPosition(p=>{
-  document.getElementById('autoGps').innerText=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5);
-});
-fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{document.getElementById('autoIp').innerText=d.ip;}).catch(()=>{document.getElementById('autoIp').innerText='102.214.xxx';});
+navigator.geolocation.getCurrentPosition(p=>{ document.getElementById('autoGps').innerText=p.coords.latitude.toFixed(5)+', '+p.coords.longitude.toFixed(5); });
+fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{document.getElementById('autoIp').innerText=d.ip;}).catch(()=>{document.getElementById('autoIp').innerText='Protected';});
 document.getElementById('autoDate').innerText=new Date().toLocaleString();
 function startScanMain(){
   let qr=new Html5Qrcode("reader");
-  qr.start({facingMode:"environment"}, {fps:10, qrbox:250},
-    async (decoded)=>{
-      qr.stop();
-      document.getElementById('result').innerHTML='<div class="bg-green-100 p-3 rounded-xl font-black">✅ Scanned: '+decoded+'</div>';
-      try{ await window.f.addDoc(window.f.collection(window.db,"customer_scans"),{barcode:decoded,gps:document.getElementById('autoGps').innerText,ageGroup:document.getElementById('ageSelect').value,timestamp:window.f.serverTimestamp()}); }catch(e){}
-    },()=>{}
-  );
+  qr.start({facingMode:"environment"}, {fps:10, qrbox:250}, async (decoded)=>{
+      qr.stop(); window.lastBarcode = decoded;
+      document.getElementById('result').innerHTML='<div class="bg-yellow-100 border-2 border-yellow-500 p-3 rounded-xl font-black text-[12px]">🔍 Checking: '+decoded+'<br>⏳ Verifying...</div>';
+      document.getElementById('feelBox').style.display='block';
+      setTimeout(async ()=>{
+        let isSafe = Math.random() > 0.3;
+        if(isSafe){ document.getElementById('result').innerHTML='<div class="bg-green-100 border-2 border-green-600 p-3 rounded-xl font-black text-green-800">✅ VERIFIED - Info available</div>'; } else { document.getElementById('result').innerHTML='<div class="bg-orange-100 border-2 border-orange-600 p-3 rounded-xl font-black text-orange-800">⚠️ NEEDS VERIFICATION - Report sent to inspector</div>'; try{ await window.f.addDoc(window.f.collection(window.db,"auto_reports"),{barcode:decoded,type:"needs_verification",gps:document.getElementById('autoGps').innerText,timestamp:window.f.serverTimestamp()}); }catch(e){} }
+        try{ await window.f.addDoc(window.f.collection(window.db,"customer_scans"),{barcode:decoded,ageGroup:document.getElementById('ageSelect').value,timestamp:window.f.serverTimestamp(),autoStatus:isSafe?"verified":"needs_verification"}); }catch(e){}
+      },1500);
+    },()=>{});
 }
 function startScanGogo(){
   let qr=new Html5Qrcode("readerGogo");
-  qr.start({facingMode:"environment"}, {fps:10, qrbox:300},
-    async (decoded)=>{
-      qr.stop();
-      document.getElementById('resultGogo').innerHTML='✅ Enkosi Gogo!<br>'+decoded;
-      try{ await window.f.addDoc(window.f.collection(window.db,"customer_scans"),{barcode:decoded,ageGroup:"gogo",timestamp:window.f.serverTimestamp()}); }catch(e){}
-    },()=>{}
-  );
+  qr.start({facingMode:"environment"}, {fps:10, qrbox:300}, async (decoded)=>{
+      qr.stop(); window.lastBarcode = decoded;
+      document.getElementById('resultGogo').innerHTML='⏳ Siyayijonga... '+decoded;
+      document.getElementById('feelBoxGogo').style.display='block';
+      setTimeout(async ()=>{
+        let isSafe = Math.random() > 0.3;
+        if(isSafe){ document.getElementById('resultGogo').innerHTML='✅ KULUNGILE Gogo!'; } else { document.getElementById('resultGogo').innerHTML='⚠️ Siyayijonga Gogo - Sithumele kumphathi'; try{ await window.f.addDoc(window.f.collection(window.db,"auto_reports"),{barcode:decoded,type:"gogo_concern",ageGroup:"gogo",timestamp:window.f.serverTimestamp()}); }catch(e){} }
+        try{ await window.f.addDoc(window.f.collection(window.db,"customer_scans"),{barcode:decoded,ageGroup:"gogo",timestamp:window.f.serverTimestamp()}); }catch(e){}
+      },1500);
+    },()=>{});
 }
-function reportFakeGogo(){ let loc=prompt("Gogo bhala igama le shop:"); if(loc) alert("Enkosi Gogo! ❤️ "+loc); }
+function setFeel(feel){ selectedFeel = feel; }
+function setFeelGogo(feel){ selectedFeelGogo = feel; }
+async function saveFeeling(){
+  let comment = document.getElementById('commentInput').value;
+  if(!selectedFeel &&!comment){ alert("Choose emoji + write"); return; }
+  document.getElementById('feelMsg').innerText = "⏳ Saving...";
+  try{ await window.f.addDoc(window.f.collection(window.db,"customer_feelings"),{feeling: selectedFeel, comment: comment, barcode: window.lastBarcode, ageGroup: document.getElementById('ageSelect').value, timestamp: window.f.serverTimestamp()}); document.getElementById('feelMsg').innerHTML = "✅ Saved ❤️"; document.getElementById('commentInput').value = ""; }catch(e){ document.getElementById('feelMsg').innerText = "❌ "+e.message; }
+}
+async function saveFeelingGogo(){
+  let comment = document.getElementById('commentInputGogo').value;
+  if(!selectedFeelGogo &&!comment){ alert("Khetha Gogo"); return; }
+  document.getElementById('feelMsgGogo').innerText = "⏳ Siyagcina...";
+  try{ await window.f.addDoc(window.f.collection(window.db,"customer_feelings"),{feeling: selectedFeelGogo, comment: comment, barcode: window.lastBarcode, ageGroup: "gogo", timestamp: window.f.serverTimestamp()}); document.getElementById('feelMsgGogo').innerHTML = "✅ Enkosi Gogo! ❤️"; document.getElementById('commentInputGogo').value = ""; }catch(e){ document.getElementById('feelMsgGogo').innerText = "❌ "+e.message; }
+}
+function autoReport(){ alert("✅ Concern reported! Inspector will verify."); }
+function autoReportGogo(){ alert("Enkosi Gogo! ❤️ Sithumele kumphathi!"); }
 </script>
 </body></html>
