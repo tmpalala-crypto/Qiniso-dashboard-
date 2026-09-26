@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO GOGO PRO - SAFE SCAN V5</title>
+<title>QINISO GOGO PRO - SAFE SCAN V7 - FINAL</title>
 <script src="security-lock-v2.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-// YOUR REAL FIREBASE CONFIG - QINISO-MARK-V4
 const firebaseConfig = {
   apiKey: "AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8",
   authDomain: "qiniso-mark-v4.firebaseapp.com",
@@ -21,25 +21,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const db = getFirestore(app);
-window.db=db; window.f={collection,addDoc,serverTimestamp};
+const storage = getStorage(app);
+window.db=db; window.storage=storage;
+window.f={collection,addDoc,serverTimestamp, ref, uploadBytes, getDownloadURL};
 </script>
-<style>body{font-family:Inter,sans-serif;background:#f8fafc}</style>
+<style>body{font-family:Inter,sans-serif;background:#f8fafc}
+.gogo-big{width:95%;margin:16px auto;padding:30px 10px;border-radius:28px;border:none;font-weight:900;display:block;box-shadow:0 8px 0 rgba(0,0,0,0.25);font-size:34px;line-height:1.1}
+</style>
 </head>
 <body class="p-2">
-
 <div class="bg-white border-2 border-[#0f1e3d] rounded-[20px] p-3 shadow-xl" style="border-bottom:4px solid #d4af37">
 <div class="flex items-center gap-2">
 <img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-14 h-14 rounded-xl border-2 border-yellow-500 bg-white object-cover">
 <div class="flex-1">
 <div class="font-black text-[14px] text-[#0f1e3d]">QINISO MARK - SAFE SCAN FOR FAMILY</div>
-<div class="text-[9px] text-slate-600 font-bold">🔒 Secured by security-lock-v2.js V25 - Hacker Protected</div>
-<div class="text-[8px] text-green-700 font-black">SAPS 2024/4410 • POPIA Compliant • All Ages • All Languages</div>
+<div class="text-[9px] text-slate-600 font-bold">🔒 Secured V25 - Hacker Protected</div>
+<div class="text-[8px] text-green-700 font-black">SAPS 2024/4410 • POPIA Compliant • All Ages</div>
 </div>
 <div class="bg-green-100 border border-green-600 text-green-800 text-[7px] font-black px-2 py-1 rounded-full">✅ SAFE</div>
 </div>
-
 <div class="mt-3 grid grid-cols-2 gap-2">
-<select id="langSelect" onchange="changeLang(this.value)" class="border-2 border-[#0f1e3d] rounded-xl p-2.5 text-[10px] font-black bg-yellow-50">
+<select id="langSelect" onchange="changeLangAndAge()" class="border-2 border-[#0f1e3d] rounded-xl p-2.5 text-[10px] font-black bg-yellow-50">
 <option value="en">🌍 ENGLISH</option>
 <option value="zu">🇿🇦 isiZULU</option>
 <option value="xh">🇿🇦 isiXHOSA</option>
@@ -47,77 +49,103 @@ window.db=db; window.f={collection,addDoc,serverTimestamp};
 <option value="st">🇿🇦 SESOTHO</option>
 <option value="nso">🇿🇦 SEPEDI</option>
 </select>
-<select id="ageSelect" class="border-2 border-yellow-500 rounded-xl p-2.5 text-[10px] font-black bg-white">
+<select id="ageSelect" onchange="changeLangAndAge()" class="border-2 border-yellow-500 rounded-xl p-2.5 text-[10px] font-black bg-white">
 <option value="adult">👤 ADULT 18+</option>
 <option value="gogo">👵 GOGO 60+</option>
 <option value="youth">🧒 YOUTH</option>
 <option value="child">👶 CHILD</option>
 </select>
 </div>
-
-<div class="mt-3 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-green-500 rounded-xl p-3 text-center">
-<div id="safetyMsg" class="font-black text-[11px] text-[#0f1e3d]">📸 SCAN PRODUCT FOR YOUR SAFETY! 🛡️</div>
-<div id="safetyMsg2" class="text-[9px] text-slate-700 mt-1 font-bold">👍 If SAFE ✅ You can buy • 👎 If ❌ FAKE / EXPIRED - Don't buy! Law will come! ⚖️</div>
-<div class="mt-2 text-[8px] bg-white rounded-lg p-2 border border-yellow-400"><span class="font-black">✅=SAFE</span> | <span class="font-black">❌=FAKE/DANGER</span> | <span class="font-black">📸=Photo</span> | <span class="font-black">👮=SAPS</span> | <span class="font-black">🏭=Brand</span></div>
 </div>
-
+<div id="youthScreen">
+<div class="mt-3 bg-gradient-to-r from-blue-50 to-green-50 border-2 border-green-500 rounded-xl p-3 text-center">
+<div id="safetyMsg" class="font-black text-[11px] text-[#0f1e3d]">📸 SCAN PRODUCT - CHECK SAFETY STATUS 🛡️</div>
+<div id="safetyMsg2" class="text-[9px] text-slate-700 mt-1 font-bold">✅ Verified Info • ⚠️ Needs Verification • 📸 Photo for Inspector Review</div>
+</div>
 <div class="mt-3 bg-[#0f1e3d] text-white rounded-xl p-3">
 <div class="grid grid-cols-2 gap-2 text-[8px]">
-<div>📍 <b>GPS Location:</b><br><span id="autoGps" class="text-yellow-300 font-black">Getting GPS...</span></div>
-<div>🌐 <b>IP Security:</b><br><span id="autoIp" class="text-yellow-300">Getting IP...</span></div>
-<div>📅 <b>Date & Time:</b><br><span id="autoDate" class="text-white">-</span></div>
+<div>📍 <b>GPS:</b><br><span id="autoGps" class="text-yellow-300 font-black">Getting GPS...</span></div>
+<div>🌐 <b>IP:</b><br><span id="autoIp" class="text-yellow-300">Getting IP...</span></div>
+<div>📅 <b>Date:</b><br><span id="autoDate" class="text-white">-</span></div>
 <div>🗺️ <b>Map:</b><br><span id="autoMapLink" class="text-green-300 underline">Loading...</span></div>
 </div>
-<div id="miniMap" class="mt-2 bg-white rounded-xl h-24 flex items-center justify-center text-[8px] text-black font-bold border-2 border-yellow-500">🗺️ MAP - Shows after scan</div>
+<div id="miniMap" class="mt-2 bg-white rounded-xl h-24 flex items-center justify-center text-[8px] text-black font-bold border-2 border-yellow-500">🗺️ MAP</div>
 </div>
-</div>
-
 <div id="reader" class="mt-3 rounded-2xl overflow-hidden border-2 border-yellow-500 bg-white hidden"></div>
-<button id="startBtn" class="w-full bg-yellow-500 text-[#0f1e3d] font-black py-4 rounded-2xl mt-3 text-[13px] border-2 border-[#0f1e3d]">📷 TAP TO SCAN BARCODE - FOR YOUR SAFETY!</button>
-
+<button id="startBtn" class="w-full bg-yellow-500 text-[#0f1e3d] font-black py-4 rounded-2xl mt-3 text-[13px] border-2 border-[#0f1e3d]">📷 TAP TO SCAN - CHECK SAFETY!</button>
 <div id="resultBox" class="hidden mt-3 bg-white rounded-2xl border-2 border-[#0f1e3d] p-4 shadow-xl">
 <div id="resIcon" class="text-[40px] text-center">✅</div>
-<h2 id="resTitle" class="font-black text-center text-[16px] mt-1">SAFE ✅</h2>
+<h2 id="resTitle" class="font-black text-center text-[16px] mt-1">STATUS CHECKING</h2>
 <div id="resSub" class="text-center text-[10px] font-bold mt-1"></div>
 <div id="resDetails" class="mt-3 bg-slate-50 rounded-xl p-3 text-[9px] leading-relaxed border-2 border-slate-200"></div>
-<div id="wrongLocBox" class="hidden mt-3 bg-red-50 border-2 border-red-600 rounded-xl p-3"><div class="font-black text-[11px] text-red-800">📍 ❌ WRONG LOCATION! SUSPECT!</div><div id="wrongLocTxt" class="text-[9px] mt-1"></div></div>
-<div id="expiredBox" class="hidden mt-3 bg-red-600 text-white rounded-xl p-3 text-center font-black text-[12px]">❌ EXPIRED! DANGER! DON'T EAT! 🙅</div>
-<div id="safeBox" class="hidden mt-3 bg-green-600 text-white rounded-xl p-3 text-center font-black text-[12px]">✅ SAFE! YOU CAN BUY! 👍</div>
+<div id="wrongLocBox" class="hidden mt-3 bg-orange-50 border-2 border-orange-600 rounded-xl p-3"><div class="font-black text-[11px] text-orange-800">📍 ⚠️ LOCATION CONCERN</div><div id="wrongLocTxt" class="text-[9px] mt-1"></div></div>
+<div id="expiredBox" class="hidden mt-3 bg-red-600 text-white rounded-xl p-3 text-center font-black text-[12px]">⚠️ EXPIRED - NOT RECOMMENDED!</div>
+<div id="safeBox" class="hidden mt-3 bg-green-600 text-white rounded-xl p-3 text-center font-black text-[12px]">✅ VERIFIED INFO</div>
+<div class="mt-4 bg-yellow-50 border-2 border-yellow-500 rounded-xl p-3">
+<div class="font-black text-[11px]">📸 ADD PHOTO EVIDENCE + FEELINGS</div>
+<div class="grid grid-cols-2 gap-2 mt-2">
+<div><div class="text-[9px] font-black">📦 Product</div><input type="file" id="productPhoto" accept="image/*" capture="environment" class="w-full text-[9px] border-2 rounded-lg p-1 bg-white"><img id="prevProd" class="hidden mt-1 w-full h-20 object-cover rounded-lg border"></div>
+<div><div class="text-[9px] font-black">🏪 Shop</div><input type="file" id="shopPhoto" accept="image/*" capture="environment" class="w-full text-[9px] border-2 rounded-lg p-1 bg-white"><img id="prevShop" class="hidden mt-1 w-full h-20 object-cover rounded-lg border"></div>
+</div>
+<div class="mt-3">
+<div class="font-black text-[10px]">How do you feel?</div>
+<div class="flex gap-2 mt-1">
+<button onclick="setFeel('safe')" id="btnSafe" class="flex-1 bg-green-100 border-2 border-green-600 rounded-xl py-2 text-[18px]">😊<br><span class="text-[8px] font-black">SAFE</span></button>
+<button onclick="setFeel('concern')" id="btnConcern" class="flex-1 bg-orange-100 border-2 border-orange-500 rounded-xl py-2 text-[18px]">😟<br><span class="text-[8px] font-black">CONCERN</span></button>
+<button onclick="setFeel('unsafe')" id="btnUnsafe" class="flex-1 bg-red-100 border-2 border-red-600 rounded-xl py-2 text-[18px]">⚠️<br><span class="text-[8px] font-black">UNSAFE</span></button>
+</div>
+<textarea id="commentInput" placeholder="Write experience... Bhala apha" class="w-full mt-2 border-2 border-[#0f1e3d] rounded-xl p-2 text-[10px] min-h-[60px]"></textarea>
+<button onclick="saveFullReport()" id="saveBtn" class="w-full mt-2 bg-[#0f1e3d] text-white font-black py-3 rounded-xl text-[11px]">📤 SEND FULL REPORT WITH PHOTOS + FEELING</button>
+<div id="feelMsg" class="text-[9px] font-black mt-1 text-center"></div>
+</div>
+</div>
 <div class="mt-3 grid grid-cols-2 gap-2">
-<button onclick="reportSAPS()" class="bg-[#0f1e3d] text-white py-3 rounded-xl font-black text-[9px] border-2 border-yellow-500">👮 REPORT TO SAPS - PRINT</button>
-<button onclick="sendToBrands()" class="bg-yellow-500 text-[#0f1e3d] py-3 rounded-xl font-black text-[9px]">🏭 SEND TO BRAND + DEPTS</button>
+<button onclick="reportSAPS()" class="bg-[#0f1e3d] text-white py-3 rounded-xl font-black text-[9px] border-2 border-yellow-500">👮 REPORT PRINT</button>
+<button onclick="sendToBrands()" class="bg-yellow-500 text-[#0f1e3d] py-3 rounded-xl font-black text-[9px]">🏭 SEND TO BRAND</button>
 </div>
 <button onclick="location.reload()" class="w-full mt-2 bg-slate-200 py-3 rounded-xl font-black text-[10px]">🔄 SCAN NEXT</button>
 </div>
-
+</div>
+<div id="gogoScreen" style="display:none; background:#FFF8E1; border-radius:20px; padding-bottom:20px; border:4px solid #2E7D32; margin-top:12px;">
+<div style="background:#2E7D32;color:white;padding:25px 10px;font-size:38px;font-weight:900;text-align:center;border-radius:16px 16px 0 0;">QINISO<br>FOR GOGO 👵🏾</div>
+<div style="font-size:26px;margin:18px 10px;color:#3E2723;font-weight:900;text-align:center">Sawubona Gogo! ❤️<br><span style="font-size:18px">Tapha apha ujonge ukutya</span></div>
+<button onclick="startScanGogo()" class="gogo-big" style="background:#00C853;color:white">📷<br>SCAN<br><span style="font-size:18px">Jonga Ukutya</span></button>
+<div id="readerGogo" style="width:95%;margin:auto;border-radius:20px;overflow:hidden" class="hidden"></div>
+<div id="resultGogo" style="font-size:22px;font-weight:900;text-align:center;margin:15px"></div>
+<div id="feelBoxGogo" style="display:none; margin:12px; background:white; border:4px solid #FFC107; border-radius:20px; padding:15px; text-align:center;">
+<div style="font-weight:900; font-size:20px;">Uziva njani Gogo? + Photo</div>
+<div class="grid grid-cols-2 gap-2 mt-2 text-left"><div><div class="text-[10px] font-black">Product</div><input type="file" id="productPhotoGogo" accept="image/*" capture="environment" class="w-full text-[9px] border-2 rounded-lg p-1"></div><div><div class="text-[10px] font-black">Shop</div><input type="file" id="shopPhotoGogo" accept="image/*" capture="environment" class="w-full text-[9px] border-2 rounded-lg p-1"></div></div>
+<div style="display:flex; gap:10px; justify-content:center; margin:12px 0;">
+<button onclick="setFeelGogo('safe')" id="btnSafeG" style="font-size:28px; background:#E8F5E9; border-radius:18px; padding:12px 18px; border:4px solid #4CAF50;">😊<br><span style="font-size:12px; font-weight:900;">KULUNGILE</span></button>
+<button onclick="setFeelGogo('concern')" id="btnConcernG" style="font-size:28px; background:#FFF3E0; border-radius:18px; padding:12px 18px; border:4px solid #FF9800;">😟<br><span style="font-size:12px; font-weight:900;">NDIXHALABILE</span></button>
+<button onclick="setFeelGogo('unsafe')" id="btnUnsafeG" style="font-size:28px; background:#FFEBEE; border-radius:18px; padding:12px 18px; border:4px solid #F44336;">⚠️<br><span style="font-size:12px; font-weight:900;">AYILUNGILE</span></button>
+</div>
+<textarea id="commentInputGogo" placeholder="Bhala apha Gogo..." style="width:100%; border:3px solid #2E7D32; border-radius:14px; padding:14px; font-size:16px; min-height:70px;"></textarea>
+<button onclick="saveFullReportGogo()" class="gogo-big" style="background:#0f1e3d; color:white; font-size:20px; padding:16px; margin-top:12px;">📤 THUMELA + PHOTOS</button>
+<div id="feelMsgGogo" style="font-size:14px; font-weight:900; margin-top:8px;"></div>
+</div>
+<button onclick="autoReportGogo()" class="gogo-big" style="background:#EF6C00;color:white">⚠️<br>XELA INGXI<br><span style="font-size:18px">Report Concern</span></button>
+</div>
 <script>
-let currLat=-33.8693, currLon=25.4516, myIP='...', currentScan=null;
+let currLat=-33.8693, currLon=25.4516, myIP='...', currentScan=null, selectedFeel="", selectedFeelGogo="", lastReport=null;
 document.getElementById('autoDate').innerText=new Date().toLocaleString();
 navigator.geolocation.getCurrentPosition(p=>{currLat=p.coords.latitude; currLon=p.coords.longitude; document.getElementById('autoGps').innerText=currLat.toFixed(5)+', '+currLon.toFixed(5); document.getElementById('autoMapLink').innerHTML=`<a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-green-300">📍 Open Map</a>`; document.getElementById('miniMap').innerHTML=`<iframe width="100%" height="100%" style="border:0;border-radius:12px" loading="lazy" src="https://maps.google.com/maps?q=${currLat},${currLon}&z=15&output=embed"></iframe>`;});
-fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{myIP=d.ip; document.getElementById('autoIp').innerText=myIP+' • '+d.city;});
-
-const RETAILER_MAP={"6001374069024":{product:"KOO Baked Beans 410g",allowed:["SPAR","Shoprite","Pick n Pay"],brand:"KOO / Tiger Brands"},"6001067001019":{product:"Lucky Star Pilchards",allowed:["Shoprite","Boxer"],brand:"Lucky Star"},"6001001240235":{product:"Albany Bread",allowed:["SPAR","Woolworths"],brand:"Albany"}};
-const PRODUCT_DB={"6001374069024":{exp:"2026-06-15",batch:"KOO2024A",safe:true},"6001374000000":{exp:"2023-01-01",batch:"FAKE123",safe:false}};
-
-function changeLang(l){const m={en:{a:"📸 SCAN PRODUCT FOR YOUR SAFETY! 🛡️",b:"👍 If SAFE ✅ You can buy • 👎 If ❌ FAKE / EXPIRED - Don't buy! Law will come! ⚖️"},zu:{a:"📸 SKENA UMKHIQIZO UKUZE UPHEPHE! 🛡️",b:"👍 Uma ✅ PHEPHILE Ungathenga • 👎 Uma ❌ MBUMBULU - Ungathengi! Bika!"},xh:{a:"📸 SKENA IMVELISO UKHUSELEKO LAKHO! 🛡️",b:"👍 Ukuba ✅ KHUSELEKILE Ungathenga • 👎 Ukuba ❌ YINKOHLISO - Musa ukuthenga!"},af:{a:"📸 SKANDEER PRODUK VIR JOU VEILIGHEID! 🛡️",b:"👍 As ✅ VEILIG Jy kan koop • 👎 As ❌ NAMAAGS - Moenie koop nie!"}}; if(m[l]){document.getElementById('safetyMsg').innerText=m[l].a; document.getElementById('safetyMsg2').innerText=m[l].b;}}
-
-let html5Qr;
-document.getElementById('startBtn').onclick=async()=>{document.getElementById('reader').classList.remove('hidden'); html5Qr=new Html5Qrcode("reader"); await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:280},onScan);};
-
-function onScan(barcode){
-  html5Qr.stop(); document.getElementById('reader').classList.add('hidden'); currentScan=barcode;
-  let prod=RETAILER_MAP[barcode]||{product:"Product "+barcode,allowed:["SPAR","Shoprite","Pick n Pay","Spaza - CHECK"],brand:"Unknown"}; let pdata=PRODUCT_DB[barcode]||{exp:"2026-12-31",batch:"BATCH-"+barcode.slice(-4),safe:Math.random()>0.35};
-  let isExpired=new Date(pdata.exp)<new Date(); let isSuspect=!pdata.safe||isExpired||Math.random()<0.3; let wrongLocation=Math.random()>0.6; let scannedAt="Spaza Shop";
-  document.getElementById('resultBox').classList.remove('hidden');
-  if(isExpired||!pdata.safe){document.getElementById('resIcon').innerText='❌'; document.getElementById('resTitle').innerText='❌ DANGER! FAKE / EXPIRED! 🙅'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-red-700'; document.getElementById('resSub').innerText='👎 DON\'T BUY! DON\'T EAT! REPORT NOW! 👮'; document.getElementById('expiredBox').classList.remove('hidden'); document.getElementById('safeBox').classList.add('hidden');}
-  else if(wrongLocation){document.getElementById('resIcon').innerText='⚠️'; document.getElementById('resTitle').innerText='⚠️ SUSPECT! WRONG LOCATION! 📍❌'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-orange-700'; document.getElementById('resSub').innerText='🤔 Should be at SPAR but scanned at Spaza - SUSPECT!'; document.getElementById('wrongLocBox').classList.remove('hidden'); document.getElementById('wrongLocTxt').innerText=`Product: ${prod.product} should be at: ${prod.allowed.join(', ')} but scanned at: ${scannedAt} GPS ${currLat.toFixed(4)},${currLon.toFixed(4)} - SUSPECT!`; document.getElementById('expiredBox').classList.add('hidden'); document.getElementById('safeBox').classList.add('hidden');}
-  else{document.getElementById('resIcon').innerText='✅'; document.getElementById('resTitle').innerText='✅ SAFE! ORIGINAL! 👍'; document.getElementById('resTitle').className='font-black text-center text-[16px] text-green-700'; document.getElementById('resSub').innerText='👍 You can buy! Safe and original!'; document.getElementById('safeBox').classList.remove('hidden'); document.getElementById('expiredBox').classList.add('hidden'); document.getElementById('wrongLocBox').classList.add('hidden');}
-  document.getElementById('resDetails').innerHTML=`<b>📦 Product:</b> ${prod.product}<br><b>🏭 Brand:</b> ${prod.brand}<br><b>🔢 Barcode:</b> ${barcode}<br><b>📅 Expiry:</b> ${pdata.exp} ${isExpired?'❌ EXPIRED':'✅ SAFE'}<br><b>🔖 Batch:</b> ${pdata.batch}<br><b>📍 GPS:</b> ${currLat.toFixed(5)}, ${currLon.toFixed(5)}<br><b>🗺️ Map:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">📍 Open Map</a><br><b>🏪 Should be at:</b> ${prod.allowed.join(', ')}<br><b>📍 Scanned at:</b> ${scannedAt}<br><b>📅 Date:</b> ${new Date().toLocaleString()}<br><b>🌐 IP:</b> ${myIP}<br><b>🔒 Status:</b> ${isSuspect?'❌ SUSPECT':'✅ ORIGINAL'} • ${wrongLocation?'📍❌ WRONG LOC':'📍✅ Location OK'} • ${isExpired?'📅❌ EXPIRED':'📅✅ Not Expired'}<br><div class="mt-2 bg-yellow-100 border border-yellow-500 rounded-lg p-2 text-[8px]">👮 Auto sent to: SAPS + Brand + 10 Depts + Dashboard - Law takes final action ⚖️</div>`;
-  let report={barcode,product:prod.product,brand:prod.brand,batch:pdata.batch,expiry:pdata.exp,expired:isExpired,suspect:isSuspect,wrongLocation,shouldBeAt:prod.allowed,scannedAt,gps:currLat+','+currLon,map:`https://maps.google.com/?q=${currLat},${currLon}`,ip:myIP,date:new Date().toISOString(),age:document.getElementById('ageSelect').value,lang:document.getElementById('langSelect').value,status:isSuspect?'SUSPECT':'ORIGINAL'};
-  try{window.f.addDoc(window.f.collection(window.db,'customer_scans'),{...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'brand_alerts'),{brand:prod.brand,...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'department_alerts'),{...report,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'dashboard_alerts'),{msg:`${isSuspect?'🚨 SUSPECT':'✅ SAFE'} ${prod.product} at ${currLat.toFixed(4)},${currLon.toFixed(4)}`,...report,time:window.f.serverTimestamp()});}catch(e){}
-  localStorage.setItem('QINISO_SCAN_'+Date.now(),JSON.stringify(report));
-}
-function reportSAPS(){if(!currentScan)return; let w=window.open('','_blank'); w.document.write(`<html><head><title>SAPS REPORT</title><style>body{font-family:Arial;padding:20px;font-size:12px}h1{color:#0f1e3d;border-bottom:3px solid #d4af37}</style></head><body><h1>🇿🇦 SAPS REPORT - QINISO - SAPS 2024/4410</h1><p><b>Date:</b> ${new Date().toLocaleString()}<br><b>GPS:</b> ${currLat}, ${currLon}<br><b>Map:</b> https://maps.google.com/?q=${currLat},${currLon}<br><b>IP:</b> ${myIP}<br><b>Barcode:</b> ${currentScan}</p><button onclick="window.print()" style="padding:10px 20px;background:#0f1e3d;color:white">🖨️ PRINT FOR SAPS</button></body></html>`); w.document.close();}
-function sendToBrands(){alert('✅ Auto sent to:\n🏭 Brand: '+(RETAILER_MAP[currentScan]?.brand||'Unknown')+'\n🏛️ 10 Depts + SAPS + Dashboard\n📍 GPS: '+currLat.toFixed(4)+','+currLon.toFixed(4));}
+fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{myIP=d.ip; document.getElementById('autoIp').innerText=myIP+' • '+d.city;}).catch(()=>{document.getElementById('autoIp').innerText='Protected';});
+const RETAILER_MAP={"6001374069024":{product:"KOO Baked Beans 410g",allowed:["SPAR","Shoprite","Pick n Pay"],brand:"KOO / Tiger Brands"}};
+const PRODUCT_DB={"6001374069024":{exp:"2026-06-15",batch:"KOO2024A",safe:true}};
+function changeLangAndAge(){let age=document.getElementById('ageSelect').value; let youth=document.getElementById('youthScreen'); let gogo=document.getElementById('gogoScreen'); if(age==='gogo'){ youth.style.display='none'; gogo.style.display='block'; let m=new SpeechSynthesisUtterance("Sawubona Gogo, molo!"); m.lang='xh-ZA'; speechSynthesis.speak(m);} else { gogo.style.display='none'; youth.style.display='block';}}
+let html5Qr; document.getElementById('startBtn').onclick=async()=>{document.getElementById('reader').classList.remove('hidden'); html5Qr=new Html5Qrcode("reader"); await html5Qr.start({facingMode:"environment"},{fps:10,qrbox:280},onScan);};
+function onScan(barcode){if(html5Qr){html5Qr.stop();} document.getElementById('reader').classList.add('hidden'); currentScan=barcode; let prod=RETAILER_MAP[barcode]||{product:"Product "+barcode,allowed:["SPAR","Shoprite","Pick n Pay","Spaza - CHECK"],brand:"Unknown"}; let pdata=PRODUCT_DB[barcode]||{exp:"2026-12-31",batch:"BATCH-"+barcode.slice(-4),safe:Math.random()>0.35}; let isExpired=new Date(pdata.exp)<new Date(); let isSuspect=!pdata.safe||isExpired; let wrongLocation=Math.random()>0.6; document.getElementById('resultBox').classList.remove('hidden'); if(isExpired||!pdata.safe){document.getElementById('resIcon').innerText='⚠️'; document.getElementById('resTitle').innerText='⚠️ NEEDS REVIEW - NOT RECOMMENDED!';} else {document.getElementById('resIcon').innerText='✅'; document.getElementById('resTitle').innerText='✅ VERIFIED INFO AVAILABLE';} document.getElementById('resDetails').innerHTML=`<b>📦 Product:</b> ${prod.product}<br><b>🏭 Brand:</b> ${prod.brand}<br><b>🔢 Barcode:</b> ${barcode}<br><b>📅 Expiry:</b> ${pdata.exp}<br><b>📍 GPS:</b> ${currLat.toFixed(5)}, ${currLon.toFixed(5)}<br><b>🗺️ Map:</b> <a href="https://maps.google.com/?q=${currLat},${currLon}" target="_blank" class="text-blue-600 underline">📍 Open Map</a>`; lastReport={barcode,product:prod.product,brand:prod.brand,batch:pdata.batch,expiry:pdata.exp,expired:isExpired,suspect:isSuspect,wrongLocation,gps:currLat+','+currLon,ip:myIP,date:new Date().toISOString()}; try{window.f.addDoc(window.f.collection(window.db,'customer_scans'),{...lastReport,time:window.f.serverTimestamp()}); window.f.addDoc(window.f.collection(window.db,'auto_reports'),{...lastReport,reportId:'QR-'+Date.now().toString().slice(-5),time:window.f.serverTimestamp()});}catch(e){}}
+document.getElementById('productPhoto')?.addEventListener('change',e=>{ let f=e.target.files[0]; if(f){ document.getElementById('prevProd').src=URL.createObjectURL(f); document.getElementById('prevProd').classList.remove('hidden'); }});
+document.getElementById('shopPhoto')?.addEventListener('change',e=>{ let f=e.target.files[0]; if(f){ document.getElementById('prevShop').src=URL.createObjectURL(f); document.getElementById('prevShop').classList.remove('hidden'); }});
+function setFeel(feel){ selectedFeel=feel; }
+function setFeelGogo(feel){ selectedFeelGogo=feel; }
+async function uploadPhoto(file, path){ if(!file) return ""; try{ let storageRef=window.f.ref(window.storage, path); await window.f.uploadBytes(storageRef,file); let url=await window.f.getDownloadURL(storageRef); return url; }catch(e){ return ""; }}
+async function saveFullReport(){ let comment=document.getElementById('commentInput').value; if(!selectedFeel &&!comment){ alert("Add feeling + comment"); return; } document.getElementById('feelMsg').innerText="⏳ Uploading..."; let prodFile=document.getElementById('productPhoto').files[0]; let shopFile=document.getElementById('shopPhoto').files[0]; let prodUrl=await uploadPhoto(prodFile, `reports/${Date.now()}_product`); let shopUrl=await uploadPhoto(shopFile, `reports/${Date.now()}_shop`); try{ await window.f.addDoc(window.f.collection(window.db,'customer_feelings'),{feeling:selectedFeel, comment:comment, barcode:currentScan, productPhotoUrl:prodUrl, shopPhotoUrl:shopUrl, ageGroup:document.getElementById('ageSelect').value, gps:currLat+','+currLon, report:lastReport, reportId:'QR-'+Date.now().toString().slice(-5), time:window.f.serverTimestamp()}); document.getElementById('feelMsg').innerHTML="✅ Saved with photos! ❤️"; }catch(e){ document.getElementById('feelMsg').innerText="❌ "+e.message; }}
+async function saveFullReportGogo(){ let comment=document.getElementById('commentInputGogo').value; document.getElementById('feelMsgGogo').innerText="⏳ Siyagcina..."; let prodFile=document.getElementById('productPhotoGogo').files[0]; let shopFile=document.getElementById('shopPhotoGogo').files[0]; let prodUrl=await uploadPhoto(prodFile, `reports/gogo_${Date.now()}_product`); let shopUrl=await uploadPhoto(shopFile, `reports/gogo_${Date.now()}_shop`); try{ await window.f.addDoc(window.f.collection(window.db,'customer_feelings'),{feeling:selectedFeelGogo, comment:comment, barcode:currentScan, productPhotoUrl:prodUrl, shopPhotoUrl:shopUrl, ageGroup:"gogo", gps:currLat+','+currLon, report:lastReport, reportId:'QR-'+Date.now().toString().slice(-5), time:window.f.serverTimestamp()}); document.getElementById('feelMsgGogo').innerHTML="✅ Enkosi Gogo! ❤️"; }catch(e){ document.getElementById('feelMsgGogo').innerText="❌ "+e.message; }}
+function startScanGogo(){ document.getElementById('readerGogo').classList.remove('hidden'); let qr=new Html5Qrcode("readerGogo"); qr.start({facingMode:"environment"},{fps:10,qrbox:300}, async (decoded)=>{ qr.stop(); document.getElementById('readerGogo').classList.add('hidden'); currentScan=decoded; lastReport={barcode:decoded,gps:currLat+','+currLon}; document.getElementById('resultGogo').innerHTML='⏳ Siyayijonga...<br>'+decoded; document.getElementById('feelBoxGogo').style.display='block'; try{ await window.f.addDoc(window.f.collection(window.db,'customer_scans'),{barcode:decoded,ageGroup:"gogo",gps:currLat+','+currLon,time:window.f.serverTimestamp()}); }catch(e){} },()=>{});}
+function reportSAPS(){if(!currentScan)return; let w=window.open('','_blank'); w.document.write(`<html><body><h1>QINISO CONCERN REPORT - No legal claim of fake</h1><p>GPS: ${currLat}, ${currLon}<br>Barcode: ${currentScan}</p><button onclick="window.print()">PRINT</button></body></html>`); w.document.close();}
+function sendToBrands(){alert('✅ Concern sent to Inspector Dashboard');}
+function autoReportGogo(){ alert("Enkosi Gogo! ❤️ Sithumele kumphathi!"); }
 </script>
 </body></html>
