@@ -1,0 +1,18 @@
+{
+  "name": "QINISO CEO PORTAL v25 FINAL",
+  "short_name": "CEO PORTAL",
+  "description": "Super Admin - 50 Brands + Security Master + Live Threat Map - SAPS 2024/4410",
+  "start_url": "/Qiniso-dashboard-/ceo-portal.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FFD700",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
