@@ -1,95 +1,62 @@
 <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>CEO PORTAL v25 FINAL - QINISO MARK SUPER ADMIN</title><script src="https://cdn.tailwindcss.com"></script>
+<title>CEO PORTAL v25 FINAL - QINISO MARK SUPER ADMIN + LOGO</title><script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import{getFirestore,collection,onSnapshot,addDoc,serverTimestamp,doc,setDoc,deleteDoc,getDocs}from"https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const cfg={
-  apiKey: "AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8",
-  authDomain: "qiniso-mark-v4.firebaseapp.com",
-  projectId: "qiniso-mark-v4",
-  storageBucket: "qiniso-mark-v4.firebasestorage.app",
-  messagingSenderId: "519121640224",
-  appId: "1:519121640224:web:f516bddbc5281e06fa9545",
-  measurementId: "G-LDDNVQDSB5"
-};
+const cfg={apiKey:"AIzaSyAHRegV2imef2EZbr9cCTPHDJDfvhUvzi8",authDomain:"qiniso-mark-v4.firebaseapp.com",projectId:"qiniso-mark-v4",storageBucket:"qiniso-mark-v4.firebasestorage.app",messagingSenderId:"519121640224",appId:"1:519121640224:web:f516bddbc5281e06fa9545",measurementId:"G-LDDNVQDSB5"};
 const app=initializeApp(cfg); const db=getFirestore(app); window.db=db; window.f={collection,onSnapshot,addDoc,serverTimestamp,doc,setDoc,deleteDoc,getDocs};
 </script></head>
 <body class="bg-black text-white">
-<div class="bg-yellow-400 text-black p-3 text-center font-black border-b-4 border-red-600">👑 QINISO CEO PORTAL v25 FINAL - SUPER ADMIN - ALL 50 BRANDS</div>
-<div id="secBar" class="text-[9px] text-center bg-green-900 text-yellow-300 p-1">✅ CEO Portal Connected - qiniso-mark-v4 - Firebase LIVE</div>
+<div class="bg-yellow-400 text-black p-3 flex items-center justify-center gap-3 border-b-4 border-red-600">
+<img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-12 h-12 rounded-xl border-2 border-black bg-white object-cover">
+<div class="font-black text-center">👑 QINISO CEO PORTAL v25 FINAL - SUPER ADMIN<br><span class="text-[10px]">ALL 50 BRANDS + 6 DEPTS + SECURITY MASTER</span></div>
+<img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-12 h-12 rounded-xl border-2 border-black bg-white object-cover">
+</div>
+<div id="secBar" class="text-[9px] text-center bg-green-900 text-yellow-300 p-2">✅ LOGO + Firebase LIVE qiniso-mark-v4 - CEO Portal Connected</div>
 
-<div id="login" class="max-w-md mx-auto mt-10 bg-white text-black rounded-xl p-4 border-4 border-yellow-400">
-<div class="font-black text-center text-lg">👑 CEO SUPER ADMIN LOGIN</div>
-<input id="pass" type="password" placeholder="CEO Password = qinisoceo2024" class="border-2 border-black w-full p-3 rounded-xl mt-3">
+<div id="login" class="max-w-md mx-auto mt-10 bg-white text-black rounded-xl p-4 border-4 border-yellow-400 text-center">
+<img src="logo2.png" onerror="this.src='https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo2.png'" class="w-24 h-24 rounded-2xl border-4 border-yellow-400 mx-auto bg-white object-cover">
+<div class="font-black text-lg mt-2">👑 CEO SUPER ADMIN LOGIN</div>
+<input id="pass" type="password" placeholder="Password = qinisoceo2024" class="border-2 border-black w-full p-3 rounded-xl mt-3">
 <button onclick="login()" class="w-full bg-black text-yellow-400 p-3 rounded-xl font-black mt-3 border-2 border-yellow-400">LOGIN AS CEO</button>
 <div id="msg" class="text-xs text-red-600 mt-2"></div>
-<div id="ipShow" class="text-[8px] mt-2 bg-black text-white p-2 rounded">Firebase Ready qiniso-mark-v4</div>
 </div>
 
 <div id="dash" class="hidden p-2">
 <div class="grid grid-cols-5 gap-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">📱 PPL SCANS</div><div id="scanCount" class="text-xl font-black">0</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🚨 SUSPECTED</div><div id="susCount" class="text-xl font-black text-red-600">0</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🔍 INSPECTIONS</div><div id="inspCount" class="text-xl font-black">0</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="text-[10px] font-black">🏭 QR FACTORY</div><div id="qrCount" class="text-xl font-black">0</div></div>
-<div class="bg-red-100 text-black rounded-xl p-2 border-2 border-red-600"><div class="text-[10px] font-black">🚫 HACKERS</div><div id="hackCount" class="text-xl font-black text-red-600">0</div></div>
+<div class="bg-white text-black rounded-xl p-2 text-center"><img src="logo2.png" class="w-6 h-6 mx-auto rounded"><div class="text-[9px] font-black">📱 SCANS</div><div id="scanCount" class="text-xl font-black">0</div></div>
+<div class="bg-white text-black rounded-xl p-2 text-center"><div class="text-[9px] font-black">🚨 SUSPECTED</div><div id="susCount" class="text-xl font-black text-red-600">0</div></div>
+<div class="bg-white text-black rounded-xl p-2 text-center"><div class="text-[9px] font-black">🔍 INSPECTIONS</div><div id="inspCount" class="text-xl font-black">0</div></div>
+<div class="bg-white text-black rounded-xl p-2 text-center"><div class="text-[9px] font-black">🏭 QR FACTORY</div><div id="qrCount" class="text-xl font-black">0</div></div>
+<div class="bg-red-100 text-black rounded-xl p-2 border-2 border-red-600 text-center"><div class="text-[9px] font-black">🚫 HACKERS</div><div id="hackCount" class="text-xl font-black text-red-600">0</div></div>
 </div>
-
 <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ CEO LIVE MAP</div><div id="map" class="h-[350px] rounded mt-2 bg-gray-200"></div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🗺️ CEO LIVE MAP - ALL SCANS</div><div id="map" class="h-[350px] rounded mt-2 bg-gray-200"></div></div>
 <div class="space-y-2">
-<div class="bg-red-50 text-black rounded-xl p-2 border-2 border-red-600"><div class="font-black text-xs text-red-600">🚨 SECURITY MASTER</div><div class="flex gap-1 mt-1"><button onclick="clearThreats()" class="bg-red-600 text-white px-2 py-1 rounded text-[9px]">CLEAR THREATS</button><button onclick="killSwitch()" class="bg-black text-yellow-400 px-2 py-1 rounded text-[9px] border border-yellow-400">☠️ KILL SWITCH</button></div><div id="threatList" class="mt-2 text-[10px] space-y-1 max-h-[200px] overflow-auto">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS</div><div id="scanList" class="mt-2 text-[10px] space-y-1 max-h-[130px] overflow-auto">Loading...</div></div>
+<div class="bg-red-50 text-black rounded-xl p-2 border-2 border-red-600"><div class="font-black text-xs">🚨 SECURITY MASTER + EMOJI FEELINGS 😊😟⚠️</div><div id="threatList" class="mt-2 text-[10px] max-h-[200px] overflow-auto">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">📱 LIVE PPL SCANS + FEELINGS</div><div id="scanList" class="mt-2 text-[10px] max-h-[130px] overflow-auto">Loading...</div></div>
+<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">💬 CUSTOMER EMOJIS 😊😟⚠️ - LIVE</div><div id="feelList" class="mt-2 text-[10px] max-h-[100px] overflow-auto">Loading customer feelings...</div></div>
 </div>
 </div>
-
-<div class="grid grid-cols-1 md:grid-cols-3 gap-2 mt-2">
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🏷️ BRANDS LOGINS</div><div id="brandLogins" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">👮 SAPS + 6 DEPTS</div><div id="sapsList" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading...</div></div>
-<div class="bg-white text-black rounded-xl p-2"><div class="font-black text-xs">🛡️ TRIPLE SIGNATURE</div><div id="finalList" class="text-[9px] mt-2 max-h-[150px] overflow-auto">Loading...</div></div>
-</div>
-
-<div class="bg-black text-white rounded-xl p-3 mt-2 border-2 border-yellow-400"><div class="font-black text-xs text-yellow-400">🔗 INVOICE CHAIN MASTER</div><div id="chainList" class="text-[10px] mt-2">Loading chains...</div><div class="mt-2 flex gap-1"><button onclick="exportCourt()" class="bg-yellow-400 text-black px-3 py-1 rounded font-black text-xs">📄 EXPORT COURT COPY SAPS-2024/4410</button></div></div>
 </div>
 
 <script>
 function login(){
  const p=document.getElementById('pass').value;
- if(p==='qinisoceo2024' || p==='qinisoadmin123' || p==='admin123'){
+ if(p==='qinisoceo2024'||p==='qinisoadmin123'||p==='admin123'){
   document.getElementById('login').classList.add('hidden'); document.getElementById('dash').classList.remove('hidden');
   setTimeout(initMap,500); setTimeout(listen,1000);
- }else{
-  document.getElementById('msg').innerText='Wrong CEO password! Password is qinisoceo2024';
- }
+ }else{document.getElementById('msg').innerText='Wrong! Password is qinisoceo2024';}
 }
-async function initMap(){
- map=L.map('map').setView([-33.84932,25.45160],11);
- L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-}
+async function initMap(){ map=L.map('map').setView([-33.84932,25.45160],11); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
 function listen(){
- const{collection,onSnapshot,addDoc,serverTimestamp}=window.f; const db=window.db;
- onSnapshot(collection(db,'dashboard_alerts'),snap=>{
-   document.getElementById('scanCount').innerText=snap.size; let h=''; let sus=0;
-   snap.forEach(d=>{const v=d.data(); if(v.status?.includes('SUSPECTED'))sus++; h+=`<div class="border p-1 rounded ${v.status?.includes('SUSPECTED')?'bg-red-100 border-red-600':''}"><b>${v.batch||'BATCH'}</b> ${v.status}</div>`;});
-   document.getElementById('scanList').innerHTML=h||'No scans'; document.getElementById('susCount').innerText=sus;
- });
- onSnapshot(collection(db,'inspection_reports_final'),snap=>{
-   document.getElementById('inspCount').innerText=snap.size; let h=''; let chainH='';
-   snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>${v.batch}</b> ${v.status||''}</div>`; if(v.chain) chainH+=`<div class="mt-1 border p-1 rounded">${v.batch}: ${v.chain.full}</div>`;});
-   document.getElementById('finalList').innerHTML=h||'No inspections'; document.getElementById('chainList').innerHTML=chainH||'No chains';
- });
- onSnapshot(collection(db,'security_threats'),snap=>{
-   document.getElementById('hackCount').innerText=snap.size; let h='';
-   snap.forEach(d=>{const v=d.data(); h+=`<div class="border border-red-600 bg-red-100 p-2 rounded"><b>HACKER ${v.target}</b> IP ${v.ip}</div>`;});
-   document.getElementById('threatList').innerHTML=h||'No hacker attempts';
- });
- onSnapshot(collection(db,'brand_logins'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>${v.brand}</b> IP ${v.ip} ${v.status}</div>`;}); document.getElementById('brandLogins').innerHTML=h||'No logins';});
- onSnapshot(collection(db,'dept_SAPS'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); h+=`<div class="border p-1 rounded"><b>${v.batch}</b> ${v.status}</div>`;}); document.getElementById('sapsList').innerHTML=h||'No SAPS alerts';});
+ const{collection,onSnapshot}=window.f; const db=window.db;
+ onSnapshot(collection(db,'dashboard_alerts'),snap=>{document.getElementById('scanCount').innerText=snap.size; let h='',sus=0; snap.forEach(d=>{const v=d.data(); if(v.status?.includes('SUSPECTED'))sus++; h+=`<div class="border p-1 rounded ${v.status?.includes('SUSPECTED')?'bg-red-100':''}"><b>${v.batch||''}</b> ${v.status}</div>`;}); document.getElementById('scanList').innerHTML=h; document.getElementById('susCount').innerText=sus;});
+ onSnapshot(collection(db,'security_threats'),snap=>{document.getElementById('hackCount').innerText=snap.size;});
  onSnapshot(collection(db,'qr_codes'),snap=>{document.getElementById('qrCount').innerText=snap.size;});
+ onSnapshot(collection(db,'inspection_reports_final'),snap=>{document.getElementById('inspCount').innerText=snap.size;});
+ onSnapshot(collection(db,'customer_feelings'),snap=>{let h=''; snap.forEach(d=>{const v=d.data(); let emoji=v.feeling==='safe'?'😊':v.feeling==='concern'?'😟':'⚠️'; h+=`<div class="border p-1 rounded">${emoji} <b>${v.feeling}</b> - ${v.comment||''} - ${v.barcode||''}</div>`;}); document.getElementById('feelList').innerHTML=h||'No feelings yet - scan page emojis will appear here!'; if(document.getElementById('threatList')) document.getElementById('threatList').innerHTML=h||'No threats';});
 }
-async function killSwitch(){ if(!confirm('BLOCK ALL HACKERS?')) return; alert('Kill Switch Activated!'); }
-async function clearThreats(){ const{collection,getDocs,deleteDoc,doc}=window.f; const snap=await getDocs(collection(window.db,'security_threats')); snap.forEach(d=>deleteDoc(doc(window.db,'security_threats',d.id))); alert('Cleared!'); }
-function exportCourt(){ let txt=`COURT COPY SAPS-2024/4410 ${new Date().toISOString()}`; const blob=new Blob([txt],{type:'text/plain'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='COURT-'+Date.now()+'.txt'; a.click(); }
-window.login=login; window.killSwitch=killSwitch; window.clearThreats=clearThreats; window.exportCourt=exportCourt;
+window.login=login;
 </script></body></html>
