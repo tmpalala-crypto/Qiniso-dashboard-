@@ -1,0 +1,18 @@
+{
+  "name": "QINISO SHOP APP",
+  "short_name": "SHOP SCAN",
+  "description": "Spaza Shop Stock Checker - Verify Real Products",
+  "start_url": "/Qiniso-dashboard-/shop.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#00C853",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
