@@ -1,0 +1,18 @@
+{
+  "name": "QINISO INSPECTOR APP",
+  "short_name": "INSPECTOR",
+  "description": "SAPS 2024/4410 - Field Inspection & Seizure Report",
+  "start_url": "/Qiniso-dashboard-/inspector.html",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#FF0000",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "logo2.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
