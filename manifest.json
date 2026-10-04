@@ -1,16 +1,18 @@
 {
-  "name": "QINISO MARK PPL SCAN",
+  "name": "QINISO SCAN PRO + SHIELD",
   "short_name": "QINISO SCAN",
-  "description": "SAPS Case SAPS-2024/4410 - PPL Dangerous Zones + IP/GPS Logger",
-  "start_url": "/Qiniso-dashboard-/scan.html",
+  "description": "Qiniso Mark - POPIA Compliant Scan + Auto Trace + GOGO Mode - SAPS 2024/4410",
+  "start_url": "/Qiniso-dashboard-/index.html",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#FF0000",
+  "theme_color": "#FFD700",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "logo2.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }
