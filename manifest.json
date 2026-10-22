@@ -1,7 +1,7 @@
 {
-  "name": "Qiniso Dashboard - Scan, CEO, Inspector, Brands, Department and Shop Portal",
+  "name": "Qiniso Dashboard",
   "short_name": "Qiniso",
-  "start_url": "/Qiniso-dashboard-/",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#000000",
@@ -9,34 +9,28 @@
   "description": "Qiniso Dashboard - Scan, CEO, Inspector, Brands, Department and Shop Portal",
   "icons": [
     {
-      "src": "https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo.png",
+      "src": "logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo.png",
+      "src": "logo.png",
       "sizes": "512x512",
       "type": "image/png"
     },
     {
-      "src": "https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo.png",
+      "src": "logo.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "maskable"
     }
   ],
   "screenshots": [
     {
-      "src": "https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo.png",
+      "src": "logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "form_factor": "narrow"
-    },
-    {
-      "src": "https://tmpalala-crypto.github.io/Qiniso-dashboard-/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "form_factor": "wide"
     }
   ]
 }
