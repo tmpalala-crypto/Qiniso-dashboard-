@@ -1,13 +1,19 @@
 {
-  "name": "QINISO SCAN PRO + SHIELD",
-  "short_name": "QINISO SCAN",
-  "description": "Qiniso Mark - POPIA Compliant Scan + Auto Trace + GOGO Mode - SAPS 2024/4410",
-  "start_url": "/Qiniso-dashboard-/index.html",
+  "name": "Qiniso",
+  "short_name": "Qiniso",
+  "description": "Qiniso Mark - POPIA Compliant Scan and Dashboard",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#FFD700",
   "orientation": "portrait",
   "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "logo2.png",
       "sizes": "512x512",
