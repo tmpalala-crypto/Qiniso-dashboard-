@@ -1,12 +1,15 @@
 {
-  "name": "Qiniso",
-  "short_name": "Qiniso",
-  "description": "Qiniso Mark - POPIA Compliant Scan and Dashboard",
-  "start_url": "./index.html",
+  "background_color": "#FFD700",
+  "dir": "ltr",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#FFD700",
-  "orientation": "portrait",
+  "name": "Qiniso",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Qiniso",
+  "start_url": "/",
+  "theme_color": "#000000",
+  "id": "com.qiniso.dashboard",
+  "description": "Qiniso Dashboard - CEO, Inspector and Brands Portal",
   "icons": [
     {
       "src": "logo.png",
