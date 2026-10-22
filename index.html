@@ -41,7 +41,6 @@ const app=initializeApp(cfg);const db=getFirestore(app);window.db=db;window.f={c
 <button onclick="saveFeeling()" class="w-full mt-2 bg-black text-yellow-400 font-black p-3 rounded-xl border border-yellow-400">📤 SEND</button><div id="feelMsg" class="text-[11px] font-black mt-2"></div>
 </div></div>
 
-<!-- AUTO TRACE MAP -->
 <div class="bg-white rounded-2xl p-2 mt-3 border-2 border-green-500">
 <div class="font-black text-[11px] flex justify-between"><span>📍 LIVE LOCATION AUTO-TRACE</span><span id="mapStatus" class="text-green-600">● LIVE</span></div>
 <div id="miniMap" class="h-[220px] rounded-xl mt-2 bg-gray-200"></div>
@@ -66,15 +65,12 @@ const app=initializeApp(cfg);const db=getFirestore(app);window.db=db;window.f={c
 <script>
 let selectedFeel="",selectedFeelGogo="",lastBar="",currentLat=-33.84933,currentLng=25.45161,currentAcc=0,miniMap=null,miniMapGogo=null,watchId=null;
 function changeAge(){let a=document.getElementById('ageSelect').value;if(a==='gogo'){document.getElementById('youthScreen').style.display='none';document.getElementById('gogoScreen').style.display='block';setTimeout(initGogoMap,500);}else{document.getElementById('gogoScreen').style.display='none';document.getElementById('youthScreen').style.display='block';}}
-
 function initMainMap(lat,lng){
  if(miniMap){miniMap.setView([lat,lng],15); L.marker([lat,lng]).addTo(miniMap).bindPopup("📍 Scan Location - Auto Traced").openPopup(); return;}
  miniMap=L.map('miniMap').setView([lat,lng],15); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
  L.marker([lat,lng]).addTo(miniMap).bindPopup("📍 You - Auto Traced").openPopup(); L.circle([lat,lng],{radius:50,color:'green',fillColor:'#0f0',fillOpacity:0.2}).addTo(miniMap);
 }
 function initGogoMap(){ if(miniMapGogo) {miniMapGogo.invalidateSize(); return;} miniMapGogo=L.map('miniMapGogo').setView([currentLat,currentLng],15); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMapGogo); L.marker([currentLat,currentLng]).addTo(miniMapGogo).bindPopup("Gogo Location").openPopup(); }
-
-// AUTO TRACE - WATCH POSITION
 if(navigator.geolocation){
  navigator.geolocation.getCurrentPosition(p=>{
   currentLat=p.coords.latitude; currentLng=p.coords.longitude; currentAcc=p.coords.accuracy;
@@ -82,8 +78,6 @@ if(navigator.geolocation){
   document.getElementById('autoAccuracy').innerText=`🛰️ Auto Trace: ON | ${new Date().toLocaleTimeString()}`;
   initMainMap(currentLat,currentLng);
  },e=>{document.getElementById('autoGps').innerText="📍 GPS: Denied - Enable location!";},{enableHighAccuracy:true});
-
- // Live watch
  watchId=navigator.geolocation.watchPosition(p=>{
   currentLat=p.coords.latitude; currentLng=p.coords.longitude; currentAcc=p.coords.accuracy;
   document.getElementById('autoGps').innerText=`📍 GPS: ${currentLat.toFixed(5)},${currentLng.toFixed(5)} | Accuracy: ${currentAcc.toFixed(0)}m | LIVE`;
@@ -92,7 +86,6 @@ if(navigator.geolocation){
 }
 fetch('https://api.ipify.org?format=json').then(r=>r.json()).then(d=>{document.getElementById('autoIp').innerText="🌐 IP: "+d.ip+" | Device logged";});
 document.getElementById('autoDate').innerText="🕒 "+new Date().toLocaleString()+" | POPIA Logged";
-
 function startScanMain(){let qr=new Html5Qrcode("reader");qr.start({facingMode:"environment"},{fps:10,qrbox:250},async(decoded)=>{
   qr.stop();lastBar=decoded;document.getElementById('result').innerText='🔍 '+decoded;document.getElementById('feelBox').style.display='block';
   try{await window.f.addDoc(window.f.collection(window.db,"customer_scans"),{barcode:decoded,ageGroup:document.getElementById('ageSelect').value,lat:currentLat,lng:currentLng,accuracy:currentAcc,ip:document.getElementById('autoIp').innerText,timestamp:window.f.serverTimestamp(),autoTraced:true});document.getElementById('result').innerText='✅ '+decoded+' | 📍 Location Auto-Saved!';document.getElementById('mapStatus').innerText='● SAVED TO CEO MAP';}catch(e){document.getElementById('result').innerText='❌ '+e.message;}
@@ -105,4 +98,10 @@ function setFeel(f){selectedFeel=f;['bSafe','bConcern','bUnsafe'].forEach(id=>do
 function setFeelGogo(f){selectedFeelGogo=f;['bSafeG','bConcernG','bUnsafeG'].forEach(id=>document.getElementById(id).style.background='white');if(f==='safe')document.getElementById('bSafeG').style.background='#bbf7d0';if(f==='concern')document.getElementById('bConcernG').style.background='#ffecb3';if(f==='unsafe')document.getElementById('bUnsafeG').style.background='#fecaca';}
 async function saveFeeling(){let c=document.getElementById('commentInput').value;document.getElementById('feelMsg').innerText='Saving...';try{await window.f.addDoc(window.f.collection(window.db,"customer_feelings"),{feeling:selectedFeel,comment:c,barcode:lastBar,lat:currentLat,lng:currentLng,timestamp:window.f.serverTimestamp()});document.getElementById('feelMsg').innerText='✅ Saved! 📍 Location linked!';}catch(e){document.getElementById('feelMsg').innerText='❌ '+e.message;}}
 async function saveFeelingGogo(){let c=document.getElementById('commentInputGogo').value;document.getElementById('feelMsgGogo').innerText='Saving...';try{await window.f.addDoc(window.f.collection(window.db,"customer_feelings"),{feeling:selectedFeelGogo,comment:c,barcode:lastBar,ageGroup:"gogo",lat:currentLat,lng:currentLng,timestamp:window.f.serverTimestamp()});document.getElementById('feelMsgGogo').innerText='✅ Enkosi Gogo! 📍';}catch(e){document.getElementById('feelMsgGogo').innerText='❌ '+e.message;}}
-</script></body></html>
+</script>
+<script>
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/Qiniso-dashboard-/sw.js');
+}
+</script>
+</body></html>
