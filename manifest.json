@@ -1,24 +1,21 @@
 {
   "name": "Qiniso",
   "short_name": "Qiniso",
-  "description": "Qiniso Dashboard - Scan, CEO, Inspector, Brands, Department and Shop Portal",
   "start_url": "/Qiniso-dashboard-/",
   "display": "standalone",
   "background_color": "#000000",
-  "theme_color": "#000000",
-  "scope": "/Qiniso-dashboard-/",
+  "theme_color": "#FFD700",
+  "description": "Qiniso Dashboard - Scan, CEO, Inspector, Brands, Department and Shop Portal",
   "icons": [
     {
-      "src": "logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/Qiniso-dashboard-/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
     },
     {
-      "src": "logo2.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
+      "src": "/Qiniso-dashboard-/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ]
 }
