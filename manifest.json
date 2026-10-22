@@ -2,14 +2,14 @@
   "name": "Qiniso",
   "short_name": "Qiniso",
   "description": "Qiniso Dashboard - Scan, CEO, Inspector, Brands, Department and Shop Portal",
-  "id": "com.qiniso.dashboard",
+  "background_color": "#FFD700",
+  "theme_color": "#000000",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#FFD700",
-  "scope": "/Qiniso-dashboard-/",
-  "start_url": "/Qiniso-dashboard-/",
   "orientation": "any",
   "dir": "ltr",
+  "id": "com.qiniso.dashboard",
+  "scope": "/Qiniso-dashboard-/",
+  "start_url": "/Qiniso-dashboard-/",
   "icons": [
     {
       "src": "logo.png",
@@ -19,6 +19,12 @@
     },
     {
       "src": "logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "logo2.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
