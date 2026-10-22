@@ -1,16 +1,13 @@
 {
-  "name": "Qiniso Store",
+  "name": "Qiniso Store - Qiniso Scan Pro + Shield",
   "short_name": "Qiniso",
-  "id": "./",
+  "description": "Qiniso Store - Manage your store, scan products, track inventory, sales and low stock alerts with Shield security",
   "start_url": "./",
-  "scope": "./",
   "display": "standalone",
-  "orientation": "portrait",
-  "dir": "ltr",
-  "lang": "en",
+  "orientation": "any",
   "background_color": "#0d1117",
   "theme_color": "#00d4ff",
-  "description": "Qiniso Store - Manage your store",
+  "categories": ["business", "shopping", "productivity", "utilities"],
   "icons": [
     {
       "src": "./icon-192.png",
@@ -19,6 +16,12 @@
       "purpose": "any"
     },
     {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "./icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
@@ -28,13 +31,33 @@
       "src": "./icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "./icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshot-narrow.png",
+      "sizes": "540x720",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Qiniso Store Dashboard on Phone"
+    },
+    {
+      "src": "./screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Qiniso Store Management Dashboard"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Scan Product",
+      "short_name": "Scan",
+      "description": "Quick scan a product",
+      "url": "./",
+      "icons": [{ "src": "./icon-192.png", "sizes": "192x192" }]
+    }
+  ],
+  "prefer_related_applications": false
 }
