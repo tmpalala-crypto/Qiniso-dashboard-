@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QINISO CEO DASHBOARD - 0603142346</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{background:#000;color:#0f0;font-family:monospace;padding:12px;margin:0}
+h1{color:red;text-align:center;font-size:22px}
+h2{color:yellow;margin-top:25px;border-bottom:1px solid #333;padding-bottom:5px}
+.card{background:#111;border:1px solid red;padding:12px;margin:10px 0;border-radius:10px}
+.card img{max-width:100%;border:2px solid red;margin-top:8px}
+.badge{background:red;color:#fff;padding:2px 8px;border-radius:4px;font-size:11px}
+button{padding:10px 15px;margin:5px;border:none;border-radius:6px;font-weight:bold}
+.wa{background:#25D366;color:#fff} .map{background:yellow;color:#000} .unban{background:#444;color:#fff}
+.top{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.stat{background:#222;padding:10px 15px;border-radius:8px;text-align:center;min-width:80px}
+</style>
+</head>
+<body>
+<h1>🔒 QINISO MARK CEO DASHBOARD<br><small>CEO: 0603142346 | v26.2</small></h1>
+
+<div class="top">
+<div class="stat">🚫 Banned<br><span id="countBan">0</span></div>
+<div class="stat">👤 Faces<br><span id="countFace">0</span></div>
+<div class="stat">🚨 Threats<br><span id="countThreat">0</span></div>
+<div class="stat">📱 WhatsApp<br><span id="countWa">0</span></div>
+</div>
+
+<h2>📱 1. WhatsApp Alerts to 0603142346</h2>
+<div id="wa">Loading WhatsApp alerts...</div>
+
+<h2>🚫 2. Banned Devices (Survives Delete/Reinstall)</h2>
+<div id="banned">Loading banned devices...</div>
+
+<h2>👤 3. Banned Faces - Same Hacker Different Device Auto-Lock</h2>
+<div id="faces">Loading banned faces...</div>
+
+<h2>🚨 4. Live Hacker Threats</h2>
+<div id="threats">Loading threats...</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, limit, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
+
+// === PASTE YOUR FIREBASE CONFIG FROM YOUR OLD FILE ===
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT.appspot.com",
+  messagingSenderId: "123",
+  appId: "1:123:web:abc"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+function listen(col, elementId, counterId){
+  const q = query(collection(db,col), orderBy("time","desc"), limit(20));
+  onSnapshot(q, snap=>{
+    document.getElementById(counterId).innerText = snap.size;
+    const div = document.getElementById(elementId);
+    if(snap.empty){ div.innerHTML="<div class='card'>No data yet</div>"; return; }
+    div.innerHTML="";
+    snap.forEach(d=>{
+      const x = d.data();
+      const t = x.time?.toDate?.()?.toLocaleString() || "now";
+      const lat = x.gps?.lat || x.scannedGPS?.split(',')[0] || -33.84;
+      const lng = x.gps?.lng || x.scannedGPS?.split(',')[1] || 25.45;
+      const photo = x.photo || "";
+      div.innerHTML+=`
+        <div class="card">
+          <div><span class="badge">${col}</span> <b>${x.target||x.type||'HACKER'}</b> - ${t}</div>
+          <div style="margin-top:6px">IP: ${x.ip||'N/A'} | FP: ${(x.fingerprint||'').slice(0,12)} | Face: ${(x.faceHash||'').slice(0,12)}</div>
+          <div>GPS: ${lat},${lng}</div>
+          ${photo ? `<img src="${photo}">` : '<div style="color:#666">No photo</div>'}
+          <div style="margin-top:10px">
+            <button class="wa" onclick="window.open('https://wa.me/27603142346?text=${encodeURIComponent('🚨 HACKER\\nIP:'+(x.ip||'')+'\\nGPS:'+lat+','+lng+'\\nMap: https://maps.google.com/?q='+lat+','+lng)}','_blank')">📱 WhatsApp 0603142346</button>
+            <button class="map" onclick="window.open('https://maps.google.com/?q=${lat},${lng}','_blank')">📍 MAP</button>
+            <button class="unban" onclick="if(confirm('Unban?')){import('https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js').then(m=>{m.deleteDoc(m.doc(db,'${col}','${d.id}'))})}">✅ UNBAN</button>
+          </div>
+        </div>`;
+    });
+  });
+}
+
+listen('ceo_whatsapp_alerts','wa','countWa');
+listen('banned_devices','banned','countBan');
+listen('banned_faces','faces','countFace');
+listen('security_threats','threats','countThreat');
+</script>
+</body>
+</html>
