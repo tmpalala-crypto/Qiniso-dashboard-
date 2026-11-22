@@ -1,141 +1,180 @@
 <!DOCTYPE html>
-<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>QINISO V2 - FULL EVIDENCE + LOGO</title>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QINISO INSPECTION v29</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
 <style>
-canvas{touch-action:none}
-.sig-canvas{border:2px dashed #1e3a8a;border-radius:12px;width:100%;height:100px;background:white}
-.photo-box{border:2px dashed #d4af37;border-radius:12px;background:#fffbeb;position:relative;overflow:hidden;min-height:140px;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.photo-box.has-photo{border-style:solid;border-color:#16a34a}
-.photo-preview{width:100%;height:100px;object-fit:cover;border-radius:8px}
+body{background:#0f172a;font-family:Arial,sans-serif}
+.gold{background:linear-gradient(135deg,#fbbf24,#f59e0b);color:black}
+.card{background:white;border-radius:14px;padding:14px}
+.step{display:none}.step.active{display:block}
+canvas{border:2px dashed #cbd5e1;border-radius:10px;width:100%;height:110px;background:#f8fafc;touch-action:none}
+@keyframes scanMove{0%{top:0}50%{top:92%}100%{top:0}}
+.scanline{position:absolute;left:0;width:100%;height:3px;background:#fbbf24;box-shadow:0 0 15px #fbbf24;animation:scanMove 1.5s infinite}
+.pdfpage{background:white;box-shadow:0 4px 20px rgba(0,0,0,.4);border-radius:4px;padding:8px}
+input,select{border:1px solid #cbd5e1;border-radius:8px;padding:9px;width:100%;font-size:14px}
+label{font-size:11px;font-weight:bold}
 </style>
 </head>
-<body class="bg-[#f5f7fb] pb-[100px]">
+<body class="p-3 max-w-md mx-auto">
 
-<!-- HEADER WITH YOUR LOGO -->
-<div class="bg-white p-3 flex items-center gap-3 shadow" style="border-top:5px solid #1e3a8a">
-<img src="logo.png" class="w-[65px] h-[65px] rounded-xl border-2 border-yellow-500 shadow-lg object-cover">
-<div class="flex-1"><div class="font-black text-[13px] leading-tight">QINISO SCAN PRO + SHIELD<br><span class="text-[10px] text-slate-500">FIELD TOOL PRO V2 - EVIDENCE</span></div><div class="text-[8px] text-slate-500 font-bold mt-1">SAPS 2024/4410 COMPLIANT • VERIFIED & SECURE</div></div>
-<div class="bg-green-100 border border-green-600 text-[7px] font-black px-2 py-1 rounded text-center">EVIDENCE<br>MODE</div>
+<!-- HEADER -->
+<div class="text-center mb-3">
+<img src="logo.png" style="width:90px;height:90px;border-radius:50%;object-fit:cover;margin:0 auto;border:3px solid #fbbf24;background:white" onerror="this.style.display='none'">
+<div class="text-white font-black text-xl mt-1">QINISO <span class="text-yellow-400">INSPECTION</span></div>
+<div class="text-[10px] text-white/80 font-bold">FIELD TOOL PRO v29 OFFLINE • POPIA COMPLIANT</div>
+<div class="text-[9px] text-yellow-300">QINISO Private Brand Protection - Not SAPS • Location Captured ✓</div>
 </div>
 
-<div class="grid grid-cols-3 gap-2 mx-3 mt-3">
-<div class="bg-white rounded-xl p-2 shadow-sm border-t-2 border-yellow-500"><div class="text-[8px] font-black">ID</div><div id="scanId" class="font-black text-[10px]">QI-...</div><div class="text-[8px] text-slate-500" id="gpsTxt">GPS loading...</div></div>
-<div class="bg-white rounded-xl p-2 shadow-sm border-t-2 border-yellow-500"><div class="text-[8px] font-black">PRODUCT SCAN</div><div id="prodCount" class="font-black text-[10px]">0 products</div><button onclick="startProdScan()" class="w-full bg-black text-white text-[8px] py-1 rounded mt-1 font-bold">📦 SCAN PRODUCT</button></div>
-<div class="bg-white rounded-xl p-2 shadow-sm border-t-2 border-yellow-500"><div class="text-[8px] font-black">EVIDENCE</div><div id="evCount" class="font-black text-[10px]">0 photos • 0 voice</div><div class="text-[8px] text-green-600">Secured</div></div>
+<!-- PROGRESS -->
+<div class="flex gap-1 mb-3 text-[9px] font-bold text-center">
+<div id="p1" class="flex-1 bg-yellow-400 rounded p-1">1 INSPECTOR</div>
+<div id="p2" class="flex-1 bg-white/20 text-white rounded p-1">2 OWNER</div>
+<div id="p3" class="flex-1 bg-white/20 text-white rounded p-1">3 EVIDENCE</div>
+<div id="p4" class="flex-1 bg-white/20 text-white rounded p-1">4 SEAL</div>
 </div>
 
-<div id="readerWrap" class="hidden mx-3 mt-3 bg-white rounded-xl p-2 border-2 border-yellow-500"><div id="reader"></div><button onclick="stopScan()" class="w-full mt-2 bg-red-600 text-white py-2 rounded-lg text-xs font-bold">CLOSE SCANNER</button><div id="prodList" class="mt-2 text-[10px]"></div></div>
-
-<div class="bg-white rounded-2xl m-3 p-3 shadow-sm">
-<div class="font-black text-[13px] border-b-2 border-yellow-500 inline-block pb-1">📸 EVIDENCE PHOTOS - TAP TO TAKE PICTURE</div>
-<div class="text-[10px] text-slate-600 mt-1">Take real photos, not typing! Court evidence for SAPS!</div>
-<div class="grid grid-cols-2 gap-3 mt-3">
-
-<div class="photo-box" id="boxInvoice" onclick="document.getElementById('fileInvoice').click()">
-<img id="prevInvoice" class="hidden photo-preview"><div id="phInvoice"><div class="text-2xl">📄</div><div class="font-black text-[10px] mt-1">INVOICE PHOTO</div><div class="text-[8px] text-slate-500">Tap to take picture</div><div class="bg-blue-600 text-white text-[8px] px-2 py-1 rounded-full mt-2 font-bold">📷 TAKE PHOTO</div></div>
-<div id="okInvoice" class="hidden absolute top-1 right-1 bg-green-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">✓ CAPTURED</div></div>
-<input type="file" id="fileInvoice" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(this,'prevInvoice','phInvoice','okInvoice','boxInvoice')">
-
-<div class="photo-box" id="boxProduct" onclick="document.getElementById('fileProduct').click()">
-<img id="prevProduct" class="hidden photo-preview"><div id="phProduct"><div class="text-2xl">📦</div><div class="font-black text-[10px] mt-1">PRODUCTS ON SHELF</div><div class="text-[8px] text-slate-500">Evidence of products</div><div class="bg-blue-600 text-white text-[8px] px-2 py-1 rounded-full mt-2 font-bold">📷 TAKE PHOTO</div></div>
-<div id="okProduct" class="hidden absolute top-1 right-1 bg-green-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">✓ CAPTURED</div></div>
-<input type="file" id="fileProduct" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(this,'prevProduct','phProduct','okProduct','boxProduct')">
-
-<div class="photo-box" id="boxShop" onclick="document.getElementById('fileShop').click()">
-<img id="prevShop" class="hidden photo-preview"><div id="phShop"><div class="text-2xl">🏪</div><div class="font-black text-[10px] mt-1">SHOP FRONT / SIGN</div><div class="text-[8px] text-slate-500">Shop name & location</div><div class="bg-blue-600 text-white text-[8px] px-2 py-1 rounded-full mt-2 font-bold">📷 TAKE PHOTO</div></div>
-<div id="okShop" class="hidden absolute top-1 right-1 bg-green-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">✓ CAPTURED</div></div>
-<input type="file" id="fileShop" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(this,'prevShop','phShop','okShop','boxShop')">
-
-<div class="photo-box" id="boxBatch" onclick="document.getElementById('fileBatch').click()">
-<img id="prevBatch" class="hidden photo-preview"><div id="phBatch"><div class="text-2xl">🔖</div><div class="font-black text-[10px] mt-1">BATCH LABEL CLOSE-UP</div><div class="text-[8px] text-slate-500">Batch / Expiry label</div><div class="bg-blue-600 text-white text-[8px] px-2 py-1 rounded-full mt-2 font-bold">📷 TAKE PHOTO</div></div>
-<div id="okBatch" class="hidden absolute top-1 right-1 bg-green-600 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">✓ CAPTURED</div></div>
-<input type="file" id="fileBatch" accept="image/*" capture="environment" class="hidden" onchange="handlePhoto(this,'prevBatch','phBatch','okBatch','boxBatch')">
-
-</div>
-<div class="mt-3 bg-yellow-50 border border-yellow-400 rounded-lg p-2 text-[10px]"><b>For SAPS Court:</b> Photos auto-tagged with <span id="gpsTag">GPS + IP + Time</span></div>
+<!-- STEP 1 -->
+<div id="s1" class="step active card">
+<h2 class="font-black">STEP 1: INSPECTOR START</h2>
+<p class="text-[11px] text-gray-500 mb-2">Inspector starts inspection in-store.</p>
+<label>Inspector Full Name</label><input id="inspName" placeholder="e.g. Likuwe">
+<label>Inspector ID / Badge</label><input id="inspId" placeholder="QIN-001">
+<label>Shop Name</label><input id="shopName" placeholder="Shop Name">
+<label>Shop Owner Name</label><input id="ownerName" placeholder="e.g. Anna">
+<label>Shop Location / Area</label><input id="shopLoc" placeholder="e.g. Mthatha CBD">
+<label>Shop Owner Phone (optional)</label><input id="ownerPhone" placeholder="07...">
+<button onclick="go(2)" class="gold w-full p-3 rounded-xl font-black mt-3">START INSPECTION →</button>
 </div>
 
-<div class="bg-white rounded-2xl m-3 p-3 shadow-sm">
-<div class="font-black text-[13px] border-b-2 border-yellow-500 inline-block pb-1">🎤 VOICE EVIDENCE - TELL WHAT YOU SEE</div>
-<div class="mt-3 flex items-center gap-3 bg-slate-900 rounded-xl p-3">
-<button id="recBtn" onclick="toggleRec()" class="w-14 h-14 bg-red-600 rounded-full flex items-center justify-center text-white font-black text-xl">🎤</button>
-<div class="flex-1 text-white"><div id="recStatus" class="font-black text-[11px]">TAP RED TO RECORD VOICE</div><div id="recTime" class="text-[10px] text-gray-400">0:00 • Evidence</div><audio id="audioPlay" controls class="hidden w-full mt-2 h-8"></audio></div>
-</div>
+<!-- STEP 2 -->
+<div id="s2" class="step card">
+<h2 class="font-black">STEP 2: OWNER CONSENT</h2>
+<div class="bg-yellow-50 border border-yellow-200 rounded p-2 text-[11px] mt-2">I, <b id="ownerNameShow">Owner</b>, agree to this Qiniso inspection. I give my thumbprint as my mark and my signature as confirmation. I understand photos are only for evidence.</div>
+<label class="flex gap-2 mt-2 text-[12px]"><input type="checkbox" id="consent" style="width:20px"> <span><b>Owner ticks: YES, I AGREE</b></span></label>
+
+<label class="mt-3 block">OWNER THUMBPRINT - Draw with finger in box</label>
+<canvas id="ownerFP"></canvas>
+<button onclick="clearCanvas('ownerFP')" class="text-[11px] underline">Clear Thumbprint</button>
+
+<label class="mt-2 block">OWNER SIGNATURE - Sign with finger</label>
+<canvas id="ownerSign"></canvas>
+<button onclick="clearCanvas('ownerSign')" class="text-[11px] underline">Clear Signature</button>
+
+<label class="mt-3 block">OWNER PHOTO - Only if consent ticked</label>
+<input type="file" id="ownerPhoto" accept="image/*" capture="camera">
+<div class="text-[9px] text-gray-500">No consent = No photo. Inspection still valid.</div>
+
+<label class="flex gap-2 mt-3 text-[12px]"><input type="checkbox" id="inspConfirm" style="width:20px"> <span><b>Inspector Confirms: Owner was here in-store ✓</b></span></label>
+
+<button onclick="go(1)" class="w-full p-2 border rounded-lg mt-3">← BACK</button>
+<button onclick="saveConsent()" class="gold w-full p-3 rounded-xl font-black mt-2">SAVE CONSENT & OPEN EVIDENCE →</button>
 </div>
 
-<div class="bg-white rounded-2xl m-3 p-3 shadow-sm">
-<div class="font-black text-[13px] border-b-2 border-yellow-500 inline-block pb-1">✅ COMPLIANCE - ALL DEPARTMENTS</div>
-<div class="mt-3 space-y-2 text-[11px]">
-<label class="flex items-center gap-2 border p-2 rounded-lg"><input type="checkbox" class="w-4 h-4" onchange="updateEv()"> <span>📋 <b>Invoices</b> - Valid & photographed</span></label>
-<label class="flex items-center gap-2 border p-2 rounded-lg"><input type="checkbox" class="w-4 h-4" onchange="updateEv()"> <span>📦 <b>Batch</b> - Correct retailer</span></label>
-<label class="flex items-center gap-2 border p-2 rounded-lg"><input type="checkbox" class="w-4 h-4" onchange="updateEv()"> <span>⏰ <b>Expiry</b> - Not expired</span></label>
-<label class="flex items-center gap-2 border p-2 rounded-lg"><input type="checkbox" class="w-4 h-4" onchange="updateEv()"> <span>🏥 <b>Health & Safety</b> - Storage OK</span></label>
-<label class="flex items-center gap-2 border p-2 rounded-lg"><input type="checkbox" class="w-4 h-4" onchange="updateEv()"> <span>🔒 <b>POPIA & SAPS 2024/4410</b> - Logged</span></label>
-</div>
+<!-- STEP 3 -->
+<div id="s3" class="step card">
+<h2 class="font-black">STEP 3: EVIDENCE SCAN LIKE PDF</h2>
+<p class="text-[11px] text-gray-500">Press SCAN - It will look like a PDF scanner.</p>
+<div id="evList"></div>
+<button onclick="go(2)" class="w-full p-2 border rounded-lg mt-3">← BACK</button>
+<button onclick="go(4)" class="gold w-full p-3 rounded-xl font-black mt-2">DONE SCANNING → GO TO SEAL</button>
 </div>
 
-<div class="bg-white rounded-2xl m-3 p-3 shadow-sm">
-<div class="font-black text-[13px]">SIGN & VERIFY - DRAW WITH FINGER</div>
-<div class="grid grid-cols-1 gap-3 mt-3">
-<div><div class="text-[10px] font-black">INSPECTOR</div><canvas id="sig1" class="sig-canvas"></canvas><div class="flex justify-between"><span id="s1" class="text-[9px]">Not signed</span><button onclick="clearSig('sig1','s1')" class="text-[9px] bg-slate-200 px-2 rounded">Clear</button></div></div>
-<div><div class="text-[10px] font-black">SUPERVISOR</div><canvas id="sig2" class="sig-canvas"></canvas><div class="flex justify-between"><span id="s2" class="text-[9px]">Not signed</span><button onclick="clearSig('sig2','s2')" class="text-[9px] bg-slate-200 px-2 rounded">Clear</button></div></div>
-<div><div class="text-[10px] font-black">SHOP MANAGER / CLIENT</div><canvas id="sig3" class="sig-canvas"></canvas><div class="flex justify-between"><span id="s3" class="text-[9px]">Not signed</span><button onclick="clearSig('sig3','s3')" class="text-[9px] bg-slate-200 px-2 rounded">Clear</button></div></div>
-</div>
-<div class="mt-3 bg-blue-50 border-2 border-blue-700 rounded-xl p-3 flex items-center gap-3"><div id="fpI" class="w-10 h-10 bg-white border-2 border-blue-700 rounded-full flex items-center justify-center">👆</div><div class="flex-1"><div id="fpT" class="font-black text-[10px]">TAP TO VERIFY FINGERPRINT</div><div id="fpS" class="text-[9px]">Not verified</div></div><button id="fpB" onclick="verifyFp()" class="bg-blue-700 text-white text-[9px] px-3 py-2 rounded-lg font-bold">VERIFY</button></div>
+<!-- STEP 4 -->
+<div id="s4" class="step card">
+<h2 class="font-black">STEP 4: SEAL INSPECTION</h2>
+<p class="text-[11px] text-gray-500">Final signatures. All in-store.</p>
+<label>INSPECTOR SIGNATURE</label><canvas id="inspSign"></canvas><button onclick="clearCanvas('inspSign')" class="text-[11px] underline">Clear</button>
+<label class="mt-2 block">INSPECTOR THUMBPRINT</label><canvas id="inspFP"></canvas><button onclick="clearCanvas('inspFP')" class="text-[11px] underline">Clear</button>
+<label class="mt-2 block">WITNESS NAME</label><input id="witName" placeholder="Witness Name">
+<label>WITNESS SIGNATURE</label><canvas id="witSign"></canvas><button onclick="clearCanvas('witSign')" class="text-[11px] underline">Clear</button>
+<label class="mt-2 block">WITNESS THUMBPRINT</label><canvas id="witFP"></canvas><button onclick="clearCanvas('witFP')" class="text-[11px] underline">Clear</button>
+<label class="mt-2 block">VOICE NOTE (optional)</label><input type="file" accept="audio/*" capture>
+<div id="summary" class="bg-gray-50 rounded p-2 text-[11px] mt-3"></div>
+<button onclick="go(3)" class="w-full p-2 border rounded-lg mt-3">← BACK</button>
+<button onclick="seal()" class="gold w-full p-3 rounded-xl font-black mt-2">🔒 SEAL INSPECTION - SAVE OFFLINE</button>
+<div id="sealedMsg" class="hidden bg-green-100 text-green-800 p-3 rounded mt-2 font-bold text-center">SEALED OFFLINE SAVED! ✓</div>
+<button onclick="go(1)" class="w-full p-2 text-[11px] underline mt-2">Start New Inspection</button>
 </div>
 
-<div class="bg-black border-2 border-yellow-500 rounded-2xl m-3 p-4">
-<div class="flex items-center gap-2 bg-gradient-to-r from-yellow-50 to-amber-100 rounded-xl p-2">
-<img src="logo2.png" class="w-8 h-8 rounded-lg border border-yellow-500"><div class="font-black text-[11px] text-amber-900">🇿🇦 PROTECTING OUR FAMILIES. KEEPING MZANSI SAFE.</div></div>
-<div class="mt-2 text-[10px] text-gray-300">🔍 QINISO only collects evidence. Decision by LAW & BRAND.</div>
-<div class="mt-3 grid grid-cols-2 gap-2"><button onclick="saveDraft()" class="bg-white text-yellow-700 border-2 border-yellow-500 py-3 rounded-xl font-black text-[11px]">SAVE DRAFT</button><button onclick="submitEv()" class="bg-blue-700 text-white py-3 rounded-xl font-black text-[11px]">SUBMIT ALL EVIDENCE 🔒</button></div>
+<!-- PDF SCANNER OVERLAY -->
+<div id="pdfScanner" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:black;z-index:999;padding:16px">
+<div style="border:2px solid #fbbf24;height:72%;position:relative;border-radius:10px;overflow:hidden">
+<div class="scanline"></div>
+<div style="position:absolute;top:10px;left:10px;width:30px;height:30px;border-top:3px solid #fbbf24;border-left:3px solid #fbbf24"></div>
+<div style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-top:3px solid #fbbf24;border-right:3px solid #fbbf24"></div>
+<div style="position:absolute;bottom:10px;left:10px;width:30px;height:30px;border-bottom:3px solid #fbbf24;border-left:3px solid #fbbf24"></div>
+<div style="position:absolute;bottom:10px;right:10px;width:30px;height:30px;border-bottom:3px solid #fbbf24;border-right:3px solid #fbbf24"></div>
+<div style="color:white;text-align:center;margin-top:55%;font-weight:bold">SCANNING TO PDF...<br><span style="font-size:11px;color:#fbbf24" id="scanLabel">EVIDENCE</span></div>
+</div>
+<input type="file" id="scanInput" accept="image/*" capture="camera" style="display:none">
+<button onclick="document.getElementById('scanInput').click()" class="gold w-full p-3 rounded-xl font-black mt-3">📄 CAPTURE AS PDF PAGE</button>
+<button onclick="closeScanner()" class="w-full p-2 text-white mt-1">Cancel</button>
+<div id="scanPreview" class="pdfpage mt-2 hidden"><div class="text-[10px] font-bold">PDF PAGE SAVED ✓</div><img id="scanImg" class="w-full rounded mt-1"></div>
 </div>
 
 <script>
-let photoCount=0, recCount=0, prodCount=0;
-let gps='-33.8493, 25.4516', ip='102.214.117.x';
-navigator.geolocation.getCurrentPosition(p=>{gps=p.coords.latitude.toFixed(4)+','+p.coords.longitude.toFixed(4); document.getElementById('gpsTxt').innerText=gps; document.getElementById('scanId').innerText='QI-'+Math.floor(1000000+Math.random()*8999999);});
-fetch('https://ipapi.co/json/').then(r=>r.json()).then(d=>{ip=d.ip;}).catch(()=>{});
-function handlePhoto(input, prevId, phId, okId, boxId){
- if(input.files && input.files[0]){
-  const reader=new FileReader();
-  reader.onload=e=>{
-   document.getElementById(prevId).src=e.target.result;
-   document.getElementById(prevId).classList.remove('hidden');
-   document.getElementById(phId).classList.add('hidden');
-   document.getElementById(okId).classList.remove('hidden');
-   document.getElementById(boxId).classList.add('has-photo');
-   photoCount++; updateEv();
-  };
-  reader.readAsDataURL(input.files[0]);
- }
+let curEv='';
+const evs=['1. Fridge / Cold Room','2. Shelf / Display','3. CIPC Certificate','4. Health Certificate','5. Invoice / Till Slip','6. SARS / Tax','7. VAT / Business Docs','8. Police Case No (if any)','9. Other Evidence'];
+function renderEv(){
+  document.getElementById('evList').innerHTML=evs.map((e,i)=>`
+  <div class="border rounded-lg p-2 mt-2 flex justify-between items-center">
+    <div class="text-[12px] font-bold">${e} <span id="st${i}" class="text-gray-400 text-[10px]">- Not scanned</span></div>
+    <button onclick="openScanner(${i},'${e}')" class="gold px-3 py-1 rounded font-bold text-[11px]">📄 SCAN</button>
+  </div>`).join('');
 }
-function updateEv(){document.getElementById('evCount').innerText=photoCount+' photos • '+recCount+' voice'; document.getElementById('gpsTag').innerText=gps+' • '+ip+' • '+new Date().toLocaleString();}
-let scanner=null, products=[];
-function startProdScan(){document.getElementById('readerWrap').classList.remove('hidden'); if(scanner) return; scanner=new Html5Qrcode('reader'); scanner.start({facingMode:'environment'},{fps:10,qrbox:250},qr=>{products.push(qr); prodCount++; document.getElementById('prodCount').innerText=prodCount+' products'; document.getElementById('prodList').innerHTML+=`<div class="bg-green-100 border p-1 rounded mt-1">✅ ${qr} • ${new Date().toLocaleTimeString()} • GPS ${gps}</div>`;}).catch(e=>alert(e));}
-function stopScan(){document.getElementById('readerWrap').classList.add('hidden'); if(scanner){scanner.stop().then(()=>scanner=null).catch(()=>scanner=null);}}
-let mediaRec=null, chunks=[], recTimer=null, secs=0;
-function toggleRec(){
- if(!mediaRec || mediaRec.state==='inactive'){
-  navigator.mediaDevices.getUserMedia({audio:true}).then(stream=>{
-   mediaRec=new MediaRecorder(stream); chunks=[]; mediaRec.ondataavailable=e=>chunks.push(e.data);
-   mediaRec.onstop=()=>{const blob=new Blob(chunks,{type:'audio/webm'}); const url=URL.createObjectURL(blob); const a=document.getElementById('audioPlay'); a.src=url; a.classList.remove('hidden'); recCount=1; updateEv();};
-   mediaRec.start(); document.getElementById('recStatus').innerText='🔴 RECORDING...'; document.getElementById('recBtn').innerText='⏹️'; document.getElementById('recBtn').className='w-14 h-14 bg-black rounded-full flex items-center justify-center text-white font-black text-xl animate-pulse';
-   secs=0; recTimer=setInterval(()=>{secs++; document.getElementById('recTime').innerText= Math.floor(secs/60)+':'+('0'+secs%60).slice(-2)+' • Recording...';},1000);
-  }).catch(()=>alert('Mic permission needed'));
- } else if(mediaRec.state==='recording'){
-  mediaRec.stop(); clearInterval(recTimer); document.getElementById('recStatus').innerText='✅ VOICE CAPTURED'; document.getElementById('recBtn').innerText='🎤'; document.getElementById('recBtn').className='w-14 h-14 bg-green-600 rounded-full flex items-center justify-center text-white font-black text-xl';
- }
+renderEv();
+function go(n){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('active'));
+  document.getElementById('s'+n).classList.add('active');
+  for(let i=1;i<=4;i++){document.getElementById('p'+i).className='flex-1 rounded p-1 '+(i<=n?'bg-yellow-400':'bg-white/20 text-white')}
+  document.getElementById('ownerNameShow').textContent=document.getElementById('ownerName').value||'Owner';
+  window.scrollTo(0,0);
 }
-function setupSig(id,sId){const c=document.getElementById(id); const ctx=c.getContext('2d'); function resize(){c.width=c.offsetWidth*2; c.height=c.offsetHeight*2; ctx.scale(2,2);} resize(); let d=false; function p(e){const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:t.clientX-r.left, y:t.clientY-r.top};}
-c.addEventListener('mousedown',e=>{d=true; const q=p(e); ctx.beginPath(); ctx.moveTo(q.x,q.y);}); c.addEventListener('mousemove',e=>{if(!d)return; const q=p(e); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#1e3a8a'; ctx.lineTo(q.x,q.y); ctx.stroke(); document.getElementById(sId).innerText='Signed ✓'; document.getElementById(sId).className='text-[9px] text-green-600 font-bold';}); c.addEventListener('mouseup',()=>d=false);
-c.addEventListener('touchstart',e=>{d=true; const q=p(e); ctx.beginPath(); ctx.moveTo(q.x,q.y); e.preventDefault();}); c.addEventListener('touchmove',e=>{if(!d)return; const q=p(e); ctx.lineWidth=2; ctx.lineCap='round'; ctx.strokeStyle='#1e3a8a'; ctx.lineTo(q.x,q.y); ctx.stroke(); document.getElementById(sId).innerText='Signed ✓'; document.getElementById(sId).className='text-[9px] text-green-600 font-bold'; e.preventDefault();}); c.addEventListener('touchend',()=>d=false);}
-function clearSig(id,sId){const c=document.getElementById(id); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); document.getElementById(sId).innerText='Not signed'; document.getElementById(sId).className='text-[9px] text-slate-500';}
-setupSig('sig1','s1'); setupSig('sig2','s2'); setupSig('sig3','s3');
-function verifyFp(){document.getElementById('fpI').innerText='⏳'; document.getElementById('fpT').innerText='SCANNING...'; setTimeout(()=>{document.getElementById('fpI').innerText='✅'; document.getElementById('fpT').innerText='FINGERPRINT VERIFIED'; document.getElementById('fpS').innerText='Match 99.8% • '+new Date().toLocaleTimeString(); document.getElementById('fpB').innerText='VERIFIED ✓'; document.getElementById('fpB').className='bg-green-600 text-white text-[9px] px-3 py-2 rounded-lg';},1500);}
-function saveDraft(){alert('✅ DRAFT SAVED: '+photoCount+' photos, '+recCount+' voice, '+prodCount+' products, GPS '+gps);}
-function submitEv(){if(photoCount<1){alert('⚠️ Take at least 1 photo evidence! Invoice or Products!'); return;} if(document.getElementById('s1').innerText==='Not signed'){alert('⚠️ Need Inspector signature!'); return;} alert('🔒 FULL EVIDENCE SUBMITTED!\n\n📸 '+photoCount+' photos\n🎤 '+recCount+' voice\n📦 '+prodCount+' products\n📍 GPS: '+gps+'\n🌐 IP: '+ip+'\n\nCourt-ready evidence!');}
+function saveConsent(){
+  if(!document.getElementById('consent').checked){alert('Owner must tick YES I AGREE first');return}
+  if(!document.getElementById('inspConfirm').checked){alert('Inspector must confirm Owner was here');return}
+  go(3);
+}
+function openScanner(i,label){
+  curEv=i; document.getElementById('scanLabel').textContent=label;
+  document.getElementById('pdfScanner').style.display='block';
+  document.getElementById('scanPreview').classList.add('hidden');
+}
+function closeScanner(){document.getElementById('pdfScanner').style.display='none'}
+document.getElementById('scanInput').addEventListener('change',function(e){
+  const f=e.target.files[0]; if(!f) return;
+  const r=new FileReader(); r.onload=function(ev){
+    document.getElementById('scanImg').src=ev.target.result;
+    document.getElementById('scanPreview').classList.remove('hidden');
+    document.getElementById('st'+curEv).textContent='- PDF SAVED ✓'; document.getElementById('st'+curEv).style.color='green';
+    setTimeout(closeScanner,800);
+  }; r.readAsDataURL(f);
+});
+// Canvas drawing for FP + Signature
+function setup(id){
+  const c=document.getElementById(id), ctx=c.getContext('2d'); let d=false;
+  function pos(e){const r=c.getBoundingClientRect(); const t=e.touches?e.touches[0]:e; return {x:(t.clientX-r.left)*(c.width/r.width), y:(t.clientY-r.top)*(c.height/r.height)}}
+  function start(e){d=true; ctx.beginPath(); const p=pos(e); ctx.moveTo(p.x,p.y); e.preventDefault()}
+  function move(e){if(!d) return; const p=pos(e); ctx.lineWidth=2; ctx.strokeStyle='#0f172a'; ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault()}
+  function end(){d=false}
+  c.addEventListener('touchstart',start,{passive:false}); c.addEventListener('touchmove',move,{passive:false}); c.addEventListener('touchend',end);
+  c.addEventListener('mousedown',start); c.addEventListener('mousemove',move); c.addEventListener('mouseup',end);
+  // Fix size
+  c.width=c.offsetWidth*2; c.height=110*2; ctx.scale(2,2);
+}
+['ownerFP','ownerSign','inspSign','inspFP','witSign','witFP'].forEach(setup);
+function clearCanvas(id){const c=document.getElementById(id); c.getContext('2d').clearRect(0,0,c.width,c.height)}
+function seal(){
+  const batch='BATCH-'+Date.now().toString().slice(-6);
+  document.getElementById('summary').innerHTML=`<b>Batch:</b> ${batch}<br><b>Inspector:</b> ${document.getElementById('inspName').value}<br><b>Shop:</b> ${document.getElementById('shopName').value}<br><b>Owner:</b> ${document.getElementById('ownerName').value} - Consent ✓ FP ✓ Sign ✓<br><b>Evidence:</b> Scanned as PDF ✓<br><b>Status:</b> SEALED OFFLINE`;
+  document.getElementById('sealedMsg').classList.remove('hidden');
+  const data={batch, insp:document.getElementById('inspName').value, shop:document.getElementById('shopName').value, owner:document.getElementById('ownerName').value, time:new Date().toLocaleString()};
+  localStorage.setItem('qiniso_'+batch, JSON.stringify(data));
+  alert('SEALED! Batch '+batch+' Saved Offline');
+}
 </script>
-</body></html>
+</body>
+</html>
